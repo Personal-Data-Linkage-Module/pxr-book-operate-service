@@ -1,0 +1,15 @@
+{
+    "operatorUrl": "http://localhost:3000/operator",
+    "catalogUrl": "http://localhost:3001/catalog",
+    "bookManageUrl": "http://localhost:3005/book-manage",
+    "notificationUrl": "http://localhost:3004/notification",
+    "accessControlUrl": "http://localhost:3015/access-control",
+    "ctokenUrl": "http://localhost:3009/local-ctoken",
+    "proxyUrl": "http://localhost:3003/pxr-block-proxy",
+    "auditUrl": "http://localhost:3017/pxr-audit",
+    "outerBlockStore": true,
+    "rootBlock": 1000110,
+    "passwordDigit": 8,
+    "initialPasswordExpire": 7,
+    "timezone": "Asia/Tokyo"
+}

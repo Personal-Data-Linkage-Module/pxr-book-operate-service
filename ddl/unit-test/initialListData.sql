@@ -1,0 +1,65 @@
+/** Copyright 2022 NEC Corporation
+Released under the MIT license.
+https://opensource.org/licenses/mit-license.php
+*/
+INSERT INTO pxr_book_operate.my_condition_book
+(
+    user_id,
+    actor_catalog_code,
+    actor_catalog_version,
+    app_catalog_code,
+    app_catalog_version,
+    wf_catalog_code,
+    wf_catalog_version,
+    open_start_at,
+    attributes,
+    is_disabled,
+    created_by,
+    created_at,
+    updated_by,
+    identify_code,
+    updated_at
+)
+VALUES
+(
+	'111111111',
+    1000007,1,
+    null,null,
+    1000007,1,
+    '2020-02-01T00:00:00.000+0900',
+    null,
+    false,
+    'pxr_user',
+    NOW(),
+    'pxr_user',
+    'pxr_user',
+    NOW()
+),
+(
+	'222222222',
+    1000007,1,
+    null,null,
+    1000007,1,
+    '2020-03-02T00:00:00.000+0900',
+    null,
+    false,
+    'pxr_user',
+    NOW(),
+    'pxr_user',
+    'pxr_user_',
+    NOW()
+),
+(
+	'333333333',
+    1000007,1,
+    1000007,1,
+    null,null,
+    '2020-03-03T00:00:00.000+0900',
+    '{sample:1}',
+    false,
+    'pxr_user',
+    NOW(),
+    'pxr_user',
+    '_pxr_user',
+    NOW()
+);
