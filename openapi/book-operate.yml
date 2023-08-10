@@ -1,0 +1,29 @@
+openapi: '3.0.2'
+info:
+  title: pxr-book-operate-service
+  description: |
+    ## サービス概要
+    My-Condition-Book（略称：MCB）を運用するためのサービスです。
+
+    ### （注意事項）
+    - 本サービスのAPIを利用するためには、pxr-operator-serviceによる認証を通過している必要があります。
+    - 運用環境においては、本サービスのAPIへのアクセスはpxr-block-proxy経由で行う必要があります。
+  version: '1.0'
+  license:
+    name: MIT
+    url: https://licenses.opensource.jp/MIT/MIT.html
+servers:
+  - url: /book-operate
+paths:
+  /event/:userId:
+    $ref: "book-operate_event_udserId.yml"
+  /document/:userId:
+    $ref: "book-operate_document_userId.yml"
+  /thing/:userId/:eventId:
+    $ref: "book-operate_thing_userId_eventId.yml"
+  /share:
+    $ref: "book-operate_share.yml"
+  /book/search:
+    $ref: "book-operate_book_search.yml"
+  /user/list:
+    $ref: "book-operate_user_list.yml"

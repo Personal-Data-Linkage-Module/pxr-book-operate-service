@@ -1,0 +1,264 @@
+post: 
+  tags:
+    - モノ追加
+  summary: 蓄積対象のモノを登録します。
+  description: |
+    ## API概要
+    アプリケーションが、アプリケーション利用者に紐づくパーソナルデータ（モノ）を登録します。
+    
+    ### 【認可条件】
+    - アプリケーションオペレータ（カタログ定義済みのアプリケーションに割り当てられたオペレータ）であること
+      - アプリケーションオペレータは下記のAPIで追加する必要があります
+        - pxr-operator-service の [POST: /operator]APIをオペレータ種別(type=2)で実行
+  parameters:
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: |
+        蓄積対象のモノに紐づく利用者ID
+
+        （注意事項）
+        - 指定する利用者IDは下記のAPIで利用者ID連携を実施済である必要があります。
+          - pxr-book-manage-service の [POST: /book-manage/cooperate]API
+    - name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: |
+        蓄積対象イベントに紐づくイベントID
+
+        （注意事項）
+        - イベント蓄積のレスポンスに設定されたイベントIDを指定する必要があります。
+  requestBody:
+    description: |
+      モノ追加（登録）の要求オブジェクト
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/ThingTemplate"
+        examples:
+          "モノ蓄積_リクエスト":
+            $ref: "#/components/examples/モノ追加_リクエスト"
+  responses:
+    200:
+      description: モノ追加（登録）の結果オブジェクト
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ThingTemplate"
+          examples:
+            "モノ追加_レスポンス":
+              $ref: "#/components/examples/モノ追加_レスポンス"
+
+components:
+  schemas:
+    ThingTemplate:
+      type: object
+      description: モノ追加（登録または更新）の要求オブジェクト
+      properties:
+        _code:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+        app:
+          type: object
+          description: |
+            モノ追加（登録または更新）を行うアプリケーションのカタログ項目コード
+          oneOf:
+            - $ref: "#/components/schemas/App"
+        code:
+          type: object
+          description: |
+            モノのカタログ項目コード
+
+            （注意事項）
+            - code の index には 4_1_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        env:
+          type: object
+          description: |
+            モノの種別識別子カタログ
+            【確認中】
+
+            （注意事項）
+            - env の index には 4_3_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        id:
+          type: object
+          description: |
+            モノのデータ識別子
+
+            （注意事項）
+            - モノ蓄積（登録）の場合はnullである必要があります。
+            - モノ蓄積（更新）の場合は更新対象のidを指定してください。
+            - id の index には 4_1_1 を設定します。
+          properties:
+            index:
+              type: string
+            value:
+              type: string
+          required:
+            - index
+            - value
+        sourceId:
+          type: string
+          description: |
+            蓄積対象イベントに割り当てる識別子
+
+            【確認中】
+            イベント蓄積と同様に、モノ更新API及びモノ削除APIで対象の指定に利用する目的のものか。
+            
+            （注意事項）
+            - sourceId はモノ更新 API およびモノ削除 API で対象の指定に利用できます。
+              - pxr-book-operate-service の [PUT: /book-operate/thing/:userId/:eventId]API
+              - pxr-book-operate-service の [DELETE: /book-operate/thing/:userId/:eventId]API
+        wf:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+      required:
+        - "app"
+        - "code"
+        - "id"
+        - "sourceId"
+        - "env"
+    App:
+      type: object
+      description: イベント蓄積（登録または更新）を行うアプリケーションのカタログ項目コード
+      properties:
+        code:
+          type: object
+          description: |
+            アプリケーションプロバイダーのカタログ項目コード
+
+            （注意事項）
+            - code の index には 2_3_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        app:
+          type: object
+          description: |
+            アプリケーションのカタログ項目コード
+
+            （注意事項）
+            - app の index には 2_3_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+    IndexValue:
+      type: object
+      description: |
+        CMatrix列のインデックスとその設定値
+      properties:
+        index:
+          type: string
+          description: CMatrix列のインデックス
+        value:
+          description: CMatrix列の設定値
+          oneOf:
+            - $ref: "#/components/schemas/StringValue"
+            - $ref: "#/components/schemas/CodeObject"
+    StringValue:
+      type: string
+      description: 文字列値
+    CodeObject:
+      description: カタログコード
+      type: object
+      properties:
+        _value:
+          description: カタログコード値
+          type: number
+        _ver:
+          description: カタログバージョン値
+          type: number
+      required:
+        - "_value"
+        - "_ver"
+  examples:
+    モノ追加_リクエスト:
+      description: |
+
+      value:
+        {
+          "app": {
+            "code": {
+              "index": "2_3_1",
+              "value": {
+                "_value": 1000788,
+                "_ver": 1
+              }
+            },
+            "app": {
+              "index": "2_3_2",
+              "value": {
+                "_value": 1000800,
+                "_ver": 1
+              }
+            }
+          },
+          "code": {
+            "index": "4_1_2",
+            "value": {
+              "_value": 1000795,
+              "_ver": 1
+            }
+          },
+          "env": [
+            {
+              "index": "4_3_1",
+              "value": {}
+            }
+          ],
+          "id": {
+            "index": "4_1_1",
+            "value": null
+          },
+          "sourceId": null,
+        }
+    モノ追加_レスポンス:
+      description: |
+
+      value:
+        {
+          "app": {
+            "code": {
+              "index": "2_3_1",
+              "value": {
+                "_value": 1000788,
+                "_ver": 1
+              }
+            },
+            "app": {
+              "index": "2_3_2",
+              "value": {
+                "_value": 1000800,
+                "_ver": 1
+              }
+            }
+          },
+          "code": {
+            "index": "4_1_2",
+            "value": {
+              "_value": 1000795,
+              "_ver": 1
+            }
+          },
+          "env": [
+            {
+              "index": "4_3_1",
+              "value": {}
+            }
+          ],
+          "id": {
+            "index": "4_1_1",
+            "value": uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu
+          },
+          "sourceId": null,
+        }
