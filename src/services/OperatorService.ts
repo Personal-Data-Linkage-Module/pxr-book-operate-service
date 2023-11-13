@@ -6,7 +6,7 @@ https://opensource.org/licenses/mit-license.php
 import OperatorAddDto from './dto/OperatorAddDto';
 import { CoreOptions } from 'request';
 import { Request } from 'express';
-import { doPostRequest, doGetRequest } from '../common/DoRequest';
+import { doPostRequest, doGetRequest, doDeleteRequest} from '../common/DoRequest';
 import AppError from '../common/AppError';
 import { ResponseCode } from '../common/ResponseCode';
 import { OperatorType } from '../common/Operator';
@@ -26,6 +26,8 @@ const Configure = ConfigReader.ReadConfig('./config/config.json');
  * オペレーターサービス
  */
 export default class OperatorService {
+    static BLOCK_TYPE_APP: string = 'app';
+    static BLOCK_TYPE_REGION: string = 'region-root';
     /**
      * オペレーターのセッション情報を取得する
      * @param req リクエストオブジェクト
@@ -135,14 +137,21 @@ export default class OperatorService {
      * @param userInfo
      * @param operator
      */
-    static async registerUserInformation (userId: string, userInfo: UserInformationDto | undefined, operator: string) {
+    static async registerUserInformation (operatorAddDto: OperatorAddDto, operatorBlockType: string, userInfo: UserInformationDto | undefined, operator: string) {
+        const userId = operatorAddDto.getUserId();
+        const appCode = operatorAddDto.getAppCatalogCode();
+        const regionCode = operatorAddDto.getRegionCatalogCode();
         if (userInfo) {
+            this.checkCodeBlockType(null, appCode, regionCode, operatorBlockType);
             this.request(
                 Configure.operatorUrl + '/user/info',
                 operator,
                 'post',
                 JSON.stringify({
                     userId: userId,
+                    wfCode: null,
+                    appCode: appCode,
+                    regionCode: regionCode,
                     userInfo: userInfo
                 })
             );
@@ -154,9 +163,15 @@ export default class OperatorService {
      * @param userId
      * @param operator
      */
-    static async acquireUserInformation (userId: string, operator: string) {
+    static async acquireUserInformation (userId: string, wfCode: number, appCode: number, regionCode: number, operator: string) {
+        if (!wfCode && !appCode && !regionCode) {
+            // コード設定のない利用者は不正なデータのため、利用者情報取得をスキップする
+            return null;
+        }
+        // クエリパラメータを設定
+        const codeQuery = wfCode ? '&wfCode=' + wfCode : appCode ? '&appCode=' + appCode : '&regionCode=' + regionCode;
         const result = await this.request(
-            Configure.operatorUrl + '/user/info?userId=' + userId,
+            Configure.operatorUrl + '/user/info?userId=' + userId + codeQuery,
             operator,
             'get'
         );
@@ -175,12 +190,50 @@ export default class OperatorService {
     }
 
     /**
+     * オペレーターID取得
+     * @param OperatorAddDto
+     */
+    static async getOperatorId (operatorAddDto: OperatorAddDto, operatorBlockType: string): Promise<any> {
+        const appCode = operatorAddDto.getAppCatalogCode();
+        const regionCode = operatorAddDto.getRegionCatalogCode();
+        // dtoに適切なコードが設定されていることを確認し、クエリパラメータを設定
+        this.checkCodeBlockType(null, appCode, regionCode, operatorBlockType);
+        const codeQuery = appCode ? '&appCode=' + appCode : '&regionCode=' + regionCode;
+        // url生成
+        const url = (operatorAddDto.getUrl() + '?type=' + OperatorType.TYPE_IND + '&loginId=' + operatorAddDto.getUserId() + codeQuery);
+
+        const res = await OperatorService.request(
+            url,
+            encodeURIComponent(JSON.stringify(operatorAddDto.getOperator())),
+            'get'
+        );
+        return res.body['operatorId'];
+    }
+
+    /**
+     * オペレーター削除
+     * @param operatorId
+     * @param operatorUrl
+     * @param operator
+     */
+    static async deleteOperator (operatorId: number, operatorUrl: string, operator: Operator): Promise<any> {
+        // url生成
+        const url = (operatorUrl + '/' + operatorId);
+
+        return OperatorService.request(
+            url,
+            encodeURIComponent(JSON.stringify(operator)),
+            'delete'
+        );
+    }
+
+    /**
      *
      * @param url
      * @param body
      * @param operator
      */
-    static async request (url: string, operator: string, method: 'post' | 'get', body?: string) {
+    static async request (url: string, operator: string, method: 'post' | 'get' | 'delete', body?: string) {
         const options: CoreOptions = {
             headers: {
                 'Content-Type': 'application/json',
@@ -193,8 +246,10 @@ export default class OperatorService {
             options.body = body;
         }
         try {
-            // postを実行
-            const result = method === 'post' ? await doPostRequest(url, options) : await doGetRequest(url, options);
+            // リクエストを実行
+            const result = method === 'post' ? await doPostRequest(url, options)
+                : method === 'get' ? await doGetRequest(url, options)
+                    : await doDeleteRequest(url, options);
 
             // レスポンスコードが200以外の場合
             // ステータスコードを判定
@@ -228,5 +283,41 @@ export default class OperatorService {
             // サービスへの接続に失敗した場合
             throw new AppError(Message.FAILED_CONNECT_TO_OPERATOR, ResponseCode.SERVICE_UNAVAILABLE, err);
         }
+    }
+
+    /**
+     * オペレータの所属blockと設定されたcode情報の整合性をチェックする
+     * @param wfCode
+     * @param appCode
+     * @param regionCode
+     * @param operatorBlockType
+     */
+    private static checkCodeBlockType (wfCode: number, appCode: number, regionCode: number, operatorBlockType: string) {
+        // オペレータの所属blockと合致するcode情報が設定されていない場合エラー
+        if ((operatorBlockType === this.BLOCK_TYPE_APP && !appCode) || (operatorBlockType === this.BLOCK_TYPE_REGION && !regionCode)) {
+            throw new AppError(Message.MISMATCH_OPERATOR_BLOCK_TYPE_AND_SERVICE_CODE, 400);
+        }
+    }
+
+    /**
+     * サービス（アプリケーション）のカタログコード取得
+     * @param operator
+     */
+    static async getAppWfCatalogCodeByOperator (operator: Operator) {
+        let appCatalogCode: number;
+        const wfCatalogCode: number = null;
+        const service = operator.getService();
+        if (service) {
+            if (operator.getType() === OperatorDomain.TYPE_APPLICATION_NUMBER) {
+                appCatalogCode = service['_value'];
+            } else {
+                appCatalogCode = null;
+            }
+        } else {
+            const roles = operator.getRoles();
+            // APP
+            appCatalogCode = operator.getType() === OperatorDomain.TYPE_APPLICATION_NUMBER ? parseInt(roles[0]['_value']) : null;
+        }
+        return { appCatalogCode, wfCatalogCode };
     }
 }

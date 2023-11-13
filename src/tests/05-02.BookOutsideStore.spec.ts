@@ -139,8 +139,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -202,8 +202,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }

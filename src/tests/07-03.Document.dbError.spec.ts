@@ -67,7 +67,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -136,7 +136,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -203,7 +203,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック

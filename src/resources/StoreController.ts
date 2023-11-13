@@ -29,6 +29,7 @@ import { OperatorType } from '../common/Operator';
 import Config from '../common/Config';
 import StoreServiceDto from '../services/dto/StoreSreviceDto';
 import StoreService from '../services/StoreService';
+import DeleteStoreDelRequestValidator from './validator/DeleteStoreDelRequestValidator';
 @JsonController('/book-operate')
 export default class StoreController {
     /**
@@ -77,7 +78,8 @@ export default class StoreController {
     @Header('X-Frame-Options', 'deny')
     // SDE-MSA-PRIN 過負荷を回避する （MSA-PRIN-ID-02）
     @EnableSimpleBackPressure()
-    async deleteUserData (@Param('userId') userId: string, @QueryParam('physicalDelete') physicalDelete: boolean, @Req() req: Request, @Res() res: Response): Promise<any> {
+    @UseBefore(DeleteStoreDelRequestValidator)
+    async deleteUserData (@Param('userId') userId: string, @QueryParam('app') app: number, @QueryParam('wf') wf: number, @QueryParam('physicalDelete') physicalDelete: boolean, @Req() req: Request, @Res() res: Response): Promise<any> {
         const configure = Config.ReadConfig('./config/config.json');
         const message = Config.ReadConfig('./config/message.json');
         // セッションチェックデータオブジェクトを生成
@@ -96,6 +98,6 @@ export default class StoreController {
         const operator = await sessionCheckService.isSessionCheck(sessionCheckDto);
 
         // サービス層生成
-        return new StoreService().deleteUserStoreData(userId, physicalDelete, operator);
+        return new StoreService().deleteUserStoreData(userId, app, wf, physicalDelete, operator);
     }
 }

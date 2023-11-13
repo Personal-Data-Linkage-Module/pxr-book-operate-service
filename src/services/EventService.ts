@@ -39,6 +39,7 @@ import CTokenDto from './dto/CTokenDto';
 import Config from '../common/Config';
 import OperatorReqDto from '../resources/dto/OperatorReqDto';
 import { applicationLogger } from '../common/logging';
+import OperatorService from './OperatorService';
 /* eslint-enable */
 
 @Service()
@@ -56,11 +57,14 @@ export default class EventService {
         const operator = eventDto.getOperator();
         const message = eventDto.getMessage();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // リクエストテンプレートを取得
         const template = eventDto.getRequestObject();
         applicationLogger.info('get my condition book start');
         // My-Condition-Bookテーブルのレコードを取得
-        const myConditionBookInfo: MyConditionBook = await EntityOperation.getContBookRecordFromUserId(eventDto.getUserId());
+        const myConditionBookInfo: MyConditionBook = await EntityOperation.getContBookRecordFromUserId(eventDto.getUserId(), appCatalogCode, wfCatalogCode);
         // 対象データが存在しない場合
         if (!myConditionBookInfo) {
             // エラーを返す
@@ -175,8 +179,11 @@ export default class EventService {
         const operator = eventDto.getOperator();
         const message = eventDto.getMessage();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // イベントテーブルのレコードを取得
-        const eventList: Event[] = await EntityOperation.getEventRecord(eventDto.getUserId(), eventDto.getEventIdentifer(), eventDto.getSourceId());
+        const eventList: Event[] = await EntityOperation.getEventRecord(eventDto.getUserId(), eventDto.getEventIdentifer(), eventDto.getSourceId(), appCatalogCode, wfCatalogCode);
         // 対象データが1件以外の場合
         if (!eventList || eventList.length !== 1) {
             // エラーを返す
@@ -421,8 +428,11 @@ export default class EventService {
         const template = eventDto.getRequestObject();
         const operator = eventDto.getOperator();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // イベントテーブルのレコードを取得
-        const events: Event[] = await EntityOperation.getEventRecord(eventDto.getUserId(), eventDto.getEventIdentifer(), eventDto.getSourceId());
+        const events: Event[] = await EntityOperation.getEventRecord(eventDto.getUserId(), eventDto.getEventIdentifer(), eventDto.getSourceId(), appCatalogCode, wfCatalogCode);
         // 対象データが存在しない場合
         if (!events || events.length <= 0) {
             // エラーを返す

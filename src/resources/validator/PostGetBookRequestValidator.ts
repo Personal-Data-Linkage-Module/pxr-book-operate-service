@@ -36,6 +36,16 @@ export default class PostGetBookRequestValidator implements ExpressMiddlewareInt
                 }
             }
         }
+
+        // app 必須
+        if (!dto.app) {
+            throw new AppError(Message.EMPTY_APP, ResponseCode.BAD_REQUEST);
+        }
+        // wfに値が定義されている場合
+        if (dto.wf) {
+            // エラーレスポンスを返す
+            throw new AppError(Message.IF_WF_HAS_BEEN_SPECIFIED, ResponseCode.BAD_REQUEST);
+        }
         next();
     }
 }

@@ -133,7 +133,7 @@ describe('book-operate API', () => {
      */
     describe('利用者作成', () => {
         test('異常：データ登録DBエラー', async () => {
-            _catalogServer = new StubCatalogServer(3001, 1000001, 200);
+            _catalogServer = new StubCatalogServer(3001, 1000004, 200);
             _bookManageServer = new StubBookManageServer(200, 1);
             _operatorServer = new StubOperatorServer(200, 3);
 
@@ -143,7 +143,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.pxrRoot) })
+                .set({ session: JSON.stringify(Session.appManager) })
                 .send(JSON.stringify(
                     {
                         identifyCode: 'ukO8z+Xf8vv7yxXQj2Hpo',

@@ -39,6 +39,7 @@ import CTokenDto from './dto/CTokenDto';
 import Config from '../common/Config';
 import OperatorReqDto from '../resources/dto/OperatorReqDto';
 import { EntityManager } from 'typeorm';
+import OperatorService from './OperatorService';
 /* eslint-enable */
 const config = Config.ReadConfig('./config/config.json');
 
@@ -58,11 +59,14 @@ export default class DocumentService {
         const operator = documentDto.getOperator();
         const message = documentDto.getMessage();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // リクエストテンプレートを取得
         const template = documentDto.getRequestObject();
 
         // My-Condition-Bookテーブルのレコードを取得
-        const myConditionBookInfo: MyConditionBook = await EntityOperation.getContBookRecordFromUserId(documentDto.getUserId());
+        const myConditionBookInfo: MyConditionBook = await EntityOperation.getContBookRecordFromUserId(documentDto.getUserId(), appCatalogCode, wfCatalogCode);
         // 対象データが存在しない場合
         if (!myConditionBookInfo) {
             // エラーを返す
@@ -192,6 +196,10 @@ export default class DocumentService {
      * @returns
      */
     private async getTargetEventsForAdd (template: {}, document: Document, operator: OperatorReqDto, trans: EntityManager, documentDto: DocumentServiceDto, message: any) {
+        // APP
+        const appCatalogCode: number = template['app'] ? template['app']['app']['value']['_value'] : null;
+        // WF
+        const wfCatalogCode: number = null;
         const targetEvents: Set<string> = new Set();
         for (const chapter of template['chapter']) {
             const documentEventSetRelation: DocumentEventSetRelation = new DocumentEventSetRelation({
@@ -207,7 +215,7 @@ export default class DocumentService {
             // イベントセットイベントリレーションレコードを登録
             for (const sourceId of chapter['sourceId']) {
                 // リクエスト.chapter.sourceId から、ドキュメントに追加する対象のイベントを取得する
-                const events: Event[] = await EntityOperation.getEventRecord(documentDto.getUserId(), null, sourceId);
+                const events: Event[] = await EntityOperation.getEventRecord(documentDto.getUserId(), null, sourceId, appCatalogCode, wfCatalogCode);
                 if (events.length === 0) {
                     throw new AppError(message.NOT_EXIST_EVENT, ResponseCode.BAD_REQUEST);
                 }
@@ -227,7 +235,7 @@ export default class DocumentService {
             }
             for (const eventId of chapter['event']) {
                 // リクエスト.chapter.event から、ドキュメントに追加する対象のイベントを取得する
-                const events: Event[] = await EntityOperation.getEventRecord(documentDto.getUserId(), eventId, null);
+                const events: Event[] = await EntityOperation.getEventRecord(documentDto.getUserId(), eventId, null, appCatalogCode, wfCatalogCode);
                 if (events.length === 0) {
                     throw new AppError(message.NOT_EXIST_EVENT, ResponseCode.BAD_REQUEST);
                 }
@@ -264,8 +272,11 @@ export default class DocumentService {
         const operator = documentDto.getOperator();
         const message = documentDto.getMessage();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // ドキュメントテーブルのレコードを取得
-        const documentList: Document[] = await EntityOperation.getDocumentRecord(documentDto.getUserId(), documentDto.getDocumentIdentifer(), documentDto.getSourceId());
+        const documentList: Document[] = await EntityOperation.getDocumentRecord(documentDto.getUserId(), documentDto.getDocumentIdentifer(), documentDto.getSourceId(), appCatalogCode, wfCatalogCode);
         // 対象データが1件以外の場合
         if (!documentList || documentList.length !== 1) {
             // エラーを返す
@@ -406,7 +417,7 @@ export default class DocumentService {
             // イベントセットイベントリレーションレコードを登録/更新
             for (const sourceId of chapter['sourceId']) {
                 // リクエスト.chapter.sourceId から、ドキュメントに追加する対象のイベントを取得する
-                const events: Event[] = await EntityOperation.getEventRecord(documentDto.getUserId(), null, sourceId);
+                const events: Event[] = await EntityOperation.getEventRecord(documentDto.getUserId(), null, sourceId, documentInfo.appCatalogCode, documentInfo.wfCatalogCode);
                 for (const event of events) {
                     if (!targetEvents.has(event.eventIdentifier)) {
                         const eventSetEventList: EventSetEventRelation[] = await EntityOperation.getEventSetEventRelationRecord(eventSetId, event.id);
@@ -436,7 +447,7 @@ export default class DocumentService {
             }
             for (const eventId of chapter['event']) {
                 // リクエスト.chapter.event から、ドキュメントに追加する対象のイベントを取得する
-                const events: Event[] = await EntityOperation.getEventRecord(documentDto.getUserId(), eventId, null);
+                const events: Event[] = await EntityOperation.getEventRecord(documentDto.getUserId(), eventId, null, documentInfo.appCatalogCode, documentInfo.wfCatalogCode);
                 for (const event of events) {
                     if (!targetEvents.has(event.eventIdentifier)) {
                         const eventSetEventList: EventSetEventRelation[] = await EntityOperation.getEventSetEventRelationRecord(eventSetId, event.id);
@@ -522,8 +533,11 @@ export default class DocumentService {
         const operator = documentDto.getOperator();
         const template = documentDto.getRequestObject();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // ドキュメントテーブルのレコードを取得
-        const documents: Document[] = await EntityOperation.getDocumentRecord(documentDto.getUserId(), documentDto.getDocumentIdentifer(), documentDto.getSourceId());
+        const documents: Document[] = await EntityOperation.getDocumentRecord(documentDto.getUserId(), documentDto.getDocumentIdentifer(), documentDto.getSourceId(), appCatalogCode, wfCatalogCode);
         // 対象データが存在しない場合
         if (!documents || documents.length <= 0) {
             // エラーを返す

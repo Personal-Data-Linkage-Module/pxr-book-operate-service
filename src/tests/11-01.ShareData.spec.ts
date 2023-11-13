@@ -88,7 +88,7 @@ describe('book-operate API', () => {
     describe('データ共有(外部蓄積機能OFF)', () => {
         test('正常：一時的データ共有コード指定(ドキュメント指定 + イベント指定app + モノ指定app)', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -96,7 +96,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -390,7 +390,7 @@ describe('book-operate API', () => {
         });
         test('正常：ドキュメント指定 + イベント指定app + モノ指定app', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -398,7 +398,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user2',
@@ -680,7 +680,7 @@ describe('book-operate API', () => {
         });
         test('正常：ドキュメントid指定、イベントなし', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -688,7 +688,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -700,8 +700,8 @@ describe('book-operate API', () => {
                             'doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -731,34 +731,23 @@ describe('book-operate API', () => {
                                 value: '2020-02-20T00:00:00.000+0900'
                             },
                             sourceId: '202108-1-1',
-                            app: null,
-                            wf: {
+                            app: {
                                 code: {
                                     index: '2_3_1',
                                     value: {
-                                        _value: null,
-                                        _ver: null
+                                        _value: 1000004,
+                                        _ver: 1
                                     }
                                 },
-                                wf: {
-                                    index: '2_3_2',
+                                app: {
+                                    index: '2_3_5',
                                     value: {
-                                        _value: null,
-                                        _ver: null
+                                        _value: 1000007,
+                                        _ver: 1
                                     }
-                                },
-                                role: {
-                                    index: '2_3_3',
-                                    value: {
-                                        _value: null,
-                                        _ver: null
-                                    }
-                                },
-                                staffId: {
-                                    index: '2_3_4',
-                                    value: null
                                 }
                             },
+                            wf: null,
                             chapter: [
                                 {
                                     title: 'タイトル１',
@@ -777,7 +766,7 @@ describe('book-operate API', () => {
         });
         test('正常：ドキュメントid指定、イベントid指定、モノ無し', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -785,7 +774,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -798,8 +787,8 @@ describe('book-operate API', () => {
                             'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -829,34 +818,23 @@ describe('book-operate API', () => {
                                 value: '2020-02-20T00:00:00.000+0900'
                             },
                             sourceId: '202108-1-1',
-                            app: null,
-                            wf: {
+                            app: {
                                 code: {
                                     index: '2_3_1',
                                     value: {
-                                        _value: null,
-                                        _ver: null
+                                        _value: 1000004,
+                                        _ver: 1
                                     }
                                 },
-                                wf: {
-                                    index: '2_3_2',
+                                app: {
+                                    index: '2_3_5',
                                     value: {
-                                        _value: null,
-                                        _ver: null
+                                        _value: 1000007,
+                                        _ver: 1
                                     }
-                                },
-                                role: {
-                                    index: '2_3_3',
-                                    value: {
-                                        _value: null,
-                                        _ver: null
-                                    }
-                                },
-                                staffId: {
-                                    index: '2_3_4',
-                                    value: null
                                 }
                             },
+                            wf: null,
                             chapter: [
                                 {
                                     title: 'タイトル１',
@@ -895,30 +873,23 @@ describe('book-operate API', () => {
                             },
                             sourceId: '202108-1-1',
                             env: null,
-                            app: null,
-                            wf: {
+                            app: {
                                 code: {
                                     index: '3_5_1',
                                     value: {
-                                        _value: null,
-                                        _ver: null
+                                        _value: 1000004,
+                                        _ver: 1
                                     }
                                 },
-                                wf: {
-                                    index: '3_5_2',
+                                app: {
+                                    index: '3_5_5',
                                     value: {
-                                        _value: null,
-                                        _ver: null
-                                    }
-                                },
-                                role: {
-                                    index: '3_5_3',
-                                    value: {
-                                        _value: null,
-                                        _ver: null
+                                        _value: 1000007,
+                                        _ver: 1
                                     }
                                 }
                             },
+                            wf: null,
                             thing: [
                                 {
                                     id: {
@@ -991,7 +962,7 @@ describe('book-operate API', () => {
         });
         test('正常：dest.actorが設定されている', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -999,7 +970,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user2',
@@ -1297,7 +1268,7 @@ describe('book-operate API', () => {
         });
         test('正常：共有定義に設定されているデータ種とリクエストのデータ種が一致しない', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -1305,7 +1276,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user2',
@@ -1603,7 +1574,7 @@ describe('book-operate API', () => {
         });
         test('正常：共有定義にデータ種が設定されていない', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -1611,7 +1582,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user2',
@@ -1909,7 +1880,7 @@ describe('book-operate API', () => {
         });
         test('正常：共有定義の配列が空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -1917,7 +1888,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user2',
@@ -2215,7 +2186,7 @@ describe('book-operate API', () => {
         });
         test('正常：取得したデータが空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -2223,7 +2194,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2233,8 +2204,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2257,14 +2228,14 @@ describe('book-operate API', () => {
         });
         test('異常：対象データなし', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2274,8 +2245,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -2310,7 +2281,7 @@ describe('book-operate API', () => {
         });
         test('異常：Book管理から400エラー', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(400);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -2318,7 +2289,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2328,8 +2299,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -2358,7 +2329,7 @@ describe('book-operate API', () => {
         });
         test('異常：Book管理から500系エラー', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(503);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -2366,7 +2337,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2376,8 +2347,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -2406,7 +2377,7 @@ describe('book-operate API', () => {
         });
         test('異常：Book管理から200以外エラー', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(401);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -2414,7 +2385,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2424,8 +2395,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -2454,14 +2425,14 @@ describe('book-operate API', () => {
         });
         test('異常：Book管理に接続できない', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2471,8 +2442,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -2502,7 +2473,7 @@ describe('book-operate API', () => {
 
         test('異常：アクターカタログがappでない', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -2510,7 +2481,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2520,8 +2491,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -2554,7 +2525,7 @@ describe('book-operate API', () => {
 
         test('異常：dest.actorに設定されたアクターが取得できない', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
@@ -2562,7 +2533,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2572,8 +2543,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -2605,13 +2576,13 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：body JSON不正', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify('a'));
             // レスポンスチェック
             expect(response.status).toBe(400);
@@ -2619,14 +2590,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：body 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify({}));
 
             // レスポンスチェック
@@ -2635,14 +2606,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：userId 文字列以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: ['test_user1'],
@@ -2656,8 +2627,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2671,14 +2642,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：tempShareCode 文字列以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2693,8 +2664,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2708,14 +2679,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：identifier 配列以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2725,8 +2696,8 @@ describe('book-operate API', () => {
                         },
                         identifier: 'doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6',
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2740,14 +2711,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ不足：logIdentifier', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2760,8 +2731,8 @@ describe('book-operate API', () => {
                             'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6',
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2775,14 +2746,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：logIdentifier 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2796,8 +2767,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2811,14 +2782,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：logIdentifier null', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2832,8 +2803,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: null,
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2847,14 +2818,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：logIdentifier 文字列以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2868,8 +2839,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: ['1'],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2883,14 +2854,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ不足：updatedAt.start ', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2903,8 +2874,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2918,14 +2889,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：updatedAt.start 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2939,8 +2910,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2954,14 +2925,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：updatedAt.start 日付以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -2975,8 +2946,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -2990,14 +2961,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ不足：updatedAt.end ', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3010,8 +2981,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -3025,14 +2996,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：updatedAt.end 日付以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3046,8 +3017,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -3061,14 +3032,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ不足：app._value', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3096,14 +3067,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：app._value 数値以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3132,14 +3103,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：document[]._value 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3149,8 +3120,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3178,14 +3149,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：document[]._value null', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3195,8 +3166,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3225,14 +3196,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：document[]._value 数値以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3242,8 +3213,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3272,14 +3243,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：document[]._ver 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3289,8 +3260,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3318,14 +3289,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：document[]._ver null', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3335,8 +3306,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3365,14 +3336,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：document[]._ver 数値以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3382,8 +3353,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3412,14 +3383,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：event[]._value 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3429,8 +3400,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3458,14 +3429,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：event[]._value null', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3475,8 +3446,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3505,14 +3476,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：event[]._value 数値以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3522,8 +3493,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3552,14 +3523,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：event[]._ver 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3569,8 +3540,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3598,14 +3569,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：event[]._ver null', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3615,8 +3586,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3645,14 +3616,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：event[]._ver 数値以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3662,8 +3633,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3692,14 +3663,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：thing[]._value 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3709,8 +3680,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3738,14 +3709,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：thing[]._value null', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3755,8 +3726,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3785,14 +3756,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：thing[]._value 数値以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3802,8 +3773,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3832,14 +3803,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：thing[]._ver 空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3849,8 +3820,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3878,14 +3849,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：thing[]._ver null', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3895,8 +3866,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3925,14 +3896,14 @@ describe('book-operate API', () => {
         });
         test('パラメータ異常：thing[]._ver 数値以外', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3942,8 +3913,8 @@ describe('book-operate API', () => {
                         },
                         identifier: [],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [
@@ -3972,14 +3943,14 @@ describe('book-operate API', () => {
         });
         test('異常：Cookieが存在するが空', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + ''])
+                .set('Cookie', ['operator_type2_session=' + ''])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -3993,8 +3964,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -4015,7 +3986,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -4030,8 +4001,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -4045,14 +4016,14 @@ describe('book-operate API', () => {
         });
         test('異常：Cookie使用、Book管理サービス応答400系', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(400, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -4067,8 +4038,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -4082,14 +4053,14 @@ describe('book-operate API', () => {
         });
         test('異常：Cookie使用、Book管理サービス応答500系', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(503, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -4104,8 +4075,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -4119,13 +4090,13 @@ describe('book-operate API', () => {
         });
         test('異常：Cookie使用、Book管理サービス未起動', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -4140,8 +4111,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],
@@ -4155,14 +4126,14 @@ describe('book-operate API', () => {
         });
         test('異常：Book管理サービスからBook一覧が取得できない', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 1);
             _proxyServer = new StubProxyServer(3003, 200);
 
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -4176,8 +4147,8 @@ describe('book-operate API', () => {
                             'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
                         ],
                         logIdentifier: '1',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         },
                         document: [],

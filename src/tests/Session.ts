@@ -102,6 +102,10 @@ export namespace Session {
         actor: {
             _value: 1000020,
             _ver: 1
+        },
+        service: {
+            _value: 1000007,
+            _ver: 1
         }
     };
 
@@ -124,7 +128,44 @@ export namespace Session {
         attributes: {},
         roles: [
             {
-                _value: 1,
+                _value: 1000007,
+                _ver: 1
+            }
+        ],
+        block: {
+            _value: 1000110,
+            _ver: 1
+        },
+        actor: {
+            _value: 1000020,
+            _ver: 1
+        },
+        service: {
+            _value: 1000007,
+            _ver: 1
+        }
+    };
+
+    /**
+    * 正常(アプリケーション)、ロールにappコード1000002指定
+    */
+    export const application2 = {
+        sessionId: 'sessionId',
+        operatorId: 1,
+        type: 2,
+        loginId: 'loginid',
+        name: 'test-user',
+        mobilePhone: '0311112222',
+        auth: {
+            add: true,
+            update: true,
+            delete: true
+        },
+        lastLoginAt: '2020-01-01T00:00:00.000+0900',
+        attributes: {},
+        roles: [
+            {
+                _value: 1000002,
                 _ver: 1
             }
         ],
@@ -339,6 +380,71 @@ export namespace Session {
         },
         actor: {
             _value: 1000432,
+            _ver: 1
+        }
+    };
+
+    /**
+    * 正常(ワークフロー運営メンバー)
+    */
+    export const wfManager = {
+        sessionId: 'sessionId',
+        operatorId: 1,
+        type: 3,
+        loginId: 'loginid',
+        name: 'test-user',
+        mobilePhone: '0311112222',
+        auth: {
+            add: true,
+            update: true,
+            delete: true
+        },
+        lastLoginAt: '2020-01-01T00:00:00.000+0900',
+        attributes: {},
+        roles: [
+            {
+                _value: 1,
+                _ver: 1
+            }
+        ],
+        block: {
+            _value: 1000110,
+            _ver: 1
+        },
+        actor: {
+            _value: 1000001,
+            _ver: 1
+        }
+    };
+    /**
+    * 正常(アプリケーション運営メンバー)
+    */
+    export const appManager = {
+        sessionId: 'sessionId',
+        operatorId: 1,
+        type: 3,
+        loginId: 'loginid',
+        name: 'test-user',
+        mobilePhone: '0311112222',
+        auth: {
+            add: true,
+            update: true,
+            delete: true
+        },
+        lastLoginAt: '2020-01-01T00:00:00.000+0900',
+        attributes: {},
+        roles: [
+            {
+                _value: 1,
+                _ver: 1
+            }
+        ],
+        block: {
+            _value: 1000110,
+            _ver: 1
+        },
+        actor: {
+            _value: 1000436,
             _ver: 1
         }
     };

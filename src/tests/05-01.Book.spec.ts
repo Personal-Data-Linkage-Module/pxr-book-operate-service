@@ -193,8 +193,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -253,8 +253,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -313,8 +313,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -348,8 +348,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -383,8 +383,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -418,8 +418,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -452,8 +452,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -483,8 +483,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -541,8 +541,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -597,8 +597,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -627,8 +627,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -657,8 +657,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -687,9 +687,9 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
-                            _value: 99999
+                        wf: null,
+                        app: {
+                            _value: 1000007
                         }
                     }
                 ));
@@ -721,8 +721,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -757,8 +757,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -961,8 +961,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -997,8 +997,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1034,8 +1034,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1044,7 +1044,7 @@ describe('book-operate API', () => {
             // レスポンスチェック
             expect(response.status).toBe(204);
         });
-        test('正常：モノ指定の場合(ワークフロー)', async () => {
+        test('正常：モノ指定の場合(アプリケーション)', async () => {
             // テストデータ作成
             await common.executeSqlFile('initialData.sql');
             await common.executeSqlFile('initialMyConditionData.sql');
@@ -1053,68 +1053,6 @@ describe('book-operate API', () => {
             await common.executeSqlFile('initialDocumentRelationData.sql');
             await common.executeSqlFile('initialThingDataForBook.sql');
 
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.bookSearchURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
-                .send(JSON.stringify(
-                    {
-                        userId: 'test_user_id1',
-                        type: 'thing',
-                        identifier: null,
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-12-31T00:00:00.000+0900'
-                        },
-                        _code: [
-                            {
-                                _value: 1000008,
-                                _ver: 1
-                            }
-                        ],
-                        app: null,
-                        wf: {
-                            _value: 1000007
-                        }
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(200);
-            expect(response.body.length).toBe(1);
-            expect(response.body[0]).toMatchObject({
-                id: {
-                    index: '4_1_1',
-                    value: 'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                },
-                code: {
-                    index: '4_1_2',
-                    value: {
-                        _value: 1000008,
-                        _ver: 1
-                    }
-                },
-                env: null,
-                sourceId: '20200221-1',
-                'x-axis': {
-                    index: '4_2_2_1',
-                    value: null
-                },
-                'y-axis': {
-                    index: '4_2_2_2',
-                    value: null
-                },
-                'z-axis': {
-                    index: '4_2_2_3',
-                    value: null
-                },
-                acquired_time: {
-                    index: '4_2_2_4',
-                    value: 'uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu'
-                }
-            });
-        });
-        test('正常：モノ指定の場合(アプリケーション)', async () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.bookSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
@@ -1150,70 +1088,7 @@ describe('book-operate API', () => {
                 }
             });
         });
-        test('正常：モノ指定の場合(識別子：ワークフロー)', async () => {
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.bookSearchURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
-                .send(JSON.stringify(
-                    {
-                        userId: 'test_user_id1',
-                        type: null,
-                        identifier: [
-                            'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-12-31T00:00:00.000+0900'
-                        },
-                        _code: [
-                            {
-                                _value: 1000008,
-                                _ver: 1
-                            }
-                        ],
-                        app: null,
-                        wf: {
-                            _value: 1000007
-                        }
-                    }
-                ));
 
-            // レスポンスチェック
-            expect(response.status).toBe(200);
-            expect(response.body.length).toBe(1);
-            expect(response.body[0]).toMatchObject({
-                id: {
-                    index: '4_1_1',
-                    value: 'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                },
-                code: {
-                    index: '4_1_2',
-                    value: {
-                        _value: 1000008,
-                        _ver: 1
-                    }
-                },
-                env: null,
-                sourceId: '20200221-1',
-                'x-axis': {
-                    index: '4_2_2_1',
-                    value: null
-                },
-                'y-axis': {
-                    index: '4_2_2_2',
-                    value: null
-                },
-                'z-axis': {
-                    index: '4_2_2_3',
-                    value: null
-                },
-                acquired_time: {
-                    index: '4_2_2_4',
-                    value: 'uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu'
-                }
-            });
-        });
         test('正常：モノ指定の場合(識別子：アプリケーション)', async () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.bookSearchURI)
@@ -1272,8 +1147,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1323,8 +1198,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1356,8 +1231,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1389,8 +1264,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1420,8 +1295,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1451,8 +1326,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1484,8 +1359,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1519,8 +1394,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1552,8 +1427,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1587,8 +1462,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1620,8 +1495,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1640,7 +1515,11 @@ describe('book-operate API', () => {
                     {
                         userId: 'test_user_id1',
                         type: 'document',
-                        identifier: null
+                        identifier: null,
+                        wf: null,
+                        app: {
+                            _value: 1000007
+                        }
                     }
                 ));
 
@@ -1690,8 +1569,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1723,8 +1602,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1758,8 +1637,8 @@ describe('book-operate API', () => {
                                 _ver: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1788,8 +1667,8 @@ describe('book-operate API', () => {
                             end: '2020-12-31T00:00:00.000+0900'
                         },
                         _code: 'XXXXX',
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1821,8 +1700,8 @@ describe('book-operate API', () => {
                                 YYYYY: 1
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -1856,8 +1735,8 @@ describe('book-operate API', () => {
                                 _ver: 'XXXXX'
                             }
                         ],
-                        app: null,
-                        wf: {
+                        wf: null,
+                        app: {
                             _value: 1000007
                         }
                     }
@@ -2002,6 +1881,59 @@ describe('book-operate API', () => {
             expect(response.body.reasons.length).toBe(1);
             expect(response.body.reasons[0].property).toBe('_value');
             expect(response.body.reasons[0].message).toBe(Message.validation.isNumber);
+        });
+
+        describe('利用者ID重複対応追加ケース', () => {
+            test('パラメータ異常：APP,WF両方設定なし', async () => {
+                // 対象APIに送信
+                const response = await supertest(expressApp).post(Url.bookSearchURI)
+                    .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                    .set({ session: JSON.stringify(Session.wrorkFlow) })
+                    .send(JSON.stringify(
+                        {
+                            userId: 'test_user_id1',
+                            type: 'document',
+                            identifier: null
+                        }
+                    ));
+
+                // レスポンスチェック
+                expect(response.status).toBe(400);
+                expect(response.body.message).toBe(Message.EMPTY_APP);
+            });
+            test('パラメータ異常：APP,WF両方設定あり', async () => {
+                // 対象APIに送信
+                const response = await supertest(expressApp).post(Url.bookSearchURI)
+                    .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                    .set({ session: JSON.stringify(Session.wrorkFlow) })
+                    .send(JSON.stringify(
+                        {
+                            userId: 'test_user_id1',
+                            type: 'document',
+                            identifier: null,
+                            updatedAt: {
+                                start: '2020-01-01T00:00:00.000+0900',
+                                end: '2020-12-31T00:00:00.000+0900'
+                            },
+                            _code: [
+                                {
+                                    _value: 1000008,
+                                    _ver: 1
+                                }
+                            ],
+                            app: {
+                                _value: 1000007
+                            },
+                            wf: {
+                                _value: 1000007
+                            }
+                        }
+                    ));
+
+                // レスポンスチェック
+                expect(response.status).toBe(400);
+                expect(response.body.message).toBe(Message.IF_WF_HAS_BEEN_SPECIFIED);
+            });
         });
     });
 });

@@ -14,7 +14,8 @@ import { Server } from 'net';
 /* eslint-enable */
 import * as express from 'express';
 import Config from '../common/Config';
-import { NotificationService } from './StubNotificationServer';
+import { NotificationService, NotificationServiceForDuplicateUserId } from './StubNotificationServer';
+import { ProxyServer } from './StubProxyServer';
 const Message = Config.ReadConfig('./config/message.json');
 
 // 対象アプリケーションを取得
@@ -22,16 +23,107 @@ const app = new Application();
 const expressApp = app.express.app;
 const common = new Common();
 
+// DoRequestメソッドのmock化
+const doRequest = require('../common/DoRequest');
+const mockDoGetRequest = jest.spyOn(doRequest, 'doGetRequest');
+
+const userInfo = {
+    _code: {
+        _value: 1000373,
+        _ver: 1
+    },
+    'item-group': [
+        {
+            title: '氏名',
+            item: [
+                {
+                    title: '姓',
+                    type: {
+                        _value: 30019,
+                        _ver: 1
+                    },
+                    content: 'サンプル'
+                },
+                {
+                    title: '名',
+                    type: {
+                        _value: 30020,
+                        _ver: 1
+                    },
+                    content: '太郎'
+                }
+            ]
+        },
+        {
+            title: '性別',
+            item: [
+                {
+                    title: '性別',
+                    type: {
+                        _value: 30021,
+                        _ver: 1
+                    },
+                    content: '男'
+                }
+            ]
+        },
+        {
+            title: '生年',
+            item: [
+                {
+                    title: '生年',
+                    type: {
+                        _value: 1000372,
+                        _ver: 1
+                    },
+                    content: 2000
+                }
+            ]
+        },
+        {
+            title: '住所（行政区）',
+            item: [
+                {
+                    title: '住所（行政区）',
+                    type: {
+                        _value: 1000371,
+                        _ver: 1
+                    },
+                    content: '東京都港区'
+                }
+            ]
+        },
+        {
+            title: '連絡先電話番号',
+            item: [
+                {
+                    title: '連絡先電話番号',
+                    type: {
+                        _value: 30036,
+                        _ver: 1
+                    },
+                    content: '080-1234-5678',
+                    'changeable-flag': true
+                }
+            ]
+        }
+    ]
+};
+
 // スタブサーバー（オペレータサービス）
 class StubOperatorServer {
     _app: express.Express;
     _server: Server;
 
-    constructor (status: number, type: number, infoStatus: number = 200) {
+    constructor (status: number, type: number, appService: number = null, infoStatus: number = 200) {
         this._app = express();
 
         // イベントハンドラー
         const _listener = (req: express.Request, res: express.Response) => {
+            let service;
+            if (appService) {
+                service = { _value: appService, _ver: 1 };
+            }
             res.status(status);
             res.json({
                 sessionId: 'sessionId',
@@ -53,6 +145,7 @@ class StubOperatorServer {
                         _ver: 1
                     }
                 ],
+                service: service,
                 block: {
                     _value: 1000110,
                     _ver: 1
@@ -69,88 +162,7 @@ class StubOperatorServer {
             } else {
                 res.status(status).json({
                     userId: req.query.userId,
-                    userInfo: {
-                        _code: {
-                            _value: 1000373,
-                            _ver: 1
-                        },
-                        'item-group': [
-                            {
-                                title: '氏名',
-                                item: [
-                                    {
-                                        title: '姓',
-                                        type: {
-                                            _value: 30019,
-                                            _ver: 1
-                                        },
-                                        content: 'サンプル'
-                                    },
-                                    {
-                                        title: '名',
-                                        type: {
-                                            _value: 30020,
-                                            _ver: 1
-                                        },
-                                        content: '太郎'
-                                    }
-                                ]
-                            },
-                            {
-                                title: '性別',
-                                item: [
-                                    {
-                                        title: '性別',
-                                        type: {
-                                            _value: 30021,
-                                            _ver: 1
-                                        },
-                                        content: '男'
-                                    }
-                                ]
-                            },
-                            {
-                                title: '生年',
-                                item: [
-                                    {
-                                        title: '生年',
-                                        type: {
-                                            _value: 1000372,
-                                            _ver: 1
-                                        },
-                                        content: 2000
-                                    }
-                                ]
-                            },
-                            {
-                                title: '住所（行政区）',
-                                item: [
-                                    {
-                                        title: '住所（行政区）',
-                                        type: {
-                                            _value: 1000371,
-                                            _ver: 1
-                                        },
-                                        content: '東京都港区'
-                                    }
-                                ]
-                            },
-                            {
-                                title: '連絡先電話番号',
-                                item: [
-                                    {
-                                        title: '連絡先電話番号',
-                                        type: {
-                                            _value: 30036,
-                                            _ver: 1
-                                        },
-                                        content: '080-1234-5678',
-                                        'changeable-flag': true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                    userInfo: userInfo
                 }).end();
             }
         });
@@ -168,6 +180,7 @@ app.start();
 let _operatorServer: StubOperatorServer = null;
 let _catalogServer: StubCatalogServer = null;
 let _bookManageServer: StubBookManageServer = null;
+let _proxyServer: ProxyServer = null;
 
 /**
  * book-operate API のユニットテスト
@@ -182,6 +195,14 @@ describe('book-operate API', () => {
         // DB初期化
         await common.executeSqlFile('initialData.sql');
         await common.executeSqlFile('initialListData.sql');
+    });
+
+    /**
+     * 各テスト実行の前処理
+     */
+    beforeEach(async () => {
+        // mockDoPostRequestのリセット
+        mockDoGetRequest.mockClear();
     });
 
     /**
@@ -200,6 +221,10 @@ describe('book-operate API', () => {
         if (_bookManageServer) {
             _bookManageServer._server.close();
             _bookManageServer = null;
+        }
+        if (_proxyServer) {
+            _proxyServer._server.close();
+            _proxyServer = null;
         }
     });
 
@@ -226,7 +251,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.pxrRoot) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         userId: [
@@ -244,7 +269,7 @@ describe('book-operate API', () => {
             // console.log(response.body);
         });
         test('正常：オペレーターがregion-root', async () => {
-            _operatorServer = new StubOperatorServer(200, 1);
+            _operatorServer = new StubOperatorServer(200, 3);
             _catalogServer = new StubCatalogServer(3001, -1, 200);
             _bookManageServer = new StubBookManageServer(200);
 
@@ -257,11 +282,7 @@ describe('book-operate API', () => {
                 .set({ session: JSON.stringify(Session.regionRoot) })
                 .send(JSON.stringify(
                     {
-                        userId: [
-                            '111111111',
-                            '222222222',
-                            '333333333'
-                        ],
+                        userId: null,
                         establishAt: {
                             start: '2020-03-01T00:00:00.000+0900',
                             end: '2020-03-04T00:00:00.000+0900'
@@ -271,12 +292,11 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            // console.log(response.body);
         });
 
         test('正常：Cookieにセッション情報がある', async () => {
             // スタブを起動
-            _operatorServer = new StubOperatorServer(200, 3);
+            _operatorServer = new StubOperatorServer(200, 1, 1000007);
             _catalogServer = new StubCatalogServer(3001, 1000001, 200);
             _bookManageServer = new StubBookManageServer(200);
 
@@ -286,7 +306,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=sessionId'])
+                .set('Cookie', ['operator_type2_session=appSessionId'])
                 .send(JSON.stringify(
                     {
                         userId: [
@@ -304,36 +324,7 @@ describe('book-operate API', () => {
             expect(response.status).toBe(200);
             // console.log(response.body);
         });
-        test('正常：Cookieのセッション情報がapp', async () => {
-            // スタブを起動
-            _operatorServer = new StubOperatorServer(200, 1);
-            _catalogServer = new StubCatalogServer(3001, 1000001, 200);
-            _bookManageServer = new StubBookManageServer(200);
 
-            // 送信データを生成
-            const url = Url.userListURI;
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(url)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type2_session=sessionId'])
-                .send(JSON.stringify(
-                    {
-                        userId: [
-                            '111111111',
-                            '222222222'
-                        ],
-                        establishAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        }
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(200);
-            // console.log(response.body);
-        });
         test('正常：MyConditionBookデータ全件対象（userIdおよび日付指定なし）', async () => {
             _operatorServer = new StubOperatorServer(200, 1);
             _catalogServer = new StubCatalogServer(3001, 1000001, 200);
@@ -367,7 +358,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.pxrRoot) })
+                .set({ session: JSON.stringify(Session.wrorkFlow) })
                 .send(JSON.stringify(
                     {
                         userId: [
@@ -392,7 +383,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.pxrRoot) })
+                .set({ session: JSON.stringify(Session.wrorkFlow) })
                 .send(JSON.stringify(
                     {
                         userId: [
@@ -641,6 +632,7 @@ describe('book-operate API', () => {
                     status: 1,
                     app: null,
                     wf: { _value: 1000007, _ver: 1 },
+                    region: null,
                     userId: '222222222',
                     establishAt: '2020-03-02T09:00:00.000+0900',
                     attribute: {},
@@ -762,8 +754,9 @@ describe('book-operate API', () => {
 
         test('正常：', async () => {
             _operatorServer = new StubOperatorServer(200, 1);
-            _catalogServer = new StubCatalogServer(3001, 1000001, 200);
+            _catalogServer = new StubCatalogServer(3001, 1000004, 200);
             _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, '123');
             const notificationServer = new NotificationService(200);
             await notificationServer.start();
 
@@ -785,6 +778,7 @@ describe('book-operate API', () => {
                     status: 1,
                     app: null,
                     wf: { _value: 1000007, _ver: 1 },
+                    region: null,
                     userId: '111111111',
                     establishAt: '2020-02-01T09:00:00.000+0900',
                     attribute: {},
@@ -904,6 +898,7 @@ describe('book-operate API', () => {
                     status: 1,
                     app: null,
                     wf: { _value: 1000007, _ver: 1 },
+                    region: null,
                     userId: '222222222',
                     establishAt: '2020-03-02T09:00:00.000+0900',
                     attribute: {},
@@ -1023,6 +1018,397 @@ describe('book-operate API', () => {
                     status: 1,
                     app: { _value: 1000007, _ver: 1 },
                     wf: null,
+                    region: null,
+                    userId: '333333333',
+                    establishAt: '2020-03-03T09:00:00.000+0900',
+                    attribute: '{sample:1}',
+                    store: {
+                        document: [
+                            {
+                                _value: 1000009,
+                                _ver: 1
+                            }, {
+                                _value: 1000010,
+                                _ver: 1
+                            }
+                        ],
+                        event: [
+                            {
+                                _value: 1300009,
+                                _ver: 4
+                            }, {
+                                _value: 1300010,
+                                _ver: 5
+                            }
+                        ],
+                        thing: [
+                            {
+                                _value: 1300011,
+                                _ver: 2
+                            }, {
+                                _value: 1300014,
+                                _ver: 3
+                            }
+                        ]
+                    },
+                    userInformation: {
+                        _code: {
+                            _value: 1000373,
+                            _ver: 1
+                        },
+                        'item-group': [
+                            {
+                                title: '氏名',
+                                item: [
+                                    {
+                                        title: '姓',
+                                        type: {
+                                            _value: 30019,
+                                            _ver: 1
+                                        },
+                                        content: 'サンプル'
+                                    },
+                                    {
+                                        title: '名',
+                                        type: {
+                                            _value: 30020,
+                                            _ver: 1
+                                        },
+                                        content: '太郎'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '性別',
+                                item: [
+                                    {
+                                        title: '性別',
+                                        type: {
+                                            _value: 30021,
+                                            _ver: 1
+                                        },
+                                        content: '男'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '生年',
+                                item: [
+                                    {
+                                        title: '生年',
+                                        type: {
+                                            _value: 1000372,
+                                            _ver: 1
+                                        },
+                                        content: 2000
+                                    }
+                                ]
+                            },
+                            {
+                                title: '住所（行政区）',
+                                item: [
+                                    {
+                                        title: '住所（行政区）',
+                                        type: {
+                                            _value: 1000371,
+                                            _ver: 1
+                                        },
+                                        content: '東京都港区'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '連絡先電話番号',
+                                item: [
+                                    {
+                                        title: '連絡先電話番号',
+                                        type: {
+                                            _value: 30036,
+                                            _ver: 1
+                                        },
+                                        content: '080-1234-5678',
+                                        'changeable-flag': true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    status: 0,
+                    identifyCode: 'not_found'
+                }
+            ]));
+            expect(response.status).toBe(200);
+        });
+
+        test('正常：有効期限切れの本人性確認コード', async () => {
+            _operatorServer = new StubOperatorServer(200, 1);
+            _catalogServer = new StubCatalogServer(3001, 1000001, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, '123');
+            const notificationServer = new NotificationService(200);
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.pxrRoot) })
+                .send(JSON.stringify({
+                    includeRequest: true
+                }));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify([
+                {
+                    status: 1,
+                    app: null,
+                    wf: { _value: 1000007, _ver: 1 },
+                    region: null,
+                    userId: '111111111',
+                    establishAt: '2020-02-01T09:00:00.000+0900',
+                    attribute: {},
+                    store: {
+                        document: [
+                            {
+                                _value: 1000009,
+                                _ver: 1
+                            }, {
+                                _value: 1000010,
+                                _ver: 1
+                            }
+                        ],
+                        event: [
+                            {
+                                _value: 1000009,
+                                _ver: 1
+                            }, {
+                                _value: 1000010,
+                                _ver: 1
+                            }
+                        ],
+                        thing: [
+                            {
+                                _value: 1000011,
+                                _ver: 1
+                            }, {
+                                _value: 1000014,
+                                _ver: 1
+                            }
+                        ]
+                    },
+                    userInformation: {
+                        _code: {
+                            _value: 1000373,
+                            _ver: 1
+                        },
+                        'item-group': [
+                            {
+                                title: '氏名',
+                                item: [
+                                    {
+                                        title: '姓',
+                                        type: {
+                                            _value: 30019,
+                                            _ver: 1
+                                        },
+                                        content: 'サンプル'
+                                    },
+                                    {
+                                        title: '名',
+                                        type: {
+                                            _value: 30020,
+                                            _ver: 1
+                                        },
+                                        content: '太郎'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '性別',
+                                item: [
+                                    {
+                                        title: '性別',
+                                        type: {
+                                            _value: 30021,
+                                            _ver: 1
+                                        },
+                                        content: '男'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '生年',
+                                item: [
+                                    {
+                                        title: '生年',
+                                        type: {
+                                            _value: 1000372,
+                                            _ver: 1
+                                        },
+                                        content: 2000
+                                    }
+                                ]
+                            },
+                            {
+                                title: '住所（行政区）',
+                                item: [
+                                    {
+                                        title: '住所（行政区）',
+                                        type: {
+                                            _value: 1000371,
+                                            _ver: 1
+                                        },
+                                        content: '東京都港区'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '連絡先電話番号',
+                                item: [
+                                    {
+                                        title: '連絡先電話番号',
+                                        type: {
+                                            _value: 30036,
+                                            _ver: 1
+                                        },
+                                        content: '080-1234-5678',
+                                        'changeable-flag': true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    status: 1,
+                    app: null,
+                    wf: { _value: 1000007, _ver: 1 },
+                    region: null,
+                    userId: '222222222',
+                    establishAt: '2020-03-02T09:00:00.000+0900',
+                    attribute: {},
+                    store: {
+                        document: [
+                            {
+                                _value: 1000009,
+                                _ver: 1
+                            }, {
+                                _value: 1000010,
+                                _ver: 1
+                            }
+                        ],
+                        event: [
+                            {
+                                _value: 1200009,
+                                _ver: 4
+                            }, {
+                                _value: 1200010,
+                                _ver: 5
+                            }
+                        ],
+                        thing: [
+                            {
+                                _value: 1200011,
+                                _ver: 2
+                            }, {
+                                _value: 1200014,
+                                _ver: 3
+                            }
+                        ]
+                    },
+                    userInformation: {
+                        _code: {
+                            _value: 1000373,
+                            _ver: 1
+                        },
+                        'item-group': [
+                            {
+                                title: '氏名',
+                                item: [
+                                    {
+                                        title: '姓',
+                                        type: {
+                                            _value: 30019,
+                                            _ver: 1
+                                        },
+                                        content: 'サンプル'
+                                    },
+                                    {
+                                        title: '名',
+                                        type: {
+                                            _value: 30020,
+                                            _ver: 1
+                                        },
+                                        content: '太郎'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '性別',
+                                item: [
+                                    {
+                                        title: '性別',
+                                        type: {
+                                            _value: 30021,
+                                            _ver: 1
+                                        },
+                                        content: '男'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '生年',
+                                item: [
+                                    {
+                                        title: '生年',
+                                        type: {
+                                            _value: 1000372,
+                                            _ver: 1
+                                        },
+                                        content: 2000
+                                    }
+                                ]
+                            },
+                            {
+                                title: '住所（行政区）',
+                                item: [
+                                    {
+                                        title: '住所（行政区）',
+                                        type: {
+                                            _value: 1000371,
+                                            _ver: 1
+                                        },
+                                        content: '東京都港区'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '連絡先電話番号',
+                                item: [
+                                    {
+                                        title: '連絡先電話番号',
+                                        type: {
+                                            _value: 30036,
+                                            _ver: 1
+                                        },
+                                        content: '080-1234-5678',
+                                        'changeable-flag': true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    status: 1,
+                    app: { _value: 1000007, _ver: 1 },
+                    wf: null,
+                    region: null,
                     userId: '333333333',
                     establishAt: '2020-03-03T09:00:00.000+0900',
                     attribute: '{sample:1}',
@@ -1237,6 +1623,7 @@ describe('book-operate API', () => {
                     status: 1,
                     app: null,
                     wf: { _value: 1000007, _ver: 1 },
+                    region: null,
                     userId: '111111111',
                     establishAt: '2020-02-01T09:00:00.000+0900',
                     attribute: {},
@@ -1356,6 +1743,7 @@ describe('book-operate API', () => {
                     status: 1,
                     app: null,
                     wf: { _value: 1000007, _ver: 1 },
+                    region: null,
                     userId: '222222222',
                     establishAt: '2020-03-02T09:00:00.000+0900',
                     attribute: {},
@@ -1475,6 +1863,7 @@ describe('book-operate API', () => {
                     status: 1,
                     app: { _value: 1000007, _ver: 1 },
                     wf: null,
+                    region: null,
                     userId: '333333333',
                     establishAt: '2020-03-03T09:00:00.000+0900',
                     attribute: '{sample:1}',
@@ -1859,7 +2248,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.pxrRoot) })
+                .set({ session: JSON.stringify(Session.wrorkFlow) })
                 .send(JSON.stringify(
                     {
                         userId: [
@@ -2065,10 +2454,7 @@ describe('book-operate API', () => {
                 .set('Cookie', ['operator_type3_session=sessionId'])
                 .send(JSON.stringify(
                     {
-                        userId: [
-                            '111111111',
-                            '222222222'
-                        ],
+                        userId: null,
                         establishAt: {
                             start: '2020-01-01T00:00:00.000+0900',
                             end: '2020-03-01T00:00:00.000+0900'
@@ -2096,10 +2482,7 @@ describe('book-operate API', () => {
                 .set('Cookie', ['operator_type3_session=sessionId'])
                 .send(JSON.stringify(
                     {
-                        userId: [
-                            '111111111',
-                            '222222222'
-                        ],
+                        userId: null,
                         establishAt: {
                             start: '2020-01-01T00:00:00.000+0900',
                             end: '2020-03-01T00:00:00.000+0900'
@@ -2127,10 +2510,7 @@ describe('book-operate API', () => {
                 .set('Cookie', ['operator_type3_session=sessionId'])
                 .send(JSON.stringify(
                     {
-                        userId: [
-                            '111111111',
-                            '222222222'
-                        ],
+                        userId: null,
                         establishAt: {
                             start: '2020-01-01T00:00:00.000+0900',
                             end: '2020-03-01T00:00:00.000+0900'
@@ -2157,10 +2537,7 @@ describe('book-operate API', () => {
                 .set('Cookie', ['operator_type3_session=sessionId'])
                 .send(JSON.stringify(
                     {
-                        userId: [
-                            '111111111',
-                            '222222222'
-                        ],
+                        userId: null,
                         establishAt: {
                             start: '2020-01-01T00:00:00.000+0900',
                             end: '2020-03-01T00:00:00.000+0900'
@@ -2187,10 +2564,7 @@ describe('book-operate API', () => {
                 .set('Cookie', ['operator_type2_session=sessionId'])
                 .send(JSON.stringify(
                     {
-                        userId: [
-                            '111111111',
-                            '222222222'
-                        ],
+                        userId: null,
                         establishAt: {
                             start: '2020-01-01T00:00:00.000+0900',
                             end: '2020-03-01T00:00:00.000+0900'
@@ -2205,7 +2579,7 @@ describe('book-operate API', () => {
 
         test('異常：オペレーターサービスにて、利用者情報が未登録', async () => {
             // スタブを起動
-            _operatorServer = new StubOperatorServer(200, 3, 204);
+            _operatorServer = new StubOperatorServer(200, 1, 1000007, 204);
             _catalogServer = new StubCatalogServer(3001, 1000001, 200);
             _bookManageServer = new StubBookManageServer(200);
 
@@ -2226,6 +2600,551 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
+        });
+    });
+
+    /**
+     * 利用者一覧検索（userId重複パターン）
+     */
+    describe('利用者一覧検索（userId重複パターン）', () => {
+        test('正常：アプリケーション、userId指定あり', async () => {
+            // DBセットアップ
+            await common.executeSqlFile('initialData.sql');
+            await common.executeSqlFile('initialListDataDuplicateUserIdApp.sql');
+            _operatorServer = new StubOperatorServer(200, null);
+            _catalogServer = new StubCatalogServer(3001, 1000020, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, 'pxrUser01');
+            const notificationServer = new NotificationServiceForDuplicateUserId(200, 'app');
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.application2) })
+                .send(JSON.stringify(
+                    {
+                        userId: [
+                            'appUser01'
+                        ],
+                        establishAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        includeRequest: false
+                    }
+                ));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(response.status).toBe(200);
+            expect(response.body.length).toBe(1);
+            expect(JSON.stringify(response.body[0])).toBe(JSON.stringify({
+                status: 1,
+                app: { _value: 1000002, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser01',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: 'userId重複の取得対象app',
+                store: {
+                    document: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    event: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    thing: [
+                        {
+                            _value: 1000011,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 1
+                        }
+                    ]
+                },
+                userInformation: userInfo
+            }));
+            // オペレータサービス.利用者情報取得API のクエリパラメータ確認
+            const apiInfos = mockDoGetRequest.mock.calls;
+            expect(JSON.stringify(apiInfos[2][0])).toBe(JSON.stringify('http://localhost:3000/operator/user/info?userId=appUser01&appCode=1000002'));
+        });
+        test('正常：アプリケーション、userId指定なし', async () => {
+            _operatorServer = new StubOperatorServer(200, null);
+            _catalogServer = new StubCatalogServer(3001, 1000020, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, 'pxrUser01');
+            const notificationServer = new NotificationServiceForDuplicateUserId(200, 'app');
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.application2) })
+                .send(JSON.stringify(
+                    {
+                        userId: null,
+                        establishAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        includeRequest: false
+                    }
+                ));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(response.status).toBe(200);
+            expect(response.body.length).toBe(2);
+            expect(JSON.stringify(response.body[0])).toBe(JSON.stringify({
+                status: 1,
+                app: { _value: 1000002, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser01',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: 'userId重複の取得対象app',
+                store: {
+                    document: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    event: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    thing: [
+                        {
+                            _value: 1000011,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 1
+                        }
+                    ]
+                },
+                userInformation: userInfo
+            }));
+            expect(JSON.stringify(response.body[1])).toBe(JSON.stringify({
+                status: 1,
+                app: { _value: 1000002, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser02',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: 'userId重複なしの取得対象app',
+                store: {
+                    document: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    event: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    thing: [
+                        {
+                            _value: 1000011,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 1
+                        }
+                    ]
+                },
+                userInformation: userInfo
+            }));
+            // オペレータサービス.利用者情報取得API のクエリパラメータ確認
+            const apiInfos = mockDoGetRequest.mock.calls;
+            expect(apiInfos.length).toBe(6);
+            expect(JSON.stringify(apiInfos[4][0])).toBe(JSON.stringify('http://localhost:3000/operator/user/info?userId=appUser01&appCode=1000002'));
+            expect(JSON.stringify(apiInfos[5][0])).toBe(JSON.stringify('http://localhost:3000/operator/user/info?userId=appUser02&appCode=1000002'));
+        });
+        test('正常：app運営メンバー、userId指定なし、申請中取得フラグON', async () => {
+            _operatorServer = new StubOperatorServer(200, null);
+            _catalogServer = new StubCatalogServer(3001, 1000020, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, 'pxrUser01');
+            const notificationServer = new NotificationServiceForDuplicateUserId(200, 'app');
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.appManager) })
+                .send(JSON.stringify(
+                    {
+                        userId: null,
+                        establishAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        includeRequest: true
+                    }
+                ));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(response.status).toBe(200);
+            expect(response.body.length).toBe(7);
+            expect(response.body).toContainEqual({
+                status: 1,
+                app: { _value: 1000002, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser01',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: 'userId重複の取得対象app',
+                store: {
+                    document: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    event: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    thing: [
+                        {
+                            _value: 1000011,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 1
+                        }
+                    ]
+                },
+                userInformation: userInfo
+            });
+            expect(response.body).toContainEqual({
+                status: 1,
+                app: { _value: 1000052, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser01',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: 'userId重複の取得対象app2',
+                store: {
+                    document: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    event: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    thing: [
+                        {
+                            _value: 1000011,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 1
+                        }
+                    ]
+                },
+                userInformation: userInfo
+            });
+            expect(response.body).toContainEqual({
+                status: 1,
+                app: { _value: 1000012, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser01',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: 'userId重複の連携解除申請app',
+                store: {
+                    document: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    event: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    thing: [
+                        {
+                            _value: 1000011,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 1
+                        }
+                    ]
+                },
+                userInformation: userInfo
+            });
+            expect(response.body).toContainEqual({
+                status: 1,
+                app: { _value: 1000002, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser02',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: 'userId重複なしの取得対象app',
+                store: {
+                    document: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    event: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    thing: [
+                        {
+                            _value: 1000011,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 1
+                        }
+                    ]
+                },
+                userInformation: userInfo
+            });
+            expect(response.body).toContainEqual({
+                status: 0,
+                identifyCode: 'identifyCodeApp1000012Release'
+            });
+            expect(response.body).toContainEqual({
+                status: 0,
+                identifyCode: 'identifyCodeApp1000042'
+            });
+            expect(response.body).toContainEqual({
+                status: 0,
+                identifyCode: 'identifyCodeApp1000022Release'
+            });
+            // // オペレータサービス.利用者情報取得API のクエリパラメータ確認
+            const apiInfos = mockDoGetRequest.mock.calls;
+            // 0～8はnotificationとcatalogとbook-manageの呼出のため無視
+            expect(JSON.stringify(apiInfos[9][0])).toBe(JSON.stringify('http://localhost:3000/operator/user/info?userId=appUser01&appCode=1000002'));
+            expect(JSON.stringify(apiInfos[10][0])).toBe(JSON.stringify('http://localhost:3000/operator/user/info?userId=appUser01&appCode=1000052'));
+            expect(JSON.stringify(apiInfos[11][0])).toBe(JSON.stringify('http://localhost:3000/operator/user/info?userId=appUser01&appCode=1000012'));
+            expect(JSON.stringify(apiInfos[12][0])).toBe(JSON.stringify('http://localhost:3000/operator/user/info?userId=appUser02&appCode=1000002'));
+        });
+        test('異常：app運営メンバー、userId指定あり', async () => {
+            _operatorServer = new StubOperatorServer(200, null);
+            _catalogServer = new StubCatalogServer(3001, 1000020, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, 'pxrUser01');
+            const notificationServer = new NotificationServiceForDuplicateUserId(200, 'app');
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.appManager) })
+                .send(JSON.stringify(
+                    {
+                        userId: ['appUser01'],
+                        establishAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        includeRequest: false
+                    }
+                ));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe(Message.SEARCH_WITH_USER_ID_IS_FORBIDDEN);
+        });
+        test('異常：アプリケーション、申請中取得フラグON', async () => {
+            _operatorServer = new StubOperatorServer(200, null);
+            _catalogServer = new StubCatalogServer(3001, 1000020, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, 'pxrUser01');
+            const notificationServer = new NotificationServiceForDuplicateUserId(200, 'app');
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.application2) })
+                .send(JSON.stringify(
+                    {
+                        userId: ['wfUser01'],
+                        establishAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        includeRequest: true
+                    }
+                ));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe(Message.SEARCH_INCLUDE_REQUEST_IS_FORBIDDEN);
+        });
+        test('正常：app運営メンバー、userId指定なし、appコード設定なしの利用者が存在', async () => {
+            // データ準備
+            await common.executeSqlString(`
+            INSERT INTO pxr_book_operate.my_condition_book
+            (
+                user_id,
+                actor_catalog_code, actor_catalog_version,
+                region_catalog_code, region_catalog_version,
+                app_catalog_code, app_catalog_version,
+                wf_catalog_code, wf_catalog_version,
+                open_start_at,
+                identify_code,
+                attributes,
+                is_disabled, created_by, created_at, updated_by, updated_at
+            )
+            VALUES
+            (
+                'appUser01',
+                1000001,1,
+                null,null,
+                null,null,
+                null,null,
+                '2020-02-01T00:00:00.000+0900',
+                'identifyCodeInvalidUser',
+                'サービスコード設定なしの利用者',
+                false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+            );
+            `);
+            _operatorServer = new StubOperatorServer(200, null);
+            _catalogServer = new StubCatalogServer(3001, 1000020, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, 'pxrUser01');
+            const notificationServer = new NotificationServiceForDuplicateUserId(200, 'app');
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.appManager) })
+                .send(JSON.stringify(
+                    {
+                        userId: null,
+                        establishAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        includeRequest: false
+                    }
+                ));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(response.status).toBe(200);
+            expect(response.body.length).toBe(5);
         });
     });
 });

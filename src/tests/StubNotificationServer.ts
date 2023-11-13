@@ -124,3 +124,286 @@ export class NotificationService extends BaseStubServer {
         });
     }
 }
+
+export class NotificationServiceForDuplicateUserId extends BaseStubServer {
+    constructor (status: number, service: string, expire: boolean = false) {
+        super(3004);
+        this.app.get('/notification', (req, res) => {
+            let sendAt = '2030-10-25T15:05:52.215+0900';
+            if (expire) {
+                sendAt = '2020-10-25T15:05:52.215+0900';
+            }
+            if (service === 'wf') {
+                res.status(status).json([{
+                    type: 0,
+                    title: '連携用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: 1000007,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeWf1000007'
+                    },
+                    category: { _value: 145, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: 1000047,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeWf1000047'
+                    },
+                    category: { _value: 145, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: 1000047,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeWf1000017'
+                    },
+                    category: { _value: 145, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携解除用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携解除要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: 1000017,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeWf1000017Release'
+                    },
+                    category: { _value: 181, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携解除用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携解除要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: 1000027,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeWf1000027Release'
+                    },
+                    category: { _value: 181, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携解除用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携解除要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: 1000037,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeWf1000037Release'
+                    },
+                    category: { _value: 181, _ver: 1 },
+                    sendAt: sendAt
+                }]).end();
+            } else if (service === 'app') {
+                res.status(status).json([{
+                    type: 0,
+                    title: '連携解除用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携解除要求がきました',
+                    from: {
+                        applicationCode: 1000012,
+                        workflowCode: null,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeApp1000012Release'
+                    },
+                    category: { _value: 181, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携要求がきました',
+                    from: {
+                        applicationCode: 1000042,
+                        workflowCode: null,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeApp1000042'
+                    },
+                    category: { _value: 145, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携解除用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携解除要求がきました',
+                    from: {
+                        applicationCode: 1000022,
+                        workflowCode: null,
+                        regionCode: null
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeApp1000022Release'
+                    },
+                    category: { _value: 181, _ver: 1 },
+                    sendAt: sendAt
+                }]).end();
+            } else if (service === 'region') {
+                res.status(status).json([{
+                    type: 0,
+                    title: '連携解除用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携解除要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: null,
+                        regionCode: 1000013
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeRegion1000013Release'
+                    },
+                    category: { _value: 181, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: null,
+                        regionCode: 1000043
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeRegion1000043'
+                    },
+                    category: { _value: 145, _ver: 1 },
+                    sendAt: sendAt
+                },
+                {
+                    type: 0,
+                    title: '連携解除用本人性確認コード発行',
+                    content: '個人から利用者ID連携の連携解除要求がきました',
+                    from: {
+                        applicationCode: null,
+                        workflowCode: null,
+                        regionCode: 1000023
+                    },
+                    destination: {
+                        blockCode: 1000110,
+                        operatorType: 3,
+                        isSendAll: true,
+                        operatorId: null,
+                        userId: null
+                    },
+                    attribute: {
+                        identifyCode: 'identifyCodeRegion1000023Release'
+                    },
+                    category: { _value: 181, _ver: 1 },
+                    sendAt: sendAt
+                }
+                ]).end();
+            } else {
+                res.status(status).json([{}]).end();
+            }
+        });
+    }
+}

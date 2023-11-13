@@ -38,6 +38,7 @@ import CTokenService from './CTokenService';
 import CTokenDto from './dto/CTokenDto';
 import CmatrixThing from '../repositories/postgres/CmatrixThing';
 import OperatorReqDto from '../resources/dto/OperatorReqDto';
+import OperatorService from './OperatorService';
 /* eslint-enable */
 const config = Config.ReadConfig('./config/config.json');
 
@@ -52,8 +53,11 @@ export default class ThingService {
         const message = thingDto.getMessage();
         const operator = thingDto.getOperator();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // イベントテーブルのレコードを取得
-        const eventList: Event[] = await EntityOperation.getEventRecord(thingDto.getUserId(), thingDto.getEventIdentifer(), thingDto.getSourceId());
+        const eventList: Event[] = await EntityOperation.getEventRecord(thingDto.getUserId(), thingDto.getEventIdentifer(), thingDto.getSourceId(), appCatalogCode, wfCatalogCode);
         // 対象データが1件以外の場合
         if (!eventList || eventList.length !== 1) {
             // エラーを返す
@@ -110,9 +114,13 @@ export default class ThingService {
      */
     public async updateThing (thingDto: ThingServiceDto): Promise<any> {
         const message = thingDto.getMessage();
+        const operator = thingDto.getOperator();
+
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
 
         // モノテーブルのレコードを取得
-        const thingList: Thing[] = await EntityOperation.getThingRecord(thingDto.getUserId(), thingDto.getEventIdentifer(), thingDto.getThingIdentifer(), thingDto.getSourceId());
+        const thingList: Thing[] = await EntityOperation.getThingRecord(thingDto.getUserId(), thingDto.getEventIdentifer(), thingDto.getThingIdentifer(), thingDto.getSourceId(), appCatalogCode, wfCatalogCode);
         // 対象データが1件以外の場合
         if (!thingList || thingList.length !== 1) {
             // エラーを返す
@@ -127,9 +135,6 @@ export default class ThingService {
 
         // モノ情報とリクエスト情報の不整合を確認
         this.checkRequestInfo(thingInfo, template, message);
-
-        // オペレータ情報を取得
-        const operator = thingDto.getOperator();
 
         // リクエストからindexが4で始まるかつCMatrixテーブルに出てこないindex, valueを取得
         const property4: {}[] = this.getIndexAndValue(template, true);
@@ -367,8 +372,11 @@ export default class ThingService {
         const template = thingDto.getRequestObject();
         const operator = thingDto.getOperator();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // モノテーブルのレコードを取得
-        const things: Thing[] = await EntityOperation.getThingRecord(thingDto.getUserId(), thingDto.getEventIdentifer(), thingDto.getThingIdentifer(), thingDto.getSourceId());
+        const things: Thing[] = await EntityOperation.getThingRecord(thingDto.getUserId(), thingDto.getEventIdentifer(), thingDto.getThingIdentifer(), thingDto.getSourceId(), appCatalogCode, wfCatalogCode);
         // 対象データが存在しない場合
         if (!things || things.length <= 0) {
             // エラーを返す
@@ -495,8 +503,11 @@ export default class ThingService {
         const message = thingDto.getMessage();
         const operator = thingDto.getOperator();
 
+        // サービス（アプリケーション）のカタログコードをオペレーター情報から取得
+        const { appCatalogCode, wfCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+
         // イベントテーブルのレコードを取得
-        const eventList: Event[] = await EntityOperation.getEventRecord(thingDto.getUserId(), thingDto.getEventIdentifer(), thingDto.getSourceId());
+        const eventList: Event[] = await EntityOperation.getEventRecord(thingDto.getUserId(), thingDto.getEventIdentifer(), thingDto.getSourceId(), appCatalogCode, wfCatalogCode);
         // 対象データが1件以外の場合
         if (!eventList || eventList.length !== 1) {
             // エラーを返す

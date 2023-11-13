@@ -39,6 +39,7 @@ import BookService from './BookService';
 import BookDto from './dto/BookDto';
 import BookManageDto from './dto/BookManageDto';
 import BookManageService from './BookManageService';
+import OperatorService from './OperatorService';
 import Config from '../common/Config';
 import { applicationLogger } from '../common/logging';
 import urljoin = require('url-join');
@@ -318,9 +319,9 @@ export default class ShareService {
      *  #3803 : getDataTypaList
      */
     public async getShareSearch (dto: ShareDto): Promise<PostShareSearchResDto> {
+        const operator = dto.getOperator();
         // userIdを取得
         let pxrId;
-        let targetCoop;
         const bookManageService: BookManageService = new BookManageService();
         if (dto.getTempShareCode()) {
             const bookManageDto: BookManageDto = new BookManageDto();
@@ -338,26 +339,31 @@ export default class ShareService {
             const searchTemp = await bookManageService.getCollationTempShareCode(bookManageDto);
             pxrId = searchTemp['pxrId'];
         } else {
-            const bookSearchUser: BookManageDto = new BookManageDto();
-            bookSearchUser.setUserId(dto.getUserId());
-            let url;
-            const baseUrl = configure['bookManageUrl'];
-            if ((baseUrl + '').indexOf('pxr-block-proxy') === -1) {
-                url = urljoin(baseUrl, '/search/user');
-            } else {
-                url = baseUrl + encodeURIComponent('/search/user');
-            }
-            bookSearchUser.setUrl(url);
-            bookSearchUser.setOperator(dto.getOperator());
-            bookSearchUser.setMessage(message);
-            if (dto.getActorCode()) {
-                bookSearchUser.setActor(dto.getActorCode());
-            }
-            const searchUser = await bookManageService.searchUser(bookSearchUser);
-            pxrId = searchUser['pxrId'];
+            // サービス（アプリケーション/ワークフロー）のカタログコードをオペレーター情報から取得
+            const { appCatalogCode } = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+            const actor = operator.getActorCode();
+            const app = appCatalogCode;
+            pxrId = await this.searchPxrId(dto.getUserId(), actor, app, null, operator, bookManageService);
         }
+        const targetCoop = await this.getCoop(pxrId, operator, bookManageService);
+
+        // ドキュメント、イベント、モノを取得
+        const { resultDocumentList, resultEventList, resultThingList } = await this.getDataTypaList(targetCoop, dto);
+
+        // レスポンスを生成
+        const response: PostShareSearchResDto = new PostShareSearchResDto();
+        response.documentList = resultDocumentList;
+        response.eventList = resultEventList;
+        response.thingList = resultThingList;
+
+        // レスポンスを返す
+        return response;
+    }
+
+    private async getCoop (pxrId: string, operator: Operator, bookManageService: BookManageService) {
         const bookSearch: BookManageDto = new BookManageDto();
         let bookSearchUrl;
+        let targetCoop;
         const baseUrl = configure['bookManageUrl'];
         if ((baseUrl + '').indexOf('pxr-block-proxy') === -1) {
             bookSearchUrl = urljoin(baseUrl, '/search');
@@ -365,7 +371,7 @@ export default class ShareService {
             bookSearchUrl = baseUrl + encodeURIComponent('/search');
         }
         bookSearch.setUrl(bookSearchUrl);
-        bookSearch.setOperator(dto.getOperator());
+        bookSearch.setOperator(operator);
         bookSearch.setMessage(message);
         const book = await bookManageService.getCoopList(bookSearch, pxrId);
         if (book && Array.isArray(book)) {
@@ -373,18 +379,28 @@ export default class ShareService {
         } else {
             throw new AppError('bookが存在しません', ResponseCode.INTERNAL_SERVER_ERROR);
         }
+        return targetCoop;
+    }
 
-        // ドキュメント、イベント、モノを取得
-        const { documentList, eventList, thingList } = await this.getDataTypaList(targetCoop, dto);
-
-        // レスポンスを生成
-        const response: PostShareSearchResDto = new PostShareSearchResDto();
-        response.documentList = documentList;
-        response.eventList = eventList;
-        response.thingList = thingList;
-
-        // レスポンスを返す
-        return response;
+    private async searchPxrId (userId: string, actorCode: number, app: number, wf: number, operator: Operator, bookManageService: BookManageService) {
+        const bookSearchUser: BookManageDto = new BookManageDto();
+        bookSearchUser.setUserId(userId);
+        let url;
+        const baseUrl = configure['bookManageUrl'];
+        if ((baseUrl + '').indexOf('pxr-block-proxy') === -1) {
+            url = urljoin(baseUrl, '/search/user');
+        } else {
+            url = baseUrl + encodeURIComponent('/search/user');
+        }
+        bookSearchUser.setUrl(url);
+        bookSearchUser.setOperator(operator);
+        bookSearchUser.setMessage(message);
+        bookSearchUser.setActor(actorCode);
+        bookSearchUser.setApplication(app);
+        bookSearchUser.setWorkflow(wf);
+        const searchUser = await bookManageService.searchUser(bookSearchUser);
+        const pxrId = searchUser['pxrId'];
+        return pxrId;
     }
 
     /**
@@ -398,11 +414,21 @@ export default class ShareService {
      *  #3803 : createDataTypes
      */
     private async getDataTypaList (targetCoop: any, dto: ShareDto) {
-        let documentList: {}[] = [];
-        let eventList: {}[] = [];
-        let thingList: {}[] = [];
+        const resultDocumentList: {}[] = [];
+        const resultEventList: {}[] = [];
+        const resultThingList: {}[] = [];
         for (const coop of targetCoop) {
-            const book2 = await EntityOperation.getContBookRecordFromUserId(coop['userId']);
+            let documentList: {}[] = [];
+            let eventList: {}[] = [];
+            let thingList: {}[] = [];
+            const app: number = coop['app'] && coop['app']['_value'] ? coop['app']['_value'] : null;
+            const wf: number = null;
+            // userId がない または APP以外の連携情報はスキップ
+            if (!coop['userId'] || !app) {
+                continue;
+            }
+            const book2 = await EntityOperation.getContBookRecordFromUserId(coop['userId'], app, wf);
+            // Bookが存在しない場合はスキップする
             if (!book2) {
                 continue;
             }
@@ -412,8 +438,8 @@ export default class ShareService {
             bookDto.setUserId(coop['userId']);
             bookDto.setIdentifier(dto.getIdentifier());
             bookDto.setUpdatedAt(dto.getUpdatedAt());
-            bookDto.setWf(dto.getWf());
-            bookDto.setApp(dto.getApp());
+            bookDto.setWf(null);
+            bookDto.setApp(app ? { _value: app } : null);
             // ドキュメントを取得
             if ((dto.getIdentifier() && dto.getIdentifier().length > 0) || (dto.getDocumentList() && dto.getDocumentList().length > 0)) {
                 bookDto.setCode(dto.getDocumentList());
@@ -465,9 +491,12 @@ export default class ShareService {
             const dataTypes: ShareAccessLogDataType[] = this.createDataTypes(documentList, dto, eventList, thingList);
             accessLog.dataTypes = dataTypes;
             await EntityOperation.insertShareAccessLog(accessLog);
-            break;
+
+            resultDocumentList.push(...documentList);
+            resultEventList.push(...eventList);
+            resultThingList.push(...thingList);
         }
-        return { documentList, eventList, thingList };
+        return { resultDocumentList, resultEventList, resultThingList };
     }
 
     /**

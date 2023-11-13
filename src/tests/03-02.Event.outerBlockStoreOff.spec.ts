@@ -4,6 +4,7 @@ https://opensource.org/licenses/mit-license.php
 */
 import * as supertest from 'supertest';
 import { Application } from '../resources/config/Application';
+import { transformFromDateTimeToString } from '../common/Transform';
 import Common, { Url } from './Common';
 import { Session } from './Session';
 import { sprintf } from 'sprintf-js';
@@ -1009,7 +1010,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3342,7 +3343,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -4220,7 +4221,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9631,7 +9632,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -10203,6 +10204,954 @@ describe('book-operate API', () => {
             // レスポンスチェック
             expect(response.status).toBe(400);
             expect(response.body.message).toBe(sprintf(Message.STRING_INVALID, 'eventSourceId'));
+        });
+    });
+
+    describe('利用者ID重複対応追加ケース', () => {
+        // DoRequestメソッドのmock化
+        const doRequet = require('../common/DoRequest');
+        const mockDoPostRequest = jest.spyOn(doRequet, 'doPostRequest');
+        let eventIdentifer12: string = null;
+        let eventIdentifer14: string = null;
+        beforeAll(async () => {
+            // DB初期化
+            await common.executeSqlFile('initialData.sql');
+            // test_user_id3, test_user_id4, test_user_id5 が重複
+            await common.executeSqlFile('initialMyConditionDataMultiBook.sql');
+        });
+        afterAll(async () => {
+            mockDoPostRequest.mockRestore();
+        });
+        beforeEach(async () => {
+            mockDoPostRequest.mockClear();
+        });
+        describe('イベント蓄積', () => {
+            describe('正常系', () => {
+                describe('My-Condition-Bookテーブルに 同じuserIdの利用者が存在しない', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id2');
+
+                        const request = JSON.stringify(
+                            {
+                                id: {
+                                    index: '3_1_1',
+                                    value: null
+                                },
+                                code: {
+                                    index: '3_1_2',
+                                    value: {
+                                        _value: 1000008,
+                                        _ver: 1
+                                    }
+                                },
+                                start: {
+                                    index: '3_2_1',
+                                    value: '2020-02-20T00:00:00.000+0900'
+                                },
+                                end: {
+                                    index: '3_2_2',
+                                    value: '2020-02-21T00:00:00.000+0900'
+                                },
+                                location: {
+                                    index: '3_3_1',
+                                    value: 'location'
+                                },
+                                sourceId: '2023_6948_2',
+                                env: null,
+                                app: {
+                                    code: {
+                                        index: '3_5_1',
+                                        value: {
+                                            _value: 1000004,
+                                            _ver: 1
+                                        }
+                                    },
+                                    app: {
+                                        index: '3_5_5',
+                                        value: {
+                                            _value: 1000007,
+                                            _ver: 1
+                                        }
+                                    }
+                                },
+                                wf: null,
+                                userId: {
+                                    index: '3_6_1',
+                                    value: 'test_user_id2'
+                                },
+                                thing: []
+                            }
+                        );
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).post(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(request);
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        eventIdentifer12 = response.body.id.value;
+                        // イベントテーブルの確認 event_identifier で取得
+                        const event = await common.executeSqlString(`select * from pxr_book_operate.event where event_identifier='${eventIdentifer12}';`);
+                        // Cmatrixテーブルの確認  event_identifier で取得
+                        const cmatrix = await common.executeSqlString(`select * from pxr_book_operate.cmatrix_event where "3_1_1"='${eventIdentifer12}';`);
+                        expect(event.length).toBe(1);
+                        expect(cmatrix.length).toBe(1);
+                        expect(parseInt(event[0]['my_condition_book_id'])).toBe(2);
+                    });
+                });
+                describe('My-Condition-Bookテーブルに 別のAPP/WFに同じuserIdの利用者が存在する', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id4');
+                        const request = JSON.stringify(
+                            {
+                                id: {
+                                    index: '3_1_1',
+                                    value: null
+                                },
+                                code: {
+                                    index: '3_1_2',
+                                    value: {
+                                        _value: 1000008,
+                                        _ver: 1
+                                    }
+                                },
+                                start: {
+                                    index: '3_2_1',
+                                    value: null
+                                },
+                                end: {
+                                    index: '3_2_2',
+                                    value: null
+                                },
+                                location: {
+                                    index: '3_3_1',
+                                    value: null
+                                },
+                                sourceId: '20200221-1',
+                                env: null,
+                                app: {
+                                    code: {
+                                        index: '3_5_1',
+                                        value: {
+                                            _value: 1000004,
+                                            _ver: 1
+                                        }
+                                    },
+                                    app: {
+                                        index: '3_5_5',
+                                        value: {
+                                            _value: 1000007,
+                                            _ver: 1
+                                        }
+                                    }
+                                },
+                                wf: null,
+                                userId: {
+                                    index: '3_6_1',
+                                    value: 'test_user_id4'
+                                },
+                                thing: []
+                            }
+                        );
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).post(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(request);
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        eventIdentifer14 = response.body.id.value;
+                        // イベントテーブルの確認 event_identifier で取得
+                        const event = await common.executeSqlString(`select * from pxr_book_operate.event where event_identifier='${eventIdentifer14}';`);
+                        // Cmatrixテーブルの確認  event_identifier で取得
+                        const cmatrix = await common.executeSqlString(`select * from pxr_book_operate.cmatrix_event where "3_1_1"='${eventIdentifer14}';`);
+                        expect(event.length).toBe(1);
+                        expect(cmatrix.length).toBe(1);
+                        expect(parseInt(event[0]['my_condition_book_id'])).toBe(7);
+                    });
+                });
+            });
+            describe('異常系', () => {
+                describe('Book取得時にAPP/WFのコードが設定されていない', () => {
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id4');
+                        const request = JSON.stringify(
+                            {
+                                id: {
+                                    index: '3_1_1',
+                                    value: null
+                                },
+                                code: {
+                                    index: '3_1_2',
+                                    value: {
+                                        _value: 1000008,
+                                        _ver: 1
+                                    }
+                                },
+                                start: {
+                                    index: '3_2_1',
+                                    value: null
+                                },
+                                end: {
+                                    index: '3_2_2',
+                                    value: null
+                                },
+                                location: {
+                                    index: '3_3_1',
+                                    value: null
+                                },
+                                sourceId: '20200221-1',
+                                env: null,
+                                app: {
+                                    code: {
+                                        index: '3_5_1',
+                                        value: {
+                                            _value: 1000004,
+                                            _ver: 1
+                                        }
+                                    },
+                                    app: {
+                                        index: '3_5_5',
+                                        value: {
+                                            _value: 1000007,
+                                            _ver: 1
+                                        }
+                                    }
+                                },
+                                wf: null,
+                                userId: {
+                                    index: '3_6_1',
+                                    value: 'test_user_id4'
+                                },
+                                thing: []
+                            }
+                        );
+                        const serviceValue = Session.application.service._value;
+                        Session.application.service._value = 0;
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).post(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(request);
+                        Session.application.service._value = serviceValue;
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(400);
+                        expect(response.body.message).toBe(Message.EMPTY_APP);
+                    });
+                });
+                describe('Bookの取得結果が 2件以上', () => {
+                    beforeAll(async () => {
+                        // userId,app,wf が同じBookを作成
+                        await common.executeSqlString(`
+                        INSERT INTO pxr_book_operate.my_condition_book
+                        (
+                            user_id,
+                            actor_catalog_code, actor_catalog_version,
+                            app_catalog_code, app_catalog_version,
+                            wf_catalog_code, wf_catalog_version,
+                            open_start_at,
+                            attributes, is_disabled, created_by, created_at, updated_by, updated_at
+                        )
+                        VALUES
+                        (
+                            'test_user_id1',
+                            1000004, 1,
+                            null, null,
+                            1000007, 1,
+                            '2020-02-01T00:00:00.000+0900',
+                            null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                        ),
+                        (
+                            'test_user_id2',
+                            1000004, 1,
+                            1000007, 1,
+                            null, null,
+                            '2020-03-02T00:00:00.000+0900',
+                            null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                        )
+                        `);
+                    });
+                    afterAll(async () => {
+                        // 追加した userId,app,wf が同じBookを削除
+                        await common.executeSqlString(`
+                        delete from pxr_book_operate.my_condition_book where id > 8;
+                        `);
+                    });
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id2');
+                        const request = JSON.stringify(
+                            {
+                                id: {
+                                    index: '3_1_1',
+                                    value: null
+                                },
+                                code: {
+                                    index: '3_1_2',
+                                    value: {
+                                        _value: 1000008,
+                                        _ver: 1
+                                    }
+                                },
+                                start: {
+                                    index: '3_2_1',
+                                    value: null
+                                },
+                                end: {
+                                    index: '3_2_2',
+                                    value: null
+                                },
+                                location: {
+                                    index: '3_3_1',
+                                    value: null
+                                },
+                                sourceId: '20200221-1',
+                                env: null,
+                                app: {
+                                    code: {
+                                        index: '3_5_1',
+                                        value: {
+                                            _value: 1000004,
+                                            _ver: 1
+                                        }
+                                    },
+                                    app: {
+                                        index: '3_5_5',
+                                        value: {
+                                            _value: 1000007,
+                                            _ver: 1
+                                        }
+                                    }
+                                },
+                                wf: null,
+                                userId: {
+                                    index: '3_6_1',
+                                    value: 'test_user_id2'
+                                },
+                                thing: []
+                            }
+                        );
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).post(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(request);
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(400);
+                        expect(response.body.message).toBe(Message.COULD_NOT_SPECIFY_USER_BOOK);
+                    });
+                });
+            });
+        });
+        describe('ソースIDによるイベント更新', () => {
+            describe('正常系', () => {
+                beforeAll(async () => {
+                    // bookId、sourceIdId が同じで app,wf が違うイベントを作成
+                    // Local-Ctokenサービスへのリクエスト確認のためモノを追加
+                    await common.executeSqlString(`
+                INSERT INTO pxr_book_operate.event
+                (
+                    my_condition_book_id, source_id, event_identifier,
+                    event_catalog_code, event_catalog_version,
+                    event_start_at, event_end_at, event_outbreak_position,
+                    event_actor_code, event_actor_version,
+                    wf_catalog_code, wf_catalog_version,
+                    wf_role_code, wf_role_version, wf_staff_identifier,
+                    app_catalog_code, app_catalog_version,
+                    template,
+                    attributes, is_disabled, created_by,
+                    created_at, updated_by, updated_at)
+                VALUES
+                (
+                    6, '20200221-1', 'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6',
+                    1000008, 1,
+                    null, null, 'location',
+                    1000004, 1,
+                    2000007, 1,
+                    1000005, 1, 'staffId',
+                    null, null,
+                    '{"id":{"index":"3_1_1","value":"event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"end":{"index":"3_2_2","value":"2020-02-21T00:00:00.000+0900"},"location":{"index":"3_3_1","value":null},"sourceId":"20200221-1","env":null,"app":null,"wf":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"wf":{"index":"3_5_2","value":{"_value":1000007,"_ver":1}},"role":{"index":"3_5_3","value":{"_value":1000005,"_ver":1}},"staffId":{"index":"3_5_4","value":"staffId"}},"thing":[]}',
+                    null, false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
+                ),
+                (
+                    7, '20200221-1', 'event-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                    1000008, 1,
+                    '2020-02-20T00:00:00.000+0900', '2020-02-21 00:00:00', 'location',
+                    1000004, 1,
+                    null, null,
+                    null, null, null,
+                    2000007, 1,
+                    '{"id":{"index":"3_1_1","value":"event-4f75161a-449a-4839-be6a-4cc577b8a8d0"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"end":{"index":"3_2_2","value":"2020-02-21T00:00:00.000+0900"},"location":{"index":"3_3_1","value":null},"sourceId":"20200221-1","env":null,"app":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"app":{"index":"3_5_5","value":{"_value":1000007,"_ver":1}}},"wf":null,"thing":[]}',
+                    null, false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
+                );
+                INSERT INTO pxr_book_operate.thing
+                (
+                    event_id, source_id, thing_identifier,
+                    thing_catalog_code, thing_catalog_version,
+                    thing_actor_code, thing_actor_version,
+                    wf_catalog_code, wf_catalog_version,
+                    wf_role_code, wf_role_version,
+                    wf_staff_identifier,
+                    app_catalog_code, app_catalog_version,
+                    template,
+                    attributes, is_disabled, created_by, created_at, updated_by, updated_at
+                )
+                VALUES
+                (
+                    1, '202108-1', 'thing-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                    1000008, 1,
+                    1000004, 1,
+                    null, null,
+                    null, null,
+                    null,
+                    1000007, 1,
+                    '{"id":{"index":"4_1_1","value":"4f75161a-449a-4839-be6a-4cc577b8a8d0"},"code":{"index":"4_1_2","value":{"_value":1000008,"_ver":1}},"sourceId":"20200221-1","env":null,"x-axis":{"index":"4_2_2_1","value":null},"y-axis":{"index":"4_2_2_2","value":null},"z-axis":{"index":"4_2_2_3","value":null},"acquired_time":{"index":"4_2_2_4","value":"uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu"}}',
+                    null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                )
+                ;
+                INSERT INTO pxr_book_operate.cmatrix_thing
+                (
+                    "cmatrix_event_id",
+                    "4_1_1", "4_1_2_1", "4_1_2_2",
+                    "4_4_1_1", "4_4_1_2", "4_4_2_1", "4_4_2_2", "4_4_3_1", "4_4_3_2", "4_4_4",
+                    "4_4_5_1", "4_4_5_2",
+                    row_hash, row_hash_create_at,
+                    is_disabled, created_by, created_at, updated_by, updated_at
+                )
+                VALUES
+                (
+                    1,
+                    'thing-4f75161a-449a-4839-be6a-4cc577b8a8d0', 1000008, 1,
+                    1000004, 1, null, null, null, null, null,
+                    1000007, 1,
+                    'XXXX', '2020-01-01 00:00:00',
+                    false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                )
+                ;
+                `);
+                });
+                describe('イベントテーブルに 同じuserId、sourceIdのイベントが存在しない', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id2', '?eventSourceId=2023_6948_2');
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).put(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '3_1_1',
+                                        value: eventIdentifer12
+                                    },
+                                    code: {
+                                        index: '3_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    start: {
+                                        index: '3_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    end: {
+                                        index: '3_2_2',
+                                        value: '2020-02-21T00:00:00.000+0900'
+                                    },
+                                    location: {
+                                        index: '3_3_1',
+                                        value: null
+                                    },
+                                    sourceId: '2023_6948_1',
+                                    env: null,
+                                    app: {
+                                        code: {
+                                            index: '3_5_1',
+                                            value: {
+                                                _value: 1000004,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '3_5_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    wf: null,
+                                    userId: {
+                                        index: '3_6_1',
+                                        value: 'test_user_id2'
+                                    },
+                                    thing: []
+                                }
+                            ));
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        // イベントテーブルの確認 event_identifier で取得
+                        const event = await common.executeSqlString(`select * from pxr_book_operate.event where event_identifier='${eventIdentifer12}';`);
+                        // Cmatrixテーブルの確認  event_identifier で取得
+                        const cmatrix = await common.executeSqlString(`select * from pxr_book_operate.cmatrix_event where "3_1_1"='${eventIdentifer12}';`);
+                        expect(event.length).toBe(1);
+                        expect(new Date(event[0]['updated_at']).getTime()).toBeGreaterThan(new Date(event[0]['created_at']).getTime());
+                        expect(cmatrix.length).toBe(1);
+                        expect(new Date(cmatrix[0]['updated_at']).getTime()).toBeGreaterThan(new Date(cmatrix[0]['created_at']).getTime());
+
+                        expect(parseInt(event[0]['my_condition_book_id'])).toBe(2);
+
+                        // モノ取得
+                        const thing = await common.executeSqlString(`select * from pxr_book_operate.thing where event_id='${event[0].id}';`);
+                        expect(thing.length).toBe(1);
+                        const cmatrixThing = await common.executeSqlString(`select * from pxr_book_operate.cmatrix_thing where cmatrix_event_id='${event[0].id}';`);
+                        expect(cmatrixThing.length).toBe(1);
+
+                        // Local-CTokenサービス.Local-CToken登録APIへのリクエスト
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos[0][1]['body']).toBe(JSON.stringify({
+                            add: [],
+                            update: [
+                                {
+                                    '1_1': 'test_user_id2',
+                                    document: [],
+                                    event: {
+                                        '3_1_1': eventIdentifer12,
+                                        '3_1_2_1': 1000008,
+                                        '3_1_2_2': 1,
+                                        '3_2_1': '2020-02-20T00:00:00.000+0900',
+                                        '3_2_2': '2020-02-21T00:00:00.000+0900',
+                                        '3_5_1_1': 1000004,
+                                        '3_5_1_2': 1,
+                                        '3_5_2_1': 0,
+                                        '3_5_2_2': 0,
+                                        '3_5_5_1': 1000007,
+                                        '3_5_5_2': 1
+                                    },
+                                    thing: [
+                                        {
+                                            '4_1_1': thing[0].thing_identifier,
+                                            '4_1_2_1': 1000008,
+                                            '4_1_2_2': 1,
+                                            '4_4_1_1': 1000004,
+                                            '4_4_1_2': 1,
+                                            '4_4_2_1': 0,
+                                            '4_4_2_2': 0,
+                                            '4_4_5_1': 1000007,
+                                            '4_4_5_2': 1,
+                                            rowHash: cmatrixThing[0].row_hash,
+                                            rowHashCreateAt: transformFromDateTimeToString(null, cmatrixThing[0].row_hash_create_at).replace('+0000', 'Z')
+                                        }
+                                    ]
+                                }
+                            ],
+                            delete: []
+                        }));
+                    });
+                });
+                describe('イベントテーブルに 別のAPP/WFに同じuserId、sourceId のイベントが存在する', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id4', '?eventSourceId=20200221-1');
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).put(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '3_1_1',
+                                        value: eventIdentifer14
+                                    },
+                                    code: {
+                                        index: '3_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    start: {
+                                        index: '3_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    end: {
+                                        index: '3_2_2',
+                                        value: '2020-02-21T00:00:00.000+0900'
+                                    },
+                                    location: {
+                                        index: '3_3_1',
+                                        value: null
+                                    },
+                                    sourceId: '20200221-1',
+                                    env: null,
+                                    app: {
+                                        code: {
+                                            index: '3_5_1',
+                                            value: {
+                                                _value: 1000004,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '3_5_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    wf: null,
+                                    userId: {
+                                        index: '3_6_1',
+                                        value: 'test_user_id4'
+                                    },
+                                    thing: []
+                                }
+                            ));
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        // イベントテーブルの確認 event_identifier で取得
+                        const event = await common.executeSqlString(`select * from pxr_book_operate.event where event_identifier='${eventIdentifer14}';`);
+                        // Cmatrixテーブルの確認  event_identifier で取得
+                        const cmatrix = await common.executeSqlString(`select * from pxr_book_operate.cmatrix_event where "3_1_1"='${eventIdentifer14}';`);
+                        expect(event.length).toBe(1);
+                        expect(new Date(event[0]['updated_at']).getTime()).toBeGreaterThan(new Date(event[0]['created_at']).getTime());
+                        expect(cmatrix.length).toBe(1);
+                        expect(new Date(cmatrix[0]['updated_at']).getTime()).toBeGreaterThan(new Date(cmatrix[0]['created_at']).getTime());
+
+                        expect(parseInt(event[0]['my_condition_book_id'])).toBe(7);
+
+                        // thingが紐づかないためLocal-Ctokenサービスへのリクエストが飛ばないこと
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos.length).toBe(0);
+                    });
+                });
+            });
+            describe('異常系', () => {
+                describe('イベントレコード取得時にAPP/WFのコードが設定されていない', () => {
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id2', '?eventSourceId=2023_6948_2');
+                        const serviceValue = Session.application.service._value;
+                        Session.application.service._value = 0;
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).put(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '3_1_1',
+                                        value: eventIdentifer12
+                                    },
+                                    code: {
+                                        index: '3_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    start: {
+                                        index: '3_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    end: {
+                                        index: '3_2_2',
+                                        value: '2020-02-21T00:00:00.000+0900'
+                                    },
+                                    location: {
+                                        index: '3_3_1',
+                                        value: null
+                                    },
+                                    sourceId: '20200221-1',
+                                    env: null,
+                                    app: {
+                                        code: {
+                                            index: '3_5_1',
+                                            value: {
+                                                _value: 1000004,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '3_5_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    wf: null,
+                                    userId: {
+                                        index: '3_6_1',
+                                        value: 'test_user_id2'
+                                    },
+                                    thing: []
+                                }
+                            ));
+                        Session.application.service._value = serviceValue;
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(400);
+                        expect(response.body.message).toBe(Message.EMPTY_APP);
+                    });
+                });
+                describe('イベントレコードの取得結果が 2件以上', () => {
+                    beforeAll(async () => {
+                        // sourceIdId,app,wf が同じBookを作成
+                        await common.executeSqlString(`
+                        INSERT INTO pxr_book_operate.event
+                        (
+                            my_condition_book_id, source_id, event_identifier,
+                            event_catalog_code, event_catalog_version,
+                            event_start_at, event_end_at, event_outbreak_position,
+                            event_actor_code, event_actor_version,
+                            wf_catalog_code, wf_catalog_version,
+                            wf_role_code, wf_role_version, wf_staff_identifier,
+                            app_catalog_code, app_catalog_version,
+                            template,
+                            attributes, is_disabled, created_by,
+                            created_at, updated_by, updated_at)
+                        VALUES
+                        (
+                            1, '2023_6948_1', 'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6',
+                            1000008, 1,
+                            null, null, 'location',
+                            1000004, 1,
+                            1000007, 1,
+                            1000005, 1, 'staffId',
+                            null, null,
+                            '{"id":{"index":"3_1_1","value":"event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"end":{"index":"3_2_2","value":"2020-02-21T00:00:00.000+0900"},"location":{"index":"3_3_1","value":null},"sourceId":"20200221-1","env":null,"app":null,"wf":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"wf":{"index":"3_5_2","value":{"_value":1000007,"_ver":1}},"role":{"index":"3_5_3","value":{"_value":1000005,"_ver":1}},"staffId":{"index":"3_5_4","value":"staffId"}},"thing":[]}',
+                            null, false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
+                        ),
+                        (
+                            2, '2023_6948_2', 'event-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                            1000008, 1,
+                            '2020-02-20T00:00:00.000+0900', '2020-02-21 00:00:00', 'location',
+                            1000004, 1,
+                            null, null,
+                            null, null, null,
+                            1000007, 1,
+                            '{"id":{"index":"3_1_1","value":"event-4f75161a-449a-4839-be6a-4cc577b8a8d0"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"end":{"index":"3_2_2","value":"2020-02-21T00:00:00.000+0900"},"location":{"index":"3_3_1","value":null},"sourceId":"20200221-1","env":null,"app":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"app":{"index":"3_5_5","value":{"_value":1000007,"_ver":1}}},"wf":null,"thing":[]}',
+                            null, false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
+                        )
+                        `);
+                    });
+                    afterAll(async () => {
+                        // sourceIdId,app,wf が同じBookを作成
+                        await common.executeSqlString(`
+                        delete from pxr_book_operate.event
+                        where source_id = '2023_6948_1' and event_identifier = 'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6' and my_condition_book_id = 1;
+                        delete from pxr_book_operate.event
+                        where source_id = '2023_6948_2' and event_identifier = 'event-4f75161a-449a-4839-be6a-4cc577b8a8d0' and my_condition_book_id = 2;
+                        `);
+                    });
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id2', '?eventSourceId=2023_6948_2');
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).put(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '3_1_1',
+                                        value: eventIdentifer12
+                                    },
+                                    code: {
+                                        index: '3_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    start: {
+                                        index: '3_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    end: {
+                                        index: '3_2_2',
+                                        value: '2020-02-21T00:00:00.000+0900'
+                                    },
+                                    location: {
+                                        index: '3_3_1',
+                                        value: null
+                                    },
+                                    sourceId: '20200221-1',
+                                    env: null,
+                                    app: {
+                                        code: {
+                                            index: '3_5_1',
+                                            value: {
+                                                _value: 1000004,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '3_5_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    wf: null,
+                                    userId: {
+                                        index: '3_6_1',
+                                        value: 'test_user_id2'
+                                    },
+                                    thing: []
+                                }
+                            ));
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(404);
+                        expect(response.body.message).toBe(Message.TARGET_NO_DATA);
+                    });
+                });
+            });
+        });
+        describe('ソースIDによるイベント削除', () => {
+            describe('正常系', () => {
+                describe('イベントテーブルに 同じuserId、sourceIdのイベントが存在しない', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+                        const before = new Date();
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id2', '?eventSourceId=2023_6948_2');
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).delete(url)
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send();
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        // イベントテーブルの確認 event_identifier で取得
+                        const event = await common.executeSqlString(`select * from pxr_book_operate.event where event_identifier='${eventIdentifer12}';`);
+                        // Cmatrixテーブルの確認  event_identifier で取得
+                        const cmatrix = await common.executeSqlString(`select * from pxr_book_operate.cmatrix_event where "3_1_1"='${eventIdentifer12}';`);
+                        expect(event.length).toBe(1);
+                        expect(new Date(event[0]['updated_at']).getTime()).toBeGreaterThan(before.getTime());
+                        expect(event[0]['is_disabled']).toBe(true);
+                        expect(cmatrix.length).toBe(1);
+
+                        expect(parseInt(event[0]['my_condition_book_id'])).toBe(2);
+
+                        // モノ取得
+                        const thing = await common.executeSqlString(`select * from pxr_book_operate.thing where event_id='${event[0].id}';`);
+                        expect(thing.length).toBe(1);
+                        const cmatrixThing = await common.executeSqlString(`select * from pxr_book_operate.cmatrix_thing where cmatrix_event_id='${event[0].id}';`);
+                        expect(cmatrixThing.length).toBe(1);
+
+                        // Local-CTokenサービス.Local-CToken登録APIへのリクエスト
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos[0][1]['body']).toBe(JSON.stringify({
+                            add: [],
+                            update: [],
+                            delete: [
+                                {
+                                    '1_1': 'test_user_id2',
+                                    document: [],
+                                    event: {
+                                        '3_1_1': eventIdentifer12
+                                    },
+                                    thing: [
+                                        {
+                                            '4_1_1': thing[0].thing_identifier
+                                        }
+                                    ]
+                                }
+                            ]
+                        }));
+                    });
+                });
+                describe('イベントテーブルに 別のAPP/WFに同じuserId、sourceId のイベントが存在する', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+                        const before = new Date();
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id4', '?eventSourceId=20200221-1');
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).delete(url)
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send();
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        // イベントテーブルの確認 event_identifier で取得
+                        const event = await common.executeSqlString(`select * from pxr_book_operate.event where event_identifier='${eventIdentifer14}';`);
+                        // Cmatrixテーブルの確認  event_identifier で取得
+                        const cmatrix = await common.executeSqlString(`select * from pxr_book_operate.cmatrix_event where "3_1_1"='${eventIdentifer14}';`);
+                        expect(event.length).toBe(1);
+                        expect(new Date(event[0]['updated_at']).getTime()).toBeGreaterThan(before.getTime());
+                        expect(event[0]['is_disabled']).toBe(true);
+                        expect(cmatrix.length).toBe(1);
+
+                        expect(parseInt(event[0]['my_condition_book_id'])).toBe(7);
+
+                        // thingが紐づかないためLocal-Ctokenサービスへのリクエストが飛ばないこと
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos.length).toBe(0);
+                    });
+                });
+            });
+            describe('異常系', () => {
+                describe('イベントレコード取得時にAPP/WFのコードが設定されていない', () => {
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000005, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.eventURI, 'test_user_id2', '?eventSourceId=2023_6948_2');
+                        const serviceValue = Session.application.service._value;
+                        Session.application.service._value = 0;
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).delete(url)
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send();
+                        Session.application.service._value = serviceValue;
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(400);
+                        expect(response.body.message).toBe(Message.EMPTY_APP);
+                    });
+                });
+            });
         });
     });
 });

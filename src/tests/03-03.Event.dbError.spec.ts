@@ -4,7 +4,7 @@ https://opensource.org/licenses/mit-license.php
 */
 import * as supertest from 'supertest';
 import { Application } from '../resources/config/Application';
-import { Url } from './Common';
+import Common, { Url } from './Common';
 import { Session } from './Session';
 import StubCatalogServer from './StubCatalogServer';
 import urljoin = require('url-join');
@@ -15,6 +15,7 @@ jest.mock('../common/Connection');
 // 対象アプリケーションを取得
 const app = new Application();
 const expressApp = app.express.app;
+const common = new Common();
 
 // サーバをlisten
 app.start();
@@ -30,6 +31,11 @@ describe('book-operate API', () => {
      * 全テスト実行の前処理
      */
     beforeAll(async () => {
+        // DB接続
+        await common.connect();
+        // DB初期化
+        await common.executeSqlFile('initialData.sql');
+        await common.executeSqlFile('initialMyConditionData.sql');
     });
     /**
      * 各テスト実行の前処理
@@ -67,7 +73,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -138,7 +144,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -209,7 +215,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -277,7 +283,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -295,7 +301,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック

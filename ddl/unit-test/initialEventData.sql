@@ -20,9 +20,9 @@ VALUES
     1000008, 1,
     null, null, 'location',
     1000004, 1,
-    1000007, 1,
-    1000005, 1, 'staffId',
     null, null,
+    null, null, null,
+    1000007, 1,
     '{"id":{"index":"3_1_1","value":"event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"end":{"index":"3_2_2","value":"2020-02-21T00:00:00.000+0900"},"location":{"index":"3_3_1","value":null},"sourceId":"20200221-1","env":null,"app":null,"wf":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"wf":{"index":"3_5_2","value":{"_value":1000007,"_ver":1}},"role":{"index":"3_5_3","value":{"_value":1000005,"_ver":1}},"staffId":{"index":"3_5_4","value":"staffId"}},"thing":[]}',
     null, false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
 ),
@@ -42,9 +42,9 @@ VALUES
     1000008, 1,
     '2020-02-20T00:00:00.000+0900', '2020-02-21 00:00:00', 'location',
     1000004, 1,
-    1000007, 1,
-    1000005, 1, 'staffId',
     null, null,
+    null, null, null,
+    1000007, 1,
     '{"id":{"index":"3_1_1","value":"event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"end":{"index":"3_2_2","value":"2020-02-21T00:00:00.000+0900"},"location":{"index":"3_3_1","value":null},"sourceId":"20200221-1","env":null,"app":null,"wf":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"wf":{"index":"3_5_2","value":{"_value":1000007,"_ver":1}},"role":{"index":"3_5_3","value":{"_value":1000005,"_ver":1}},"staffId":{"index":"3_5_4","value":"staffId"}},"thing":[]}',
     null, false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
 ),
@@ -75,7 +75,7 @@ VALUES
 	'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6', 1000008, 1,
 	'2020-01-01 00:00:00', '2030-12-31 23:59:59',
 	'a',
-	1000004, 1, 1000007, 1, 1000005, 1, 'staffId', null, null,
+	1000004, 1, null, null, null, null, null, 1000007, 1,
 	false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
 ),
 (
