@@ -83,7 +83,6 @@ components:
           type: number
           description: |
             連携状況（0: 申請中, 1: 連携中）
-            <br>【確認中】<br>
         identifyCode:
           type: string
           description: |
