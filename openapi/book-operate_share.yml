@@ -1,0 +1,624 @@
+post: 
+  tags:
+    - データ共有によるデータ取得
+  summary: 対象のデータを取得します。
+  description: |
+    ## API概要
+    データ取得条件をもとにデータ共有APIを呼び出し、データを取得します。
+    リクエストの利用者IDとログイン情報
+    
+    ### 【認可条件】
+    - アプリケーションオペレータ（カタログ定義済みのアプリケーションに割り当てられたオペレータ）であること
+      - アプリケーションオペレータは下記のAPIで追加する必要があります
+        - pxr-operator-service の [POST: /operator]APIをオペレータ種別(type=2)で実行
+  requestBody:
+    description: データ共有によるデータ取得の要求オブジェクト
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/PostShareReqDto"
+        examples:
+          "データ共有によるデータ取得（最小限の設定）_リクエスト":
+            $ref: "#/components/examples/データ共有によるデータ取得（最小限の設定）_リクエスト"
+  responses:
+    200:
+      description: データ共有によるデータ取得の結果オブジェクト
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PostShareResDto"
+          examples:
+            "データ共有によるデータ取得（最小限の設定）_レスポンス":
+              $ref: "#/components/examples/データ共有によるデータ取得（最小限の設定）_レスポンス"
+components:
+  schemas:
+    EventTemplate:
+      type: object
+      description: イベント蓄積（登録または更新）の要求オブジェクト
+      properties:
+        _code:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+        app:
+          type: object
+          description: |
+            イベント蓄積（登録または更新）を行うアプリケーションのカタログ項目コード
+          oneOf:
+            - $ref: "#/components/schemas/App"
+        code:
+          type: object
+          description: |
+            イベントのカタログ項目コード
+
+            （注意事項）
+            - code の index には 3_1_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        end:
+          type: object
+          description: |
+            イベントの終了時刻
+
+            （注意事項）
+            - end の index には 3_2_2 を設定します。
+            - end の value には以下の形式で設定する必要があります。
+              - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          properties:
+            index:
+              type: string
+            value:
+              type: string(ISO8601)
+          required:
+            - "index"
+            - "value"
+        env:
+          type: object
+          description: |
+            ※未使用のパラメータです
+
+            （注意事項）
+            - envはnullである必要があります。
+        id:
+          type: object
+          description: |
+            イベントのデータ識別子
+
+            （注意事項）
+            - イベント蓄積（登録）の場合はnullである必要があります。
+            - イベント蓄積（更新）の場合は更新対象のidを指定してください。
+            - id の index には 3_1_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        location:
+          type: object
+          description: |
+            イベントの発生位置
+
+            （注意事項）
+            - location の value には以下の GPGGA 形式で設定する必要があります。
+              - $GPGGA,m1,m2,c1,m3,c2,d1,d2,f1,f2,M,f3,M,f4,d3*cc
+            - location の index には 3_3_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        sourceId:
+          type: string
+          description: |
+            蓄積対象イベントに割り当てる識別子
+          
+            （注意事項）
+            - sourceId はイベント更新 API およびイベント削除 API で対象の指定に利用できます。
+              - pxr-book-operate-service の [PUT: /book-operate/event/:userId]API
+              - pxr-book-operate-service の [DELETE: /book-operate/event/:userId]API
+        start:
+          type: object
+          description: |
+            イベントの開始時刻
+
+            （注意事項）
+            - start の index には 3_2_1 を設定します。
+            - start の value には以下の形式で設定する必要があります。
+              - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          properties:
+            index:
+              type: string
+            value:
+              type: string(ISO8601)
+          required:
+            - "index"
+            - "value"
+        thing:
+          type: object
+          description: |
+            モノオブジェクト
+
+            ※未使用のパラメータです
+          deprecated: true
+        userId:
+          type: object
+          description: |
+            蓄積対象イベントに紐づく利用者ID
+
+            （注意事項）
+            - パラメータ userId の値と同じ値を設定する必要があります。
+            - userId の index には 3_6_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        wf:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+    DocumentTemplate:
+      type: object
+      description: イベント蓄積（登録または更新）の要求オブジェクト
+      properties:
+        app:
+          type: object
+          description: |
+            イベント蓄積（登録または更新）を行うアプリケーションのカタログ項目コード
+          oneOf:
+            - $ref: "#/components/schemas/App"
+        code:
+          type: object
+          description: |
+            ドキュメントのカタログ項目コード
+
+            （注意事項）
+            - code の index には 2_1_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        createdAt:
+          type: object
+          description: |
+            ドキュメントの作成時間
+
+            （注意事項）
+            - createdAt の index には 2_2_1 を設定します。
+            - createdAt の value は以下の形式で書く必要があります。
+              - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          properties:
+            index:
+              type: string
+            value:
+              type: string(ISO8601)
+          required:
+            - "index"
+            - "value"
+        id:
+          type: object
+          description: |
+            イベントのデータ識別子
+
+            （注意事項）
+            - ドキュメント蓄積（登録）の場合はnullである必要があります。
+            - ドキュメント蓄積（更新）の場合は更新対象のidを指定してください。
+            - id の index には 2_1_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        sourceId:
+          type: string
+          description: |
+            蓄積対象イベントに割り当てる識別子
+            
+            【確認中】
+            イベント蓄積と同様に、ドキュメント更新API及びドキュメント削除APIで対象の指定に利用する目的のものか。
+            
+            （注意事項）
+            - sourceId はイベント更新 API およびイベント削除 API で対象の指定に利用できます。
+              - pxr-book-operate-service の [PUT: /book-operate/document/:userId]API
+              - pxr-book-operate-service の [DELETE: /book-operate/document/:userId]API
+        userId:
+          type: object
+          description: |
+            蓄積対象ドキュメントに紐づく利用者ID
+
+            （注意事項）
+            - パラメータ userId の値と同じ値を設定する必要があります。
+            - userId の index には 2_4_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        wf:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+        chapter:
+          type: object
+          description: |
+            蓄積対象ドキュメントに含まれる情報をグループ化するチャプター
+          oneOf:
+            - $ref: "#/components/schemas/Chapter"
+    ThingTemplate:
+      type: object
+      description: モノ追加（登録または更新）の要求オブジェクト
+      properties:
+        _code:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+        app:
+          type: object
+          description: |
+            モノ追加（登録または更新）を行うアプリケーションのカタログ項目コード
+          oneOf:
+            - $ref: "#/components/schemas/App"
+        code:
+          type: object
+          description: |
+            モノのカタログ項目コード
+
+            （注意事項）
+            - code の index には 4_1_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        env:
+          type: object
+          description: |
+            モノの種別識別子カタログ
+            【確認中】
+
+            （注意事項）
+            - env の index には 4_3_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        id:
+          type: object
+          description: |
+            モノのデータ識別子
+
+            （注意事項）
+            - モノ蓄積（登録）の場合はnullである必要があります。
+            - モノ蓄積（更新）の場合は更新対象のidを指定してください。
+            - id の index には 4_1_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        sourceId:
+          type: string
+          description: |
+            蓄積対象イベントに割り当てる識別子
+
+            【確認中】
+            イベント蓄積と同様に、モノ更新API及びモノ削除APIで対象の指定に利用する目的のものか。
+            
+            （注意事項）
+            - sourceId はモノ更新 API およびモノ削除 API で対象の指定に利用できます。
+              - pxr-book-operate-service の [PUT: /book-operate/thing/:userId/:eventId]API
+              - pxr-book-operate-service の [DELETE: /book-operate/thing/:userId/:eventId]API
+        wf:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+        x-axis:
+          type: object
+          description: |
+            【確認中】
+
+            （注意事項）
+            - x-axis の index には 4_2_2_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        y-axis:
+          type: object
+          description: |
+            【確認中】
+
+            （注意事項）
+            - y-axis の index には 4_2_2_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        z-axis:
+          type: object
+          description: |
+            【確認中】
+
+            （注意事項）
+            - z-axis の index には 4_2_2_3 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+    App:
+      type: object
+      description: イベント蓄積（登録または更新）を行うアプリケーションのカタログ項目コード
+      properties:
+        code:
+          type: object
+          description: |
+            アプリケーションプロバイダーのカタログ項目コード
+
+            （注意事項）
+            - code の index には 2_3_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        app:
+          type: object
+          description: |
+            アプリケーションのカタログ項目コード
+
+            （注意事項）
+            - app の index には 2_3_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+    Chapter:
+      type: object
+      description: |
+        蓄積対象ドキュメントに含まれる情報をグループ化するチャプター
+        【確認中】
+      properties:
+        title:
+          type: string
+          description: |
+            ドキュメント内のチャプターのタイトル
+        event:
+          type: array
+          description: |
+            チャプターに記録されるイベントのイベント識別子の配列
+          items:
+            type: string
+            description: |
+              イベント識別子
+        sourceId:
+          type: array
+          description: |
+            チャプターに記録されるイベントのソースIDの配列
+          items:
+            type: string
+            description: |
+              ソースID
+    IndexValue:
+      type: object
+      description: |
+        CMatrix列のインデックスとその設定値
+      properties:
+        index:
+          type: string
+          description: CMatrix列のインデックス
+        value:
+          description: CMatrix列の設定値
+          oneOf:
+            - $ref: "#/components/schemas/StringValue"
+            - $ref: "#/components/schemas/CodeObject"
+    StringValue:
+      type: string
+      description: 文字列値
+    CodeObject:
+      description: カタログコード
+      type: object
+      properties:
+        _value:
+          description: カタログコード値
+          type: number
+        _ver:
+          description: カタログバージョン値
+          type: number
+      required:
+        - "_value"
+        - "_ver"
+    PostGetBookReqDto:
+      type: object
+      description: BOOK参照条件を利用してBOOKを参照するための要求オブジェクト
+      properties:
+        userId:
+          type: string
+          description: 利用者ID
+        type:
+          type: string
+          description: |
+            取得データ種別
+            
+            （注意事項）
+            取得する対象のデータ種別を指定する type 又は identifier のどちらかの指定が必須です
+          enum:
+            - document
+            - event
+            - thing
+        identifier:
+          type: array
+          description: |
+            識別子
+
+            （注意事項）
+            - 取得する対象のデータ種別を指定する type 又は identifier のどちらかの指定が必須です
+            - identifier は UUID形式で書く必要があります。
+              - uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu
+          items:
+            type: string
+        updatedAt:
+          type: object
+          description: |
+            BOOKの検索対象時間
+
+            （注意事項）
+            - updatedA の start, end は以下の形式で書く必要があります。
+              - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          properties:
+            start:
+              type: string(ISO8601)
+              description: 検索対象時間（開始）
+            end:
+              type: string(ISO8601)
+              description: 検索対象時間（終了）
+          required:
+            - start
+            - end
+        _code:
+          type: array
+          description: |
+            取得データコード
+          items:
+            $ref: "#/components/schemas/CodeObject"
+        app:
+          type: object
+          description: アプリケーションオブジェクト
+          properties:
+            _value:
+              type: integer
+              description: アプリケーションカタログコード値
+          required: 
+            - _value
+        wf:
+          type: object
+          description: ※未使用のパラメータです
+          deprecated: true
+      required:
+        - userId
+        - app
+    PostGetBookResDto:
+      type: array
+      description: BOOK参照の共通レスポンス
+      items:
+        $ref: "#/components/schemas/BookListOneOf"
+    BookListOneOf:
+      type: object
+      description: 利用者IDと期間でリクエストで指定したデータからが返却されます
+      required: false
+      oneOf:
+        - $ref: "#/components/schemas/EventTemplate"
+        - $ref: "#/components/schemas/DocumentTemplate"
+        - $ref: "#/components/schemas/ThingTemplate"
+    PostShareReqDto:
+      type: object
+      description: データ取得条件を利用してデータを取得するための要求オブジェクト
+      properties:
+        userId:
+          type: string
+          description: |
+            データに紐づく利用者ID
+        identifier:
+          type: array
+          description: |
+            識別子
+
+            （注意事項）
+            - 取得する対象のデータ種別を指定する識別子です
+            - identifier は UUID形式で書く必要があります。
+              - uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu
+          items:
+            type: string
+        updatedAt:
+          type: object
+          description: |
+            BOOKの検索対象時間
+
+            （注意事項）
+            - updatedA の start, end は以下の形式で書く必要があります。
+              - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          properties:
+            start:
+              type: string(ISO8601)
+              description: 検索対象時間（開始）
+            end:
+              type: string(ISO8601)
+              description: 検索対象時間（終了）
+          required:
+            - start
+            - end
+        document:
+          type: array
+          description: 検索対象ドキュメント
+          items:
+            $ref: "#/components/schemas/CodeObject"
+        event:
+          type: array
+          description: 検索対象イベント
+          items:
+            $ref: "#/components/schemas/CodeObject"
+        thing:
+          type: array
+          description: 検索対象モノ
+          items:
+            $ref: "#/components/schemas/CodeObject"
+      required:
+        - userId
+    PostShareResDto:
+      type: object
+      description: 取得した対象データ
+      properties:
+        document:
+          type: array
+          description: 取得したドキュメントデータ
+          items:
+            $ref: "#/components/schemas/DocumentTemplate"
+        event:
+          type: array
+          description: 取得したイベントデータ
+          items:
+            $ref: "#/components/schemas/EventTemplate"
+        thing:
+          type: array
+          description: 取得したモノデータ
+          items:
+            $ref: "#/components/schemas/ThingTemplate"
+  examples:
+    データ共有によるデータ取得（最小限の設定）_リクエスト:
+      description: |
+
+      value:
+        {
+          "userId": "useTestUser000002",
+          "identifier": [
+            "uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu"
+          ],
+          "event": [
+            {
+              "_value": 1000875,
+              "_ver": 1
+            }
+          ]
+        }
+    データ共有によるデータ取得（最小限の設定）_レスポンス:
+      description: |
+
+      value:
+        {
+          "document": null,
+          "event": [
+            {
+              "id": {
+                "index": "3_1_1",
+                "value": "uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu"
+              },
+              "code": {
+                "index": "3_1_2",
+                "value": {
+                  "_value": 1000875,
+                  "_ver": 1
+                }
+              },
+              "start": {
+                "index": "3_2_1",
+                "value": null
+              },
+              "end": {
+                "index": "3_2_2",
+                "value": null
+              },
+              "location": {
+                "index": "3_3_1",
+                "value": null
+              },
+              "sourceId": null,
+              "env": null,
+              "app": {
+                "code": {
+                  "index": "2_3_1",
+                  "value": {
+                    "_value": 1000788,
+                    "_ver": 1
+                  }
+                },
+                "app": {
+                  "index": "2_3_2",
+                  "value": {
+                    "_value": 1000800,
+                    "_ver": 1
+                  }
+                }
+              }
+            }
+          ],
+          "thing": null
+        }

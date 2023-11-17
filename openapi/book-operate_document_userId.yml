@@ -1,0 +1,224 @@
+post: 
+  tags:
+    - ドキュメント蓄積
+  summary: 蓄積対象のドキュメントを登録します。
+  description: |-
+    ## API概要
+    アプリケーションが、アプリケーション利用者に紐づくパーソナルデータ（ドキュメント）を登録します。
+        
+    ### 【認可条件】
+    - アプリケーションオペレータ（カタログ定義済みのアプリケーションに割り当てられたオペレータ）であること
+      - アプリケーションオペレータは下記のAPIで追加する必要があります
+        - pxr-operator-service の [POST: /operator]APIをオペレータ種別(type=2)で実行
+  parameters:
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: |-
+        蓄積対象のドキュメントに紐づく利用者ID
+
+        （注意事項）
+        - 指定する利用者IDは下記のAPIで利用者ID連携を実施済である必要があります。
+          - pxr-book-manage-service の [POST: /book-manage/cooperate]API
+  requestBody:
+    description: |-
+      ドキュメント蓄積（登録）の要求オブジェクト
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/DocumentTemplate"
+        examples:
+          "ドキュメント蓄積（最小限の設定）_リクエスト":
+            $ref: "#/components/examples/ドキュメント蓄積（最小限の設定）_リクエスト"
+  responses:
+    200:
+      description: ドキュメント蓄積（登録）の結果オブジェクト
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DocumentTemplate"
+          examples:
+            "ドキュメント蓄積（最小限の設定）_レスポンス":
+              $ref: "#/components/examples/ドキュメント蓄積（最小限の設定）_レスポンス"
+components:
+  schemas:
+    DocumentTemplate:
+      type: object
+      description: イベント蓄積（登録または更新）の要求オブジェクト
+      properties:
+        app:
+          type: object
+          description: |
+            イベント蓄積（登録または更新）を行うアプリケーションのカタログ項目コード
+          oneOf:
+            - $ref: "#/components/schemas/App"
+        code:
+          type: object
+          description: |
+            ドキュメントのカタログ項目コード
+
+            （注意事項）
+            - code の index には 2_1_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        createdAt:
+          type: object
+          description: |
+            ドキュメントの作成時間
+
+            （注意事項）
+            - createdAt の index には 2_2_1 を設定します。
+            - createdAt の value は以下の形式で書く必要があります。
+              - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          properties:
+            index:
+              type: string
+            value:
+              type: string(ISO8601)
+          required:
+            - "index"
+            - "value"
+        id:
+          type: object
+          description: |
+            イベントのデータ識別子
+
+            （注意事項）
+            - ドキュメント蓄積（登録）の場合はnullである必要があります。
+            - ドキュメント蓄積（更新）の場合は更新対象のidを指定してください。
+            - id の index には 2_1_1 を設定します。
+          properties:
+            index:
+              type: string
+            value:
+              type: string
+          required:
+            - index
+            - value
+        sourceId:
+          type: string
+          description: |
+            蓄積対象イベントに割り当てる識別子
+            
+            【確認中】
+            イベント蓄積と同様に、ドキュメント更新API及びドキュメント削除APIで対象の指定に利用する目的のものか。
+            
+            （注意事項）
+            - sourceId はイベント更新 API およびイベント削除 API で対象の指定に利用できます。
+              - pxr-book-operate-service の [PUT: /book-operate/document/:userId]API
+              - pxr-book-operate-service の [DELETE: /book-operate/document/:userId]API
+        userId:
+          type: object
+          description: |
+            蓄積対象ドキュメントに紐づく利用者ID
+
+            （注意事項）
+            - パラメータ userId の値と同じ値を設定する必要があります。
+            - userId の index には 2_4_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        wf:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+        chapter:
+          type: object
+          description: |
+            蓄積対象ドキュメントに含むチャプター
+          oneOf:
+            - $ref: "#/components/schemas/Chapter"
+      required:
+        - "app"
+        - "code"
+        - "id"
+        - "userId"
+        - "sourceId"
+        - "createdAt"
+    App:
+      type: object
+      description: イベント蓄積（登録または更新）を行うアプリケーションのカタログ項目コード
+      properties:
+        code:
+          type: object
+          description: |
+            アプリケーションプロバイダーのカタログ項目コード
+
+            （注意事項）
+            - code の index には 2_3_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        app:
+          type: object
+          description: |
+            アプリケーションのカタログ項目コード
+
+            （注意事項）
+            - app の index には 2_3_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+    Chapter:
+      type: object
+      description: |
+        蓄積対象ドキュメントに含む情報をグループ化するためチャプターオブジェクト
+        個々の情報をグループ化することで、個人が理解しやすくする用途で設定します。
+      properties:
+        title:
+          type: string
+          description: ドキュメント内のチャプターのタイトル
+        event:
+          type: array
+          description: チャプターに記録されるイベントのイベント識別子の配列
+          items:
+            type: string
+        sourceId:
+          type: array
+          description: チャプターに記録されるイベントのソースIDの配列
+          items:
+            type: string
+    IndexValue:
+      type: object
+      description: |
+        CMatrix列のインデックスとその設定値
+      properties:
+        index:
+          type: string
+          description: CMatrix列のインデックス
+        value:
+          description: CMatrix列の設定値
+          oneOf:
+            - $ref: "#/components/schemas/StringValue"
+            - $ref: "#/components/schemas/CodeObject"
+    StringValue:
+      type: string
+      description: 文字列値
+    CodeObject:
+      description: カタログコード
+      type: object
+      properties:
+        _value:
+          description: カタログコード値
+          type: number
+        _ver:
+          description: カタログバージョン値
+          type: number
+      required:
+        - "_value"
+        - "_ver"
+  examples:
+    ドキュメント蓄積（最小限の設定）_リクエスト:
+      description: |
+
+      value:
+    ドキュメント蓄積（最小限の設定）_レスポンス:
+      description: |
+
+      value:
+
+
+
+
+      
