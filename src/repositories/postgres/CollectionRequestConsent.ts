@@ -19,37 +19,37 @@ export default class CollectionRequestConsent {
      * データ提供契約収集依頼ID
      */
     @Column({ type: 'bigint', nullable: false, name: 'collection_request_id' })
-    collectionRequestId: number;
+        collectionRequestId: number;
 
     /**
      * ステータス
      */
     @Column({ type: 'smallint', nullable: false, default: 0, name: 'status' })
-    status: number = 0;
+        status: number = 0;
 
     /**
      * 利用者ID
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'user_id' })
-    userId: string;
+        userId: string;
 
     /**
      * マスクID
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'mask_id' })
-    maskId: string;
+        maskId: string;
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -61,7 +61,7 @@ export default class CollectionRequestConsent {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

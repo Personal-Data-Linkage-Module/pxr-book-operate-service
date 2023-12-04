@@ -20,73 +20,73 @@ export default class ShareAccessLog {
      * My-Condition-Book_ID
      */
     @Column({ type: 'bigint', nullable: false, name: 'my_condition_book_id' })
-    myConditionBookId: number = 0;
+        myConditionBookId: number = 0;
 
     /**
      * 共有ログ識別子
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'log_identifier' })
-    logIdentifier: string = '';
+        logIdentifier: string = '';
 
     /**
      * ユーザ名
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'user_name' })
-    userName: string = '';
+        userName: string = '';
 
     /**
      * データ共有タイプ
      */
     @Column({ type: 'smallint', nullable: false, default: false, name: 'data_type' })
-    dataType: number = 0;
+        dataType: number = 0;
 
     /**
      * 状態共有機能カタログコード
      */
     @Column({ type: 'bigint', default: false, name: 'share_catalog_code' })
-    shareCatalogCode: number = 0;
+        shareCatalogCode: number = 0;
 
     /**
      * 要求アクターカタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'req_actor_catalog_code' })
-    reqActorCatalogCode: number = 0;
+        reqActorCatalogCode: number = 0;
 
     /**
      * 要求アクターカタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'req_actor_catalog_version' })
-    reqActorCatalogVersion: number = 0;
+        reqActorCatalogVersion: number = 0;
 
     /**
      * 要求ブロックカタログコード
      */
     @Column({ type: 'bigint', name: 'req_block_catalog_code' })
-    reqBlockCatalogCode: number = 0;
+        reqBlockCatalogCode: number = 0;
 
     /**
      * 要求ブロックカタログバージョン
      */
     @Column({ type: 'bigint', name: 'req_block_catalog_version' })
-    reqBlockCatalogVersion: number = 0;
+        reqBlockCatalogVersion: number = 0;
 
     /**
      * アクセス日時
      */
     @CreateDateColumn({ type: 'timestamp without time zone', name: 'access_at' })
-    accessAt: Date = new Date();
+        accessAt: Date = new Date();
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -98,7 +98,7 @@ export default class ShareAccessLog {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時
@@ -109,7 +109,7 @@ export default class ShareAccessLog {
     /** 行列ハッシュテーブルのレコード */
     @OneToMany(type => ShareAccessLogDataType, shareAccessLogDataType => shareAccessLogDataType.shareAccessLog)
     @JoinColumn({ name: 'id', referencedColumnName: 'shareAccessLogId' })
-    dataTypes: ShareAccessLogDataType[];
+        dataTypes: ShareAccessLogDataType[];
 
     /**
      * コンストラクタ

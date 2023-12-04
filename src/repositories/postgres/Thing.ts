@@ -19,109 +19,109 @@ export default class Thing {
      * イベントID
      */
     @Column({ type: 'bigint', nullable: false, name: 'event_id' })
-    eventId: number = 0;
+        eventId: number = 0;
 
     /**
      * ソースID
      */
     @Column({ type: 'varchar', length: 255, name: 'source_id' })
-    sourceId: string = '';
+        sourceId: string = '';
 
     /**
      * モノ識別子
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'thing_identifier' })
-    thingIdentifier: string = '';
+        thingIdentifier: string = '';
 
     /**
      * モノ種別カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'thing_catalog_code' })
-    thingCatalogCode: number = 0;
+        thingCatalogCode: number = 0;
 
     /**
      * モノ種別カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'thing_catalog_version' })
-    thingCatalogVersion: number = 0;
+        thingCatalogVersion: number = 0;
 
     /**
      * モノを発生させたアクター識別子カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'thing_actor_code' })
-    thingActorCode: number = 0;
+        thingActorCode: number = 0;
 
     /**
      * モノを発生させたアクター識別子カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'thing_actor_version' })
-    thingActorVersion: number = 0;
+        thingActorVersion: number = 0;
 
     /**
      * ワークフロー識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'wf_catalog_code' })
-    wfCatalogCode: number = 0;
+        wfCatalogCode: number = 0;
 
     /**
      * ワークフロー識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'wf_catalog_version' })
-    wfCatalogVersion: number = 0;
+        wfCatalogVersion: number = 0;
 
     /**
      * ワークフローロール識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'wf_role_code' })
-    wfRoleCode: number = 0;
+        wfRoleCode: number = 0;
 
     /**
      * ワークフローロール識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'wf_role_version' })
-    wfRoleVersion: number = 0;
+        wfRoleVersion: number = 0;
 
     /**
      * ワークフロー職員識別子
      */
     @Column({ type: 'varchar', length: 255, name: 'wf_staff_identifier' })
-    wfStaffIdentifier: string = '';
+        wfStaffIdentifier: string = '';
 
     /**
      * アプリケーション識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'app_catalog_code' })
-    appCatalogCode: number = 0;
+        appCatalogCode: number = 0;
 
     /**
      * アプリケーション識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'app_catalog_version' })
-    appCatalogVersion: number = 0;
+        appCatalogVersion: number = 0;
 
     /**
      * テンプレート
      */
     @Column({ type: 'text' })
-    template: string = '';
+        template: string = '';
 
     /**
      * 属性
      */
     @Column({ type: 'text' })
-    attributes: string = '';
+        attributes: string = '';
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -133,7 +133,7 @@ export default class Thing {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

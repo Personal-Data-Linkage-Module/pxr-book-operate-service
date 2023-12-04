@@ -19,37 +19,37 @@ export default class EventSetEventRelation {
      * イベントセットID
      */
     @Column({ type: 'bigint', nullable: false, name: 'event_set_id' })
-    eventSetId: number = 0;
+        eventSetId: number = 0;
 
     /**
      * イベントID
      */
     @Column({ type: 'bigint', nullable: false, name: 'event_id' })
-    eventId: number = 0;
+        eventId: number = 0;
 
     /**
      * 登録時ソースID
      */
     @Column({ type: 'varchar', length: 255, name: 'source_id_at_created' })
-    sourceIdAtCreated: string = null;
+        sourceIdAtCreated: string = null;
 
     /**
      * 属性
      */
     @Column({ type: 'text' })
-    attributes: string = '';
+        attributes: string = '';
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -61,7 +61,7 @@ export default class EventSetEventRelation {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

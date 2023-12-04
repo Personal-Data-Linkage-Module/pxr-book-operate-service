@@ -19,67 +19,67 @@ export default class ShareStatus {
      * 利用者ID
      */
     @Column({ type: 'varchar', length: 255, name: 'user_id' })
-    userId: string = '';
+        userId: string = '';
 
     /**
      * 共有トリガーカタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_trigger_code' })
-    shareTriggerCode: number = 0;
+        shareTriggerCode: number = 0;
 
     /**
      * 共有トリガーカタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_trigger_version' })
-    shareTriggerVersion: number = 0;
+        shareTriggerVersion: number = 0;
 
     /**
      * 共有定義カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_code' })
-    shareCode: number = 0;
+        shareCode: number = 0;
 
     /**
      * 共有定義カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_version' })
-    shareVersion: number = 0;
+        shareVersion: number = 0;
 
     /**
      * 共有終了方法
      */
     @Column({ type: 'bigint', nullable: false, name: 'end_method' })
-    endMethod: number = 0;
+        endMethod: number = 0;
 
     /**
      * 共有開始日時
      */
     @CreateDateColumn({ type: 'timestamp without time zone', nullable: true, name: 'start_datetime' })
-    startDatetime: Date = null;
+        startDatetime: Date = null;
 
     /**
      * 共有終了日時
      */
     @CreateDateColumn({ type: 'timestamp without time zone', nullable: true, name: 'end_datetime' })
-    endDatetime: Date = null;
+        endDatetime: Date = null;
 
     /**
      * 共有状態
      */
     @Column({ type: 'smallint', nullable: false, name: 'status' })
-    status: number = 0;
+        status: number = 0;
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -91,7 +91,7 @@ export default class ShareStatus {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

@@ -372,7 +372,7 @@ export default class EventService {
                 if (!checkList.includes(indexKey) && indexKey.indexOf('3_') === 0) {
                     property3.push({
                         index: indexKey,
-                        value: value
+                        value
                     });
                 }
             }

@@ -43,7 +43,7 @@ class StubOperatorServer {
             res.json({
                 sessionId: 'sessionId',
                 operatorId: 1,
-                type: type,
+                type,
                 loginId: 'loginid',
                 name: 'test-user',
                 mobilePhone: '0311112222',
@@ -75,7 +75,7 @@ class StubOperatorServer {
         });
         this._app.get('/operator/user/info', (req, res) => {
             if (status !== 200) {
-                res.status(status).json({ status: status, message: 'テストエラー' }).end();
+                res.status(status).json({ status, message: 'テストエラー' }).end();
             } else {
                 res.status(status).json({
                     userId: req.query.userId,

@@ -23,121 +23,121 @@ export default class CmatrixEvent {
      * 個人識別子
      */
     @Column({ type: 'varchar', length: 255, name: '1_1' })
-    personIdentifier: string = '';
+        personIdentifier: string = '';
 
     /**
      * 生年月日
      */
     @Column({ type: 'timestamp without time zone', name: '1_2' })
-    birthAt: Date = new Date();
+        birthAt: Date = new Date();
 
     /**
      * 性別
      */
     @Column({ type: 'bigint', nullable: false, name: '1_3' })
-    sex: number = 0;
+        sex: number = 0;
 
     /**
      * イベント識別子
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: '3_1_1' })
-    eventIdentifier: string = '';
+        eventIdentifier: string = '';
 
     /**
      * イベント種別カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: '3_1_2_1' })
-    eventCatalogCode: number = 0;
+        eventCatalogCode: number = 0;
 
     /**
      * イベント種別カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: '3_1_2_2' })
-    eventCatalogVersion: number = 0;
+        eventCatalogVersion: number = 0;
 
     /**
      * イベント開始時間
      */
     @Column({ type: 'timestamp without time zone', name: '3_2_1' })
-    eventStartAt: Date = new Date();
+        eventStartAt: Date = new Date();
 
     /**
      * イベント終了時間
      */
     @Column({ type: 'timestamp without time zone', name: '3_2_2' })
-    eventEndAt: Date = new Date();
+        eventEndAt: Date = new Date();
 
     /**
      * イベント発生位置
      */
     @Column({ type: 'varchar', length: 255, name: '3_3_1' })
-    eventOutbreakPosition: string = '';
+        eventOutbreakPosition: string = '';
 
     /**
      * イベントを発生させたアクター識別子カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: '3_5_1_1' })
-    eventActorCode: number = 0;
+        eventActorCode: number = 0;
 
     /**
      * イベントを発生させたアクター識別子カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: '3_5_1_2' })
-    eventActorVersion: number = 0;
+        eventActorVersion: number = 0;
 
     /**
      * ワークフロー識別子カタログコード
      */
     @Column({ type: 'bigint', name: '3_5_2_1' })
-    eventWfCatalogCode: number = 0;
+        eventWfCatalogCode: number = 0;
 
     /**
      * ワークフロー識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '3_5_2_2' })
-    eventWfCatalogVersion: number = 0;
+        eventWfCatalogVersion: number = 0;
 
     /**
      * ワークフローロール識別子カタログコード
      */
     @Column({ type: 'bigint', name: '3_5_3_1' })
-    eventWfRoleCode: number = 0;
+        eventWfRoleCode: number = 0;
 
     /**
      * ワークフローロール識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '3_5_3_2' })
-    eventWfRoleVersion: number = 0;
+        eventWfRoleVersion: number = 0;
 
     /**
      * ワークフロー職員識別子
      */
     @Column({ type: 'varchar', length: 255, name: '3_5_4' })
-    eventWfStaffIdentifier: string = '';
+        eventWfStaffIdentifier: string = '';
 
     /**
      * アプリケーション識別子カタログコード
      */
     @Column({ type: 'bigint', name: '3_5_5_1' })
-    eventAppCatalogCode: number = 0;
+        eventAppCatalogCode: number = 0;
 
     /**
      * アプリケーション識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '3_5_5_2' })
-    eventAppCatalogVersion: number = 0;
+        eventAppCatalogVersion: number = 0;
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -149,7 +149,7 @@ export default class CmatrixEvent {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

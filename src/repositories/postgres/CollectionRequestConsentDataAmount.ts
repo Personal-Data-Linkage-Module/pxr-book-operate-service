@@ -19,49 +19,49 @@ export default class CollectionRequestConsentDataAmount {
      * データ提供契約収集依頼同意ID
      */
     @Column({ type: 'bigint', nullable: false, name: 'collection_request_consent_id' })
-    collectionRequestConsentId: number;
+        collectionRequestConsentId: number;
 
     /**
      * イベントコード
      */
     @Column({ type: 'bigint', name: 'event_code' })
-    eventCode: number;
+        eventCode: number;
 
     /**
      * イベントバージョン
      */
     @Column({ type: 'bigint', name: 'event_version' })
-    eventVersion: number;
+        eventVersion: number;
 
     /**
      * モノコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'thing_code' })
-    thingCode: number;
+        thingCode: number;
 
     /**
      * モノバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'thing_version' })
-    thingVersion: number;
+        thingVersion: number;
 
     /**
      * 件数
      */
     @Column({ type: 'bigint', nullable: false, name: 'amount' })
-    amount: number;
+        amount: number;
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -73,7 +73,7 @@ export default class CollectionRequestConsentDataAmount {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

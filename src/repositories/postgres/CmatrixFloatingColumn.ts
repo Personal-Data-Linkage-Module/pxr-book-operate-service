@@ -19,31 +19,31 @@ export default class CmatrixFloatingColumn {
      * CMatrixモノID
      */
     @Column({ type: 'bigint', nullable: false, name: 'cmatrix_thing_id' })
-    cmatrixThingId: number = 0;
+        cmatrixThingId: number = 0;
 
     /**
      * インデックス
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'index_key' })
-    indexKey: string = '';
+        indexKey: string = '';
 
     /**
      * 値
      */
     @Column({ type: 'varchar', length: 255, nullable: true, name: 'value' })
-    value: string = '';
+        value: string = '';
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -55,7 +55,7 @@ export default class CmatrixFloatingColumn {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時
