@@ -144,7 +144,7 @@ describe('book-operate API', () => {
                         userId: 'test_user2',
                         updatedAt: {
                             start: '2020-01-01T00:00:00.000+0900',
-                            end: '2023-01-01T00:00:00.000+0900'
+                            end: '2500-01-01T00:00:00.000+0900'
                         },
                         identifier: [
                             'doc-4f75161a-449a-4839-be6a-4cc577b8a8d0',
