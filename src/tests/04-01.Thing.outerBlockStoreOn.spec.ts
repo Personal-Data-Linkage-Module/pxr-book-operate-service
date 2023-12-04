@@ -7533,7 +7533,7 @@ describe('book-operate API', () => {
         test('異常：Cookie使用、オペレータサービス応答400系', async () => {
             // スタブサーバー起動
             _catalogServer = new StubCatalogServer(3001, 1000005, 200);
-            _operatorServer = new StubOperatorServer(44, 1);
+            _operatorServer = new StubOperatorServer(404, 1);
 
             // 送信データを生成
             const url = urljoin(Url.thingURI, 'test_user_id2', 'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6', thingIdentifer2);
