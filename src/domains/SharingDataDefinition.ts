@@ -10,7 +10,7 @@ import { CodeVersionObject } from '../resources/dto/PostShareReqDto';
 /* eslint-enable */
 
 export class CodeObject {
-    @Transform(transformToNumber)
+    @Transform(({ value }) => { return transformToNumber(value); })
     @IsNumber()
     @IsNotEmpty()
     @IsDefined()
