@@ -9496,7 +9496,7 @@ export default class StubCatalogServer {
 
         // ハンドラーのイベントリスナーを追加、アプリケーションの起動
         this._app = express();
-        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.json() as express.RequestHandler);
         this._app.post('/catalog', _listener4);
         this._app.get('/catalog/', _listener3);
         this._app.get('/catalog/name', _listener2);
@@ -9866,7 +9866,7 @@ export class StubCatalogServerForContract {
         };
 
         // ハンドラーのイベントリスナーを追加、アプリケーションの起動
-        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.json() as express.RequestHandler);
         this._app.get('/catalog/:code/:version', _listener);
         this._app.get('/catalog/:code', _listener);
         this._app.post('/catalog', _listener2);

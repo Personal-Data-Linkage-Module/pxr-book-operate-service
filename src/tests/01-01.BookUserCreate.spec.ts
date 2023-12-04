@@ -33,8 +33,8 @@ class StubOperatorServer {
 
     constructor (status: number, type: number) {
         this._app = express();
-        this._app.use(bodyParser.json({ limit: '100mb' }));
-        this._app.use(bodyParser.urlencoded({ extended: false }));
+        this._app.use(bodyParser.json({ limit: '100mb' }) as express.RequestHandler);
+        this._app.use(bodyParser.urlencoded({ extended: false }) as express.RequestHandler);
         this._app.use(cookieParser());
 
         // イベントハンドラー

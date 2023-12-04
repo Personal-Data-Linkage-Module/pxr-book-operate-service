@@ -16,6 +16,7 @@ https://opensource.org/licenses/mit-license.php
 import 'reflect-metadata';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import { RequestHandler } from 'express';
 import * as helmet from 'helmet';
 import { useExpressServer, useContainer } from 'routing-controllers';
 import { Container } from 'typedi';
@@ -47,8 +48,8 @@ export class ExpressConfig {
         // SDE-MSA-PRIN 監視に優しい設計にする （MSA-PRIN-CD-04）
         setupHealthCheck(this.app);
 
-        this.app.use(bodyParser.json({ limit: '100mb' }));
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(bodyParser.json({ limit: '100mb' }) as RequestHandler);
+        this.app.use(bodyParser.urlencoded({ extended: false }) as RequestHandler);
         this.app.use(cookieParser());
 
         /**
