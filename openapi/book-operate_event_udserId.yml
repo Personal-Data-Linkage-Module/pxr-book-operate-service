@@ -127,6 +127,7 @@ components:
             蓄積対象イベントに割り当てる識別子
           
             （注意事項）
+            - sourceId は必須パラメータなので使わない場合はnull指定してください。
             - sourceId はイベント更新 API およびイベント削除 API で対象の指定に利用できます。
               - pxr-book-operate-service の [PUT: /book-operate/event/:userId]API
               - pxr-book-operate-service の [DELETE: /book-operate/event/:userId]API
