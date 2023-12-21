@@ -310,7 +310,7 @@ export default class ThingService {
                     if (!checkList.includes(indexKey) && indexKey.indexOf('4_') === 0) {
                         property.push({
                             index: indexKey,
-                            value: value
+                            value
                         });
                     }
                 } else {
@@ -318,7 +318,7 @@ export default class ThingService {
                     if (!checkList.includes(indexKey)) {
                         property.push({
                             index: indexKey,
-                            value: value
+                            value
                         });
                     }
                 }
@@ -655,7 +655,7 @@ export default class ThingService {
         }
 
         return {
-            template: template,
+            template,
             cmatrixEvent: cmatrixEventEntity,
             cmatrixThing: cmatrixThingEntity
         };

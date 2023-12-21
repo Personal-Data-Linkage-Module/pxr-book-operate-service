@@ -217,49 +217,53 @@ export default class BookService {
                 value: dto.docCreateAt ? moment(dto.docCreateAt).tz(config['timezone']).format(DateTimeFormatString) : null
             },
             sourceId: dto.sourceId ? dto.sourceId : null,
-            app: dto.appCatalogCode ? {
-                code: {
-                    index: '2_3_1',
-                    value: {
-                        _value: dto.docActorCode ? Number(dto.docActorCode) : null,
-                        _ver: dto.docActorVersion ? Number(dto.docActorVersion) : null
-                    }
-                },
-                app: {
-                    index: '2_3_5',
-                    value: {
-                        _value: dto.appCatalogCode ? Number(dto.appCatalogCode) : null,
-                        _ver: dto.appCatalogVersion ? Number(dto.appCatalogVersion) : null
+            app: dto.appCatalogCode
+                ? {
+                    code: {
+                        index: '2_3_1',
+                        value: {
+                            _value: dto.docActorCode ? Number(dto.docActorCode) : null,
+                            _ver: dto.docActorVersion ? Number(dto.docActorVersion) : null
+                        }
+                    },
+                    app: {
+                        index: '2_3_5',
+                        value: {
+                            _value: dto.appCatalogCode ? Number(dto.appCatalogCode) : null,
+                            _ver: dto.appCatalogVersion ? Number(dto.appCatalogVersion) : null
+                        }
                     }
                 }
-            } : null,
-            wf: dto.wfCatalogCode ? {
-                code: {
-                    index: '2_3_1',
-                    value: {
-                        _value: null,
-                        _ver: null
+                : null,
+            wf: dto.wfCatalogCode
+                ? {
+                    code: {
+                        index: '2_3_1',
+                        value: {
+                            _value: null,
+                            _ver: null
+                        }
+                    },
+                    wf: {
+                        index: '2_3_2',
+                        value: {
+                            _value: null,
+                            _ver: null
+                        }
+                    },
+                    role: {
+                        index: '2_3_3',
+                        value: {
+                            _value: null,
+                            _ver: null
+                        }
+                    },
+                    staffId: {
+                        index: '2_3_4',
+                        value: null
                     }
-                },
-                wf: {
-                    index: '2_3_2',
-                    value: {
-                        _value: null,
-                        _ver: null
-                    }
-                },
-                role: {
-                    index: '2_3_3',
-                    value: {
-                        _value: null,
-                        _ver: null
-                    }
-                },
-                staffId: {
-                    index: '2_3_4',
-                    value: null
                 }
-            } : null,
+                : null,
             chapter: chapterList.length > 0 ? chapterList : null
         };
     }
@@ -296,45 +300,49 @@ export default class BookService {
             },
             sourceId: dto.sourceId ? dto.sourceId : null,
             env: template && template['env'] ? template['env'] : null,
-            app: dto.appCatalogCode ? {
-                code: {
-                    index: '3_5_1',
-                    value: {
-                        _value: dto.eventActorCode ? Number(dto.eventActorCode) : null,
-                        _ver: dto.eventActorVersion ? Number(dto.eventActorVersion) : null
-                    }
-                },
-                app: {
-                    index: '3_5_5',
-                    value: {
-                        _value: dto.appCatalogCode ? Number(dto.appCatalogCode) : null,
-                        _ver: dto.appCatalogVersion ? Number(dto.appCatalogVersion) : null
-                    }
-                }
-            } : null,
-            wf: dto.wfCatalogCode ? {
-                code: {
-                    index: '3_5_1',
-                    value: {
-                        _value: null,
-                        _ver: null
-                    }
-                },
-                wf: {
-                    index: '3_5_2',
-                    value: {
-                        _value: null,
-                        _ver: null
-                    }
-                },
-                role: {
-                    index: '3_5_3',
-                    value: {
-                        _value: null,
-                        _ver: null
+            app: dto.appCatalogCode
+                ? {
+                    code: {
+                        index: '3_5_1',
+                        value: {
+                            _value: dto.eventActorCode ? Number(dto.eventActorCode) : null,
+                            _ver: dto.eventActorVersion ? Number(dto.eventActorVersion) : null
+                        }
+                    },
+                    app: {
+                        index: '3_5_5',
+                        value: {
+                            _value: dto.appCatalogCode ? Number(dto.appCatalogCode) : null,
+                            _ver: dto.appCatalogVersion ? Number(dto.appCatalogVersion) : null
+                        }
                     }
                 }
-            } : null
+                : null,
+            wf: dto.wfCatalogCode
+                ? {
+                    code: {
+                        index: '3_5_1',
+                        value: {
+                            _value: null,
+                            _ver: null
+                        }
+                    },
+                    wf: {
+                        index: '3_5_2',
+                        value: {
+                            _value: null,
+                            _ver: null
+                        }
+                    },
+                    role: {
+                        index: '3_5_3',
+                        value: {
+                            _value: null,
+                            _ver: null
+                        }
+                    }
+                }
+                : null
         };
     }
 

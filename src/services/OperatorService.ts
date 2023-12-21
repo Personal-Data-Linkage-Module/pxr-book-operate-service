@@ -41,7 +41,7 @@ export default class OperatorService {
                 : cookies[OperatorDomain.TYPE_MANAGER_KEY];
         // Cookieからセッションキーが取得できた場合、オペレーターサービスに問い合わせる
         if (typeof sessionId === 'string' && sessionId.length > 0) {
-            const data = JSON.stringify({ sessionId: sessionId });
+            const data = JSON.stringify({ sessionId });
             const options: request.CoreOptions = {
                 headers: {
                     accept: 'application/json',
@@ -148,11 +148,11 @@ export default class OperatorService {
                 operator,
                 'post',
                 JSON.stringify({
-                    userId: userId,
+                    userId,
                     wfCode: null,
-                    appCode: appCode,
-                    regionCode: regionCode,
-                    userInfo: userInfo
+                    appCode,
+                    regionCode,
+                    userInfo
                 })
             );
         }
@@ -247,8 +247,10 @@ export default class OperatorService {
         }
         try {
             // リクエストを実行
-            const result = method === 'post' ? await doPostRequest(url, options)
-                : method === 'get' ? await doGetRequest(url, options)
+            const result = method === 'post'
+                ? await doPostRequest(url, options)
+                : method === 'get'
+                    ? await doGetRequest(url, options)
                     : await doDeleteRequest(url, options);
 
             // レスポンスコードが200以外の場合

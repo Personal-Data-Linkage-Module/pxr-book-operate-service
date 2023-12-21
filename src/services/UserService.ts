@@ -415,18 +415,24 @@ export default class UserService {
                 );
                 jsonData = {
                     status: bookManageResult.status,
-                    app: bookManageResult.appCode ? {
-                        _value: bookManageResult.appCode,
-                        _ver: bookManageResult.appVersion
-                    } : null,
-                    wf: bookManageResult.wfCode ? {
-                        _value: bookManageResult.wfCode,
-                        _ver: bookManageResult.wfVersion
-                    } : null,
-                    region: bookManageResult.regionCode ? {
-                        _value: bookManageResult.regionCode,
-                        _ver: bookManageResult.regionVersion
-                    } : null,
+                    app: bookManageResult.appCode
+                        ? {
+                            _value: bookManageResult.appCode,
+                            _ver: bookManageResult.appVersion
+                        }
+                        : null,
+                    wf: bookManageResult.wfCode
+                        ? {
+                            _value: bookManageResult.wfCode,
+                            _ver: bookManageResult.wfVersion
+                        }
+                        : null,
+                    region: bookManageResult.regionCode
+                        ? {
+                            _value: bookManageResult.regionCode,
+                            _ver: bookManageResult.regionVersion
+                        }
+                        : null,
                     userId: bookManageResult.userId,
                     establishAt: transformFromDateTimeToString(config['timezone'], bookManageResult.openStartAt),
                     attribute: bookManageResult.attribute ? bookManageResult.attribute : {},
@@ -435,7 +441,7 @@ export default class UserService {
                         event: bookManageResult.event,
                         thing: bookManageResult.thing
                     },
-                    userInformation: userInformation
+                    userInformation
                 };
             }
             response.push(jsonData);
