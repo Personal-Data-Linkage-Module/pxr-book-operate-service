@@ -113,17 +113,23 @@ export default class BookOperateServiceDto {
             userId: this.userId,
             type: this.type,
             identifier: this.identifier && this.identifier.length > 0 ? this.identifier : null,
-            updatedAt: this.updatedAt ? {
-                start: this.updatedAt.start ? moment(this.updatedAt.start).tz(configure['timezone']).format('YYYY-MM-DDTHH:mm:ss.SSSZZ') : null,
-                end: this.updatedAt.end ? moment(this.updatedAt.end).tz(configure['timezone']).format('YYYY-MM-DDTHH:mm:ss.SSSZZ') : null
-            } : null,
+            updatedAt: this.updatedAt
+                ? {
+                    start: this.updatedAt.start ? moment(this.updatedAt.start).tz(configure['timezone']).format('YYYY-MM-DDTHH:mm:ss.SSSZZ') : null,
+                    end: this.updatedAt.end ? moment(this.updatedAt.end).tz(configure['timezone']).format('YYYY-MM-DDTHH:mm:ss.SSSZZ') : null
+                }
+                : null,
             _code: codeList.length > 0 ? codeList : null,
-            app: this.app ? {
-                _value: this.app._value
-            } : null,
-            wf: this.wf ? {
-                _value: this.wf._value
-            } : null,
+            app: this.app
+                ? {
+                    _value: this.app._value
+                }
+                : null,
+            wf: this.wf
+                ? {
+                    _value: this.wf._value
+                }
+                : null,
             document: document.length > 0 ? document : null,
             event: event.length > 0 ? event : null,
             thing: thing.length > 0 ? thing : null
