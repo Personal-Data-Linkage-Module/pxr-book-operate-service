@@ -19,103 +19,103 @@ export default class CmatrixThing {
      * CMatrixイベントID
      */
     @Column({ type: 'bigint', nullable: false, name: 'cmatrix_event_id' })
-    cmatrixEventId: number = 0;
+        cmatrixEventId: number = 0;
 
     /**
      * モノ識別子
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: '4_1_1' })
-    thingIdentifier: string = '';
+        thingIdentifier: string = '';
 
     /**
      * モノ識別子カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: '4_1_2_1' })
-    thingCatalogCode: number = 0;
+        thingCatalogCode: number = 0;
 
     /**
      * モノ識別子カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: '4_1_2_2' })
-    thingCatalogVersion: number = 0;
+        thingCatalogVersion: number = 0;
 
     /**
      * モノを発生させたアクター識別子カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: '4_4_1_1' })
-    thingActorCode: number = 0;
+        thingActorCode: number = 0;
 
     /**
      * モノを発生させたアクター識別子カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: '4_4_1_2' })
-    thingActorVersion: number = 0;
+        thingActorVersion: number = 0;
 
     /**
      * ワークフロー識別子カタログコード
      */
     @Column({ type: 'bigint', name: '4_4_2_1' })
-    thingWfCatalogCode: number = 0;
+        thingWfCatalogCode: number = 0;
 
     /**
      * ワークフロー識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '4_4_2_2' })
-    thingWfCatalogVersion: number = 0;
+        thingWfCatalogVersion: number = 0;
 
     /**
      * ワークフローロール識別子カタログコード
      */
     @Column({ type: 'bigint', name: '4_4_3_1' })
-    thingWfRoleCode: number = 0;
+        thingWfRoleCode: number = 0;
 
     /**
      * ワークフローロール識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '4_4_3_2' })
-    thingWfRoleVersion: number = 0;
+        thingWfRoleVersion: number = 0;
 
     /**
      * ワークフロー職員識別子
      */
     @Column({ type: 'varchar', length: 255, name: '4_4_4' })
-    thingWfStaffIdentifier: string = '';
+        thingWfStaffIdentifier: string = '';
 
     /**
      * アプリケーション識別子カタログコード
      */
     @Column({ type: 'bigint', name: '4_4_5_1' })
-    thingAppCatalogCode: number = 0;
+        thingAppCatalogCode: number = 0;
 
     /**
      * アプリケーション識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '4_4_5_2' })
-    thingAppCatalogVersion: number = 0;
+        thingAppCatalogVersion: number = 0;
 
     /**
      * 行ハッシュ
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'row_hash' })
-    rowHash: string = '';
+        rowHash: string = '';
 
     /**
      * 行ハッシュ生成時間
      */
     @Column({ type: 'timestamp without time zone', nullable: false, name: 'row_hash_create_at' })
-    rowHashCreateAt: Date = new Date();
+        rowHashCreateAt: Date = new Date();
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -127,7 +127,7 @@ export default class CmatrixThing {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

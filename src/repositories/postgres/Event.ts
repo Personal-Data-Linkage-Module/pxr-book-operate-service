@@ -19,127 +19,127 @@ export default class Event {
      * my-condition-bookID
      */
     @Column({ type: 'bigint', nullable: false, name: 'my_condition_book_id' })
-    myConditionBookId: number = 0;
+        myConditionBookId: number = 0;
 
     /**
      * ソースID
      */
     @Column({ type: 'varchar', length: 255, name: 'source_id' })
-    sourceId: string = '';
+        sourceId: string = '';
 
     /**
      * イベント識別子
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'event_identifier' })
-    eventIdentifier: string = '';
+        eventIdentifier: string = '';
 
     /**
      * イベント種別カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'event_catalog_code' })
-    eventCatalogCode: number = 0;
+        eventCatalogCode: number = 0;
 
     /**
      * イベント種別カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'event_catalog_version' })
-    eventCatalogVersion: number = 0;
+        eventCatalogVersion: number = 0;
 
     /**
      * イベント開始時間
      */
     @CreateDateColumn({ type: 'timestamp without time zone', name: 'event_start_at' })
-    eventStartAt: Date = new Date();
+        eventStartAt: Date = new Date();
 
     /**
      * イベント終了時間
      */
     @CreateDateColumn({ type: 'timestamp without time zone', name: 'event_end_at' })
-    eventEndAt: Date = new Date();
+        eventEndAt: Date = new Date();
 
     /**
      * イベント発生位置
      */
     @Column({ type: 'bigint', nullable: false, name: 'event_outbreak_position' })
-    eventOutbreakPosition: number = 0;
+        eventOutbreakPosition: number = 0;
 
     /**
      * イベントを発生させたアクター識別子カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'event_actor_code' })
-    eventActorCode: number = 0;
+        eventActorCode: number = 0;
 
     /**
      * イベントを発生させたアクター識別子カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'event_actor_version' })
-    eventActorVersion: number = 0;
+        eventActorVersion: number = 0;
 
     /**
      * ワークフロー識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'wf_catalog_code' })
-    wfCatalogCode: number = 0;
+        wfCatalogCode: number = 0;
 
     /**
      * ワークフロー識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'wf_catalog_version' })
-    wfCatalogVersion: number = 0;
+        wfCatalogVersion: number = 0;
 
     /**
      * ワークフローロール識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'wf_role_code' })
-    wfRoleCode: number = 0;
+        wfRoleCode: number = 0;
 
     /**
      * ワークフローロール識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'wf_role_version' })
-    wfRoleVersion: number = 0;
+        wfRoleVersion: number = 0;
 
     /**
      * ワークフロー職員識別子
      */
     @Column({ type: 'varchar', length: 255, name: 'wf_staff_identifier' })
-    wfStaffIdentifier: string = '';
+        wfStaffIdentifier: string = '';
 
     /**
      * アプリケーション識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'app_catalog_code' })
-    appCatalogCode: number = 0;
+        appCatalogCode: number = 0;
 
     /**
      * アプリケーション識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'app_catalog_version' })
-    appCatalogVersion: number = 0;
+        appCatalogVersion: number = 0;
 
     /**
      * テンプレート
      */
     @Column({ type: 'text' })
-    template: string = '';
+        template: string = '';
 
     /**
      * 属性
      */
     @Column({ type: 'text' })
-    attributes: string = '';
+        attributes: string = '';
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -151,7 +151,7 @@ export default class Event {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時
