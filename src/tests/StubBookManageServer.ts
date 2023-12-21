@@ -14,7 +14,7 @@ export default class StubBookManageServer {
     _app: express.Express;
     _server: Server;
 
-    constructor (status: number, option?: number) {
+    constructor (status: number, option?: number, option2?: number, shareType?: number) {
         this._app = express();
 
         // イベントハンドラー
@@ -69,6 +69,14 @@ export default class StubBookManageServer {
                     res.json({
                         actor: {
                             _value: 1000003,
+                            _ver: 1
+                        },
+                        userId: '123456789'
+                    });
+                } else if (option === 5) {
+                    res.json({
+                        wf: {
+                            _value: 1000004,
                             _ver: 1
                         },
                         userId: '123456789'
@@ -233,6 +241,52 @@ export default class StubBookManageServer {
                             }
                         ]
                     });
+                } else if (req.params.id === 'appUser01' || req.params.id === 'appUser02') {
+                    res.json({
+                        id: 1,
+                        bookId: 1,
+                        regionUseId: null,
+                        type: 'store',
+                        actor: {
+                            _value: 1000112,
+                            _ver: 1
+                        },
+                        app: null,
+                        wf: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        document: [
+                            {
+                                _value: 1000009,
+                                _ver: 1
+                            },
+                            {
+                                _value: 1000010,
+                                _ver: 1
+                            }
+                        ],
+                        event: [
+                            {
+                                _value: 1000009,
+                                _ver: 1
+                            },
+                            {
+                                _value: 1000010,
+                                _ver: 1
+                            }
+                        ],
+                        thing: [
+                            {
+                                _value: 1000011,
+                                _ver: 1
+                            },
+                            {
+                                _value: 1000014,
+                                _ver: 1
+                            }
+                        ]
+                    });
                 }
                 return;
             }
@@ -313,12 +367,27 @@ export default class StubBookManageServer {
                                         _value: '1000004',
                                         _ver: '1'
                                     },
+                                    region: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    app: null,
                                     wf: null,
+                                    userId: 'test_user_id2',
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
                                     app: {
                                         _value: '1000007',
                                         _ver: '1'
                                     },
-                                    userId: 'userid01',
+                                    wf: null,
+                                    userId: null,
                                     startAt: '2020-07-07T00:00:00.000+0900'
                                 }
                             ],
@@ -397,7 +466,7 @@ export default class StubBookManageServer {
                                                             _value: 30123,
                                                             _ver: 1
                                                         },
-                                                        content: '東京都港区'
+                                                        content: '東京都港区芝5-7-1'
                                                     }
                                                 ]
                                             }
@@ -410,43 +479,274 @@ export default class StubBookManageServer {
                     return;
                 } else if (option === 2) {
                     if (req.body.pxrId[0] === 'test_user_id1') {
-                        res.json([
-                            {
-                                pxrId: '58di2dfse2.test.org',
-                                attribute: {
-                                    key: 'value'
-                                },
-                                cooperation: [
-                                    {
-                                        actor: {
-                                            _value: '1000004',
-                                            _ver: '1'
-                                        },
-                                        app: null,
-                                        wf: {
-                                            _value: '1000007',
-                                            _ver: '1'
-                                        },
-                                        userId: 'test_user_id1',
-                                        startAt: '2020-07-07T00:00:00.000+0900'
+                        if (!shareType) {
+                            res.json([
+                                {
+                                    pxrId: '58di2dfse2.test.org',
+                                    attribute: {
+                                        key: 'value'
                                     },
-                                    {
-                                        actor: {
-                                            _value: '1000004',
-                                            _ver: '1'
+                                    cooperation: [
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            app: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            userId: 'test_user_id1',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
                                         },
-                                        app: null,
-                                        wf: {
-                                            _value: '1000007',
-                                            _ver: '1'
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            app: {
+                                                _value: '1000008',
+                                                _ver: '1'
+                                            },
+                                            userId: 'test_user_id1',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
                                         },
-                                        userId: 'test_user_idxxx',
-                                        startAt: '2020-07-07T00:00:00.000+0900'
-                                    }
-                                ],
-                                userInformation: []
-                            }
-                        ]);
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            app: null,
+                                            wf: null,
+                                            userId: 'test_user_id2',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: null,
+                                            app: {
+                                                _value: '1000008',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            userId: null,
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        }
+                                    ],
+                                    userInformation: []
+                                }
+                            ]);
+                        } else if (shareType === 1) {
+                            res.json([
+                                {
+                                    pxrId: '58di2dfse2.test.org',
+                                    attribute: {
+                                        key: 'value'
+                                    },
+                                    cooperation: [
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            app: {
+                                                _value: '1000009',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            userId: 'test_user_id1',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            app: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            userId: 'test_user_id1',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            app: null,
+                                            wf: null,
+                                            userId: 'test_user_id2',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: null,
+                                            app: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            userId: null,
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        }
+                                    ],
+                                    userInformation: []
+                                }
+                            ]);
+                        } else if (shareType === 2) {
+                            res.json([
+                                {
+                                    pxrId: '58di2dfse2.test.org',
+                                    attribute: {
+                                        key: 'value'
+                                    },
+                                    cooperation: [
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            app: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            userId: 'test_user_id2',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            app: null,
+                                            wf: null,
+                                            userId: 'test_user_id2',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: null,
+                                            app: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            userId: null,
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        }
+                                    ],
+                                    userInformation: []
+                                }
+                            ]);
+                        } else if (shareType === 3) {
+                            res.json([
+                                {
+                                    pxrId: '58di2dfse2.test.org',
+                                    attribute: {
+                                        key: 'value'
+                                    },
+                                    cooperation: [
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: null,
+                                            wf: null,
+                                            app: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            userId: 'test_user_id1',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: null,
+                                            app: {
+                                                _value: '1000008',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            userId: 'test_user_id2',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            app: null,
+                                            wf: null,
+                                            userId: 'test_user_id2',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            app: null,
+                                            wf: null,
+                                            userId: 'test_user_id2',
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        },
+                                        {
+                                            actor: {
+                                                _value: '1000004',
+                                                _ver: '1'
+                                            },
+                                            region: null,
+                                            app: {
+                                                _value: '1000007',
+                                                _ver: '1'
+                                            },
+                                            wf: null,
+                                            userId: null,
+                                            startAt: '2020-07-07T00:00:00.000+0900'
+                                        }
+                                    ],
+                                    userInformation: []
+                                }
+                            ]);
+                        }
                     } else if (req.body.pxrId[0] === 'test_user_id2') {
                         res.json([
                             {
@@ -460,12 +760,53 @@ export default class StubBookManageServer {
                                             _value: '1000004',
                                             _ver: '1'
                                         },
-                                        app: null,
-                                        wf: {
+                                        wf: null,
+                                        app: {
                                             _value: '1000007',
                                             _ver: '1'
                                         },
                                         userId: 'test_user_id2',
+                                        startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        wf: null,
+                                        app: {
+                                            _value: '1000008',
+                                            _ver: '1'
+                                        },
+                                        userId: 'test_user_id2',
+                                        startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        region: {
+                                            _value: '1000007',
+                                            _ver: '1'
+                                        },
+                                        app: null,
+                                        wf: null,
+                                        userId: 'test_user_id2',
+                                        startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        region: null,
+                                        app: {
+                                            _value: '1000007',
+                                            _ver: '1'
+                                        },
+                                        wf: null,
+                                        userId: null,
                                         startAt: '2020-07-07T00:00:00.000+0900'
                                     }
                                 ],
@@ -492,6 +833,34 @@ export default class StubBookManageServer {
                                         },
                                         userId: 'test_user_id3',
                                         startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        region: {
+                                            _value: '1000007',
+                                            _ver: '1'
+                                        },
+                                        app: null,
+                                        wf: null,
+                                        userId: 'test_user_id2',
+                                        startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        region: null,
+                                        app: {
+                                            _value: '1000007',
+                                            _ver: '1'
+                                        },
+                                        wf: null,
+                                        userId: null,
+                                        startAt: '2020-07-07T00:00:00.000+0900'
                                     }
                                 ],
                                 userInformation: []
@@ -516,6 +885,34 @@ export default class StubBookManageServer {
                                             _ver: '1'
                                         },
                                         userId: 'test_user_idxxx',
+                                        startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        region: {
+                                            _value: '1000007',
+                                            _ver: '1'
+                                        },
+                                        app: null,
+                                        wf: null,
+                                        userId: 'test_user_id2',
+                                        startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        region: null,
+                                        app: {
+                                            _value: '1000007',
+                                            _ver: '1'
+                                        },
+                                        wf: null,
+                                        userId: null,
                                         startAt: '2020-07-07T00:00:00.000+0900'
                                     }
                                 ],
@@ -542,6 +939,34 @@ export default class StubBookManageServer {
                                         },
                                         userId: 'test_user_id0',
                                         startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        region: {
+                                            _value: '1000007',
+                                            _ver: '1'
+                                        },
+                                        app: null,
+                                        wf: null,
+                                        userId: 'test_user_id2',
+                                        startAt: '2020-07-07T00:00:00.000+0900'
+                                    },
+                                    {
+                                        actor: {
+                                            _value: '1000004',
+                                            _ver: '1'
+                                        },
+                                        region: null,
+                                        app: {
+                                            _value: '1000007',
+                                            _ver: '1'
+                                        },
+                                        wf: null,
+                                        userId: null,
+                                        startAt: '2020-07-07T00:00:00.000+0900'
                                     }
                                 ],
                                 userInformation: []
@@ -565,12 +990,40 @@ export default class StubBookManageServer {
                                         _value: 1000004,
                                         _ver: 1
                                     },
-                                    app: null,
-                                    wf: {
+                                    wf: null,
+                                    app: {
                                         _value: 1000004,
                                         _ver: 1
                                     },
                                     userId: 'test_user_id1',
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    app: null,
+                                    wf: null,
+                                    userId: 'test_user_id2',
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    userId: null,
                                     startAt: '2020-07-07T00:00:00.000+0900'
                                 }
                             ],
@@ -676,6 +1129,34 @@ export default class StubBookManageServer {
                                     wf: null,
                                     userId: 'userid01',
                                     startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    app: null,
+                                    wf: null,
+                                    userId: 'test_user_id2',
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    userId: null,
+                                    startAt: '2020-07-07T00:00:00.000+0900'
                                 }
                             ],
                             userInformation: [
@@ -770,15 +1251,175 @@ export default class StubBookManageServer {
                             cooperation: [
                                 {
                                     actor: {
+                                        _value: 1000004,
+                                        _ver: 1
+                                    },
+                                    wf: null,
+                                    app: {
+                                        _value: 1000004,
+                                        _ver: 1
+                                    },
+                                    userId: 'userid01',
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    app: null,
+                                    wf: null,
+                                    userId: 'test_user_id2',
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    userId: null,
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                }
+                            ],
+                            userInformation: [
+                                {
+                                    template: {
+                                        _code: {
+                                            _value: 99999,
+                                            _ver: 1
+                                        },
+                                        'item-group': [
+                                            {
+                                                title: '氏名',
+                                                item: [
+                                                    {
+                                                        title: '姓',
+                                                        type: {
+                                                            _value: 30019,
+                                                            _ver: 1
+                                                        },
+                                                        content: 'サンプル'
+                                                    },
+                                                    {
+                                                        title: '名',
+                                                        type: {
+                                                            _value: 30020,
+                                                            _ver: 1
+                                                        },
+                                                        content: '太郎'
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                title: '氏名(ローマ字)',
+                                                item: [
+                                                    {
+                                                        title: '姓(ローマ字)',
+                                                        type: {
+                                                            _value: 30119,
+                                                            _ver: 1
+                                                        },
+                                                        content: 'sample'
+                                                    },
+                                                    {
+                                                        title: '名(ローマ字)',
+                                                        type: {
+                                                            _value: 30120,
+                                                            _ver: 1
+                                                        },
+                                                        content: 'taro'
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                title: '連絡先',
+                                                item: [
+                                                    {
+                                                        title: '電話番号',
+                                                        type: {
+                                                            _value: 30121,
+                                                            _ver: 1
+                                                        },
+                                                        content: '080-0000-0000'
+                                                    },
+                                                    {
+                                                        title: '郵便番号',
+                                                        type: {
+                                                            _value: 30122,
+                                                            _ver: 1
+                                                        },
+                                                        content: '000-0000'
+                                                    },
+                                                    {
+                                                        title: '住所',
+                                                        type: {
+                                                            _value: 30123,
+                                                            _ver: 1
+                                                        },
+                                                        content: '東京都港区芝5-7-1'
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            pxrId: '58di2dfse2.test.org',
+                            attribute: {
+                                key: 'value'
+                            },
+                            cooperation: [
+                                {
+                                    actor: {
                                         _value: 1000001,
                                         _ver: 1
                                     },
-                                    app: null,
-                                    wf: {
+                                    wf: null,
+                                    app: {
                                         _value: 1000007,
                                         _ver: 1
                                     },
                                     userId: 'test_user_id1',
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    app: null,
+                                    wf: null,
+                                    userId: 'test_user_id2',
+                                    startAt: '2020-07-07T00:00:00.000+0900'
+                                },
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    userId: null,
                                     startAt: '2020-07-07T00:00:00.000+0900'
                                 }
                             ],
@@ -1058,6 +1699,11 @@ export default class StubBookManageServer {
                         pxrId: 'test_user_idxxx'
                     });
                     return;
+                } else if (userId === 'test_request_user10') {
+                    res.json({
+                        pxrId: 'test_request_user_id10'
+                    });
+                    return;
                 }
             }
             res.status(status).end();
@@ -1273,7 +1919,7 @@ export default class StubBookManageServer {
         };
 
         // ハンドラーのイベントリスナーを追加、アプリケーションの起動
-        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.json() as express.RequestHandler);
         this._app.post('/book-manage/cooperate', _listener);
         this._app.get('/book-manage/settings/store/:id', _listener2);
         this._app.post('/book-manage/cooperate/release', _listener3);

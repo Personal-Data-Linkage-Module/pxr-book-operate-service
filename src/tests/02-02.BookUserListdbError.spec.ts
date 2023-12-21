@@ -60,6 +60,7 @@ describe('book-mange API', () => {
      * 全テスト実行の後処理
      */
     afterAll(async () => {
+        await common.disconnect();
         // サーバ停止
         app.stop();
     });
@@ -77,7 +78,7 @@ describe('book-mange API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.pxrRoot) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         userId: [

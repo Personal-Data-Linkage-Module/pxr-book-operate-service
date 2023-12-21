@@ -360,7 +360,7 @@ export default class StubCatalogServer {
                             ns: 'catalog/ext/aaa-healthcare-consortium/actor/wf/actor_1000020/workflow',
                             name: '外来診療',
                             _code: {
-                                _value: 1000481,
+                                _value: 1000007,
                                 _ver: 1
                             },
                             inherit: {
@@ -371,7 +371,7 @@ export default class StubCatalogServer {
                         },
                         template: {
                             _code: {
-                                _value: 1000481,
+                                _value: 1000007,
                                 _ver: 1
                             },
                             'information-site': null,
@@ -460,7 +460,7 @@ export default class StubCatalogServer {
                             ns: 'catalog/ext/aaa-healthcare-consortium/actor/wf/actor_1000020/workflow',
                             name: '外来診療',
                             _code: {
-                                _value: 1000481,
+                                _value: 1000007,
                                 _ver: 1
                             },
                             inherit: {
@@ -471,7 +471,7 @@ export default class StubCatalogServer {
                         },
                         template: {
                             _code: {
-                                _value: 1000481,
+                                _value: 1000007,
                                 _ver: 1
                             },
                             'information-site': null,
@@ -565,7 +565,7 @@ export default class StubCatalogServer {
                             ns: 'catalog/ext/aaa-healthcare-consortium/actor/wf/actor_1000020/workflow',
                             name: '外来診療',
                             _code: {
-                                _value: 1000481,
+                                _value: 1000007,
                                 _ver: 1
                             },
                             inherit: {
@@ -576,7 +576,7 @@ export default class StubCatalogServer {
                         },
                         template: {
                             _code: {
-                                _value: 1000481,
+                                _value: 1000007,
                                 _ver: 1
                             },
                             'information-site': null,
@@ -888,6 +888,115 @@ export default class StubCatalogServer {
                 ]);
             } else if (ns === 'catalog/ext/test-org/actor/wf/actor_1000405/share') {
                 res.status(status).json([]);
+            } else if (ns === 'catalog/ext/test-org/setting/global') {
+                if (code === 1000004) {
+                    res.status(status).json([
+                        {
+                            catalogItem: {
+                                ns: 'catalog/ext/test-org/setting/global',
+                                name: 'PXR：グローバル設定',
+                                _code: {
+                                    _value: 1000000,
+                                    _ver: 1
+                                },
+                                inherit: {
+                                    _value: 160,
+                                    _ver: 1
+                                },
+                                description: 'PXR全体のグローバル設定の定義です。'
+                            },
+                            template: {
+                                _code: {
+                                    _value: 1000000,
+                                    _ver: 1
+                                },
+                                'identity-verification-expiration': null
+                            },
+                            prop: [
+                                {
+                                    key: 'identity-verification-expiration',
+                                    type: {
+                                        of: 'inner',
+                                        inner: 'Expiration',
+                                        cmatrix: null,
+                                        candidate: null
+                                    },
+                                    description: '本人性確認コード有効期限',
+                                    isInherit: true
+                                },
+                                {
+                                    key: 'identity-verification-expiration',
+                                    value: [
+                                        {
+                                            key: 'type',
+                                            value: 'day'
+                                        },
+                                        {
+                                            key: 'value',
+                                            value: 7
+                                        }
+                                    ]
+                                }
+                            ],
+                            attribute: null
+                        }
+                    ]);
+                } else {
+                    res.status(status).json([
+                        {
+                            catalogItem: {
+                                ns: 'catalog/ext/test-org/setting/global',
+                                name: 'PXR：グローバル設定',
+                                _code: {
+                                    _value: 1000000,
+                                    _ver: 1
+                                },
+                                inherit: {
+                                    _value: 160,
+                                    _ver: 1
+                                },
+                                description: 'PXR全体のグローバル設定の定義です。'
+                            },
+                            template: {
+                                _code: {
+                                    _value: 1000000,
+                                    _ver: 1
+                                },
+                                'identity-verification-expiration': {
+                                    type: 'day',
+                                    value: 10
+                                }
+                            },
+                            prop: [
+                                {
+                                    key: 'identity-verification-expiration',
+                                    type: {
+                                        of: 'inner',
+                                        inner: 'Expiration',
+                                        cmatrix: null,
+                                        candidate: null
+                                    },
+                                    description: '本人性確認コード有効期限',
+                                    isInherit: true
+                                },
+                                {
+                                    key: 'identity-verification-expiration',
+                                    value: [
+                                        {
+                                            key: 'type',
+                                            value: 'day'
+                                        },
+                                        {
+                                            key: 'value',
+                                            value: 7
+                                        }
+                                    ]
+                                }
+                            ],
+                            attribute: null
+                        }
+                    ]);
+                }
             }
             res.end();
         };
@@ -895,13 +1004,332 @@ export default class StubCatalogServer {
         const _listener = (req: express.Request, res: express.Response) => {
             const catalogItemCode = parseInt(req.params.catalogItemCode);
             if (status === ResponseCode.OK) {
-                if (code === 1000001) {
+                if (code === 1000001 || catalogItemCode === 1000004) {
                     res.status(ResponseCode.OK).json({
                         catalogItem: {
                             ns: 'catalog/ext/test-org/actor/pxr-root',
                             name: '流通制御組織',
                             _code: {
                                 _value: 1000001,
+                                _ver: 1
+                            },
+                            inherit: {
+                                _value: 50,
+                                _ver: 1
+                            },
+                            description: '流通制御組織の定義です。'
+                        },
+                        template: {
+                            _code: {
+                                _value: 1000001,
+                                _ver: 1
+                            },
+                            'app-cert': {
+                                cert: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: 'アプリケーションプロバイダーの認定基準',
+                                        content: {
+                                            sentence: 'アプリケーションプロバイダーの認定基準です。'
+                                        }
+                                    }
+                                },
+                                audit: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: 'アプリケーションプロバイダーの監査手順',
+                                        content: {
+                                            sentence: 'アプリケーションプロバイダーの監査手順です。'
+                                        }
+                                    }
+                                }
+                            },
+                            category: null,
+                            'consumer-cert': {
+                                cert: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: 'データコンシューマーの認定基準',
+                                        content: {
+                                            sentence: 'データコンシューマーの認定基準です。'
+                                        }
+                                    }
+                                },
+                                audit: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: 'データコンシューマーの監査手順',
+                                        content: {
+                                            sentence: 'データコンシューマーの監査手順です。'
+                                        }
+                                    }
+                                }
+                            },
+                            'data-trader-cert': {
+                                cert: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: 'データ取引サービスプロバイダーの認定基準',
+                                        content: {
+                                            sentence: 'データ取引サービスプロバイダーの認定基準です。'
+                                        }
+                                    }
+                                },
+                                audit: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: 'データ取引サービスプロバイダーの監査手順',
+                                        content: {
+                                            sentence: 'データ取引サービスプロバイダーの監査手順です。'
+                                        }
+                                    }
+                                }
+                            },
+                            'identification-set': [
+                                {
+                                    element: {
+                                        _value: 30001,
+                                        _ver: 1
+                                    }
+                                }
+                            ],
+                            'main-block': {
+                                _value: 1000110,
+                                _ver: 1
+                            },
+                            'other-block': null,
+                            'region-root-cert': {
+                                cert: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: '領域運営サービスプロバイダーの認定基準',
+                                        content: {
+                                            sentence: '領域運営サービスプロバイダーの認定基準です。'
+                                        }
+                                    }
+                                },
+                                audit: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: '領域運営サービスプロバイダーの監査手順',
+                                        content: {
+                                            sentence: '領域運営サービスプロバイダーの監査手順です。'
+                                        }
+                                    }
+                                }
+                            },
+                            statement: [
+                                {
+                                    title: '組織ステートメント',
+                                    section: {
+                                        title: '事業概要',
+                                        content: {
+                                            sentence: 'データ取引組織の事業概要です。'
+                                        }
+                                    }
+                                }
+                            ],
+                            status: [
+                                {
+                                    status: 'certified',
+                                    by: null,
+                                    at: '2020-01-01T00:00:00.000+0900'
+                                }
+                            ],
+                            'store-distribution-ratio': null,
+                            'supply-distribution-ratio': null,
+                            'wf-cert': {
+                                cert: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: 'ワークフロープロバイダーの認定基準',
+                                        content: {
+                                            sentence: 'ワークフロープロバイダーの認定基準です。'
+                                        }
+                                    }
+                                },
+                                audit: {
+                                    key: 'title',
+                                    value: '',
+                                    section: {
+                                        title: 'ワークフロープロバイダーの監査手順',
+                                        content: {
+                                            sentence: 'ワークフロープロバイダーの監査手順です。'
+                                        }
+                                    }
+                                }
+                            },
+                            workflow: [
+                                {
+                                    _value: 1000007,
+                                    _ver: 1
+                                }
+                            ],
+                            application: [
+                                {
+                                    _value: 1000006,
+                                    _ver: 1
+                                }
+                            ]
+                        },
+                        prop: [
+                            {
+                                key: 'app-cert',
+                                type: {
+                                    of: 'inner',
+                                    inner: 'Certification'
+                                },
+                                description: 'アプリケーションプロバイダー認定'
+                            },
+                            {
+                                key: 'category',
+                                type: {
+                                    of: 'code[]',
+                                    candidate: {
+                                        ns: [
+                                            'catalog/ext/test-org/category/supply/actor',
+                                            'catalog/built_in/category/supply/actor',
+                                            'catalog/model/category/supply/actor',
+                                            'catalog/ext/test-org/category/share/actor',
+                                            'catalog/built_in/category/share/actor',
+                                            'catalog/model/category/share/actor'
+                                        ],
+                                        _code: null,
+                                        base: null
+                                    }
+                                },
+                                description: null
+                            },
+                            {
+                                key: 'consumer-cert',
+                                type: {
+                                    of: 'inner',
+                                    inner: 'Certification'
+                                },
+                                description: 'データコンシューマー認定'
+                            },
+                            {
+                                key: 'data-trader-cert',
+                                type: {
+                                    of: 'inner',
+                                    inner: 'Certification'
+                                },
+                                description: 'データ取引サービスプロバイダー認定'
+                            },
+                            {
+                                key: 'identification-set',
+                                type: {
+                                    of: 'inner[]',
+                                    inner: 'Identification'
+                                },
+                                description: '採用した本人性確認事項の組み合わせ'
+                            },
+                            {
+                                key: 'main-block',
+                                type: {
+                                    of: 'code',
+                                    candidate: {
+                                        ns: null,
+                                        _code: null,
+                                        base: {
+                                            _value: 29,
+                                            _ver: null
+                                        }
+                                    }
+                                },
+                                description: 'アクター参加時に割り当てられたPXR-Block'
+                            },
+                            {
+                                key: 'other-block',
+                                type: {
+                                    of: 'code[]',
+                                    candidate: {
+                                        ns: null,
+                                        _code: null,
+                                        base: {
+                                            _value: 29,
+                                            _ver: null
+                                        }
+                                    }
+                                },
+                                description: '他アクターから引き継いだPXR-Blockの配列'
+                            },
+                            {
+                                key: 'region-root-cert',
+                                type: {
+                                    of: 'inner',
+                                    inner: 'Certification'
+                                },
+                                description: '領域運営サービスプロバイダー認定'
+                            },
+                            {
+                                key: 'statement',
+                                type: {
+                                    of: 'item[]',
+                                    candidate: {
+                                        ns: null,
+                                        _code: [
+                                            {
+                                                _value: 61,
+                                                _ver: 1
+                                            }
+                                        ],
+                                        base: null
+                                    }
+                                },
+                                description: '組織ステートメント'
+                            },
+                            {
+                                key: 'status',
+                                type: {
+                                    of: 'inner[]',
+                                    inner: 'CertStatus'
+                                },
+                                description: '認定の履歴'
+                            },
+                            {
+                                key: 'store-distribution-ratio',
+                                type: {
+                                    of: 'inner[]',
+                                    inner: 'DistributionRatio'
+                                },
+                                description: '蓄積分配比率'
+                            },
+                            {
+                                key: 'supply-distribution-ratio',
+                                type: {
+                                    of: 'inner[]',
+                                    inner: 'DistributionRatio'
+                                },
+                                description: '提供分配比率'
+                            },
+                            {
+                                key: 'wf-cert',
+                                type: {
+                                    of: 'inner',
+                                    inner: 'Certification'
+                                },
+                                description: 'ワークフロープロバイダー認定'
+                            }
+                        ],
+                        attribute: null
+                    });
+                } else if (code === 1000004) {
+                    res.status(ResponseCode.OK).json({
+                        catalogItem: {
+                            ns: 'catalog/ext/test-org/actor/app',
+                            name: 'dest.actor（テスト）',
+                            _code: {
+                                _value: 1000400,
                                 _ver: 1
                             },
                             inherit: {
@@ -9434,6 +9862,119 @@ export default class StubCatalogServer {
                         prop: null,
                         attribute: null
                     });
+                } else if (catalogItemCode === 1000436) {
+                    res.status(ResponseCode.OK).json({
+                        catalogItem: {
+                            ns: 'catalog/ext/test-org/actor/app',
+                            name: 'テストアクターカタログAPP',
+                            _code: {
+                                _value: 1000436,
+                                _ver: 1
+                            },
+                            inherit: {
+                                _value: 42,
+                                _ver: 1
+                            },
+                            description: 'アプリケーションの定義です。'
+                        },
+                        template: {
+                            _code: {
+                                _value: 1000461,
+                                _ver: 1
+                            },
+                            application: [
+                                {
+                                    _value: 1000005,
+                                    _ver: 1
+                                }
+                            ],
+                            category: null,
+                            'main-block': {
+                                _value: 1000110,
+                                _ver: 1
+                            },
+                            statement: [
+                                {
+                                    title: '組織ステートメント',
+                                    section: {
+                                        title: '事業概要',
+                                        content: {
+                                            sentence: 'アプリケーションの事業概要です。'
+                                        }
+                                    }
+                                }
+                            ],
+                            status: [
+                                {
+                                    status: 'certified',
+                                    by: null,
+                                    at: '2020-01-01T00:00:00.000+0900'
+                                }
+                            ]
+                        },
+                        prop: [
+                            {
+                                key: 'category',
+                                type: {
+                                    of: 'code[]',
+                                    candidate: {
+                                        ns: [
+                                            'catalog/ext/test-org/category/supply/actor',
+                                            'catalog/built_in/category/supply/actor',
+                                            'catalog/model/category/supply/actor',
+                                            'catalog/ext/test-org/category/share/actor',
+                                            'catalog/built_in/category/share/actor',
+                                            'catalog/model/category/share/actor'
+                                        ],
+                                        _code: null,
+                                        base: null
+                                    }
+                                },
+                                description: null
+                            },
+                            {
+                                key: 'main-block',
+                                type: {
+                                    of: 'code',
+                                    candidate: {
+                                        ns: null,
+                                        _code: null,
+                                        base: {
+                                            _value: 29,
+                                            _ver: null
+                                        }
+                                    }
+                                },
+                                description: 'アクター参加時に割り当てられたPXR-Block'
+                            },
+                            {
+                                key: 'statement',
+                                type: {
+                                    of: 'item[]',
+                                    candidate: {
+                                        ns: null,
+                                        _code: [
+                                            {
+                                                _value: 61,
+                                                _ver: 1
+                                            }
+                                        ],
+                                        base: null
+                                    }
+                                },
+                                description: '組織ステートメント'
+                            },
+                            {
+                                key: 'status',
+                                type: {
+                                    of: 'inner[]',
+                                    inner: 'CertStatus'
+                                },
+                                description: '認定の履歴'
+                            }
+                        ],
+                        attribute: null
+                    });
                 }
                 res.end();
                 return;
@@ -9485,9 +10026,28 @@ export default class StubCatalogServer {
                                     }
                                 }
                             });
+                        } else if (dataTypeCode._code._value === 1000101) {
+                            _codes.push({
+                                catalogItem: {
+                                    ns: '/event',
+                                    _code: {
+                                        _value: 1000101,
+                                        _ver: 1
+                                    }
+                                }
+                            });
+                            _codes.push({
+                                catalogItem: {
+                                    ns: '/thing',
+                                    _code: {
+                                        _value: 1000201,
+                                        _ver: 1
+                                    }
+                                }
+                            });
                         }
-                        res.status(ResponseCode.OK).json(_codes);
                     }
+                    res.status(ResponseCode.OK).json(_codes);
                 }
                 return;
             }
@@ -9496,7 +10056,7 @@ export default class StubCatalogServer {
 
         // ハンドラーのイベントリスナーを追加、アプリケーションの起動
         this._app = express();
-        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.json() as express.RequestHandler);
         this._app.post('/catalog', _listener4);
         this._app.get('/catalog/', _listener3);
         this._app.get('/catalog/name', _listener2);
@@ -9866,10 +10426,348 @@ export class StubCatalogServerForContract {
         };
 
         // ハンドラーのイベントリスナーを追加、アプリケーションの起動
-        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.json() as express.RequestHandler);
         this._app.get('/catalog/:code/:version', _listener);
         this._app.get('/catalog/:code', _listener);
         this._app.post('/catalog', _listener2);
+        this._server = this._app.listen(3001);
+    }
+}
+
+export class StubCatalogServerForActor {
+    _app: express.Express;
+    _server: Server;
+    constructor (status: number) {
+        this._app = express();
+
+        // イベントハンドラー
+        const _listener = (req: express.Request, res: express.Response) => {
+            if (status === 200) {
+                res.status(ResponseCode.OK).json({
+                    catalogItem: {
+                        ns: 'catalog/ext/test-org/actor/wf',
+                        name: 'dest.actor（テスト）',
+                        _code: {
+                            _value: 1000400,
+                            _ver: 1
+                        },
+                        inherit: {
+                            _value: 50,
+                            _ver: 1
+                        },
+                        description: 'データビリティコンソーシアム（流通制御）の定義です。'
+                    },
+                    template: {
+                        _code: {
+                            _value: 1000001,
+                            _ver: 1
+                        },
+                        'app-cert': {
+                            cert: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: 'アプリケーションプロバイダーの認定基準',
+                                    content: {
+                                        sentence: 'アプリケーションプロバイダーの認定基準です。'
+                                    }
+                                }
+                            },
+                            audit: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: 'アプリケーションプロバイダーの監査手順',
+                                    content: {
+                                        sentence: 'アプリケーションプロバイダーの監査手順です。'
+                                    }
+                                }
+                            }
+                        },
+                        category: null,
+                        'consumer-cert': {
+                            cert: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: 'データコンシューマーの認定基準',
+                                    content: {
+                                        sentence: 'データコンシューマーの認定基準です。'
+                                    }
+                                }
+                            },
+                            audit: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: 'データコンシューマーの監査手順',
+                                    content: {
+                                        sentence: 'データコンシューマーの監査手順です。'
+                                    }
+                                }
+                            }
+                        },
+                        'data-trader-cert': {
+                            cert: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: 'データ取引サービスプロバイダーの認定基準',
+                                    content: {
+                                        sentence: 'データ取引サービスプロバイダーの認定基準です。'
+                                    }
+                                }
+                            },
+                            audit: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: 'データ取引サービスプロバイダーの監査手順',
+                                    content: {
+                                        sentence: 'データ取引サービスプロバイダーの監査手順です。'
+                                    }
+                                }
+                            }
+                        },
+                        'identification-set': [
+                            {
+                                element: {
+                                    _value: 30001,
+                                    _ver: 1
+                                }
+                            }
+                        ],
+                        'main-block': {
+                            _value: 1000110,
+                            _ver: 1
+                        },
+                        'other-block': null,
+                        'region-root-cert': {
+                            cert: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: '領域運営サービスプロバイダーの認定基準',
+                                    content: {
+                                        sentence: '領域運営サービスプロバイダーの認定基準です。'
+                                    }
+                                }
+                            },
+                            audit: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: '領域運営サービスプロバイダーの監査手順',
+                                    content: {
+                                        sentence: '領域運営サービスプロバイダーの監査手順です。'
+                                    }
+                                }
+                            }
+                        },
+                        statement: [
+                            {
+                                title: '組織ステートメント',
+                                section: {
+                                    title: '事業概要',
+                                    content: {
+                                        sentence: 'ワークフローの事業概要です。'
+                                    }
+                                }
+                            }
+                        ],
+                        status: [
+                            {
+                                status: 'certified',
+                                by: null,
+                                at: '2020-01-01T00:00:00.000+0900'
+                            }
+                        ],
+                        'store-distribution-ratio': null,
+                        'supply-distribution-ratio': null,
+                        'wf-cert': {
+                            cert: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: 'ワークフロープロバイダーの認定基準',
+                                    content: {
+                                        sentence: 'ワークフロープロバイダーの認定基準です。'
+                                    }
+                                }
+                            },
+                            audit: {
+                                key: 'title',
+                                value: '',
+                                section: {
+                                    title: 'ワークフロープロバイダーの監査手順',
+                                    content: {
+                                        sentence: 'ワークフロープロバイダーの監査手順です。'
+                                    }
+                                }
+                            }
+                        },
+                        workflow: [
+                            {
+                                _value: 1000007,
+                                _ver: 1
+                            }
+                        ],
+                        application: [
+                            {
+                                _value: 1000006,
+                                _ver: 1
+                            }
+                        ]
+                    },
+                    prop: [
+                        {
+                            key: 'app-cert',
+                            type: {
+                                of: 'inner',
+                                inner: 'Certification'
+                            },
+                            description: 'アプリケーションプロバイダー認定'
+                        },
+                        {
+                            key: 'category',
+                            type: {
+                                of: 'code[]',
+                                candidate: {
+                                    ns: [
+                                        'catalog/ext/test-org/category/supply/actor',
+                                        'catalog/built_in/category/supply/actor',
+                                        'catalog/model/category/supply/actor',
+                                        'catalog/ext/test-org/category/share/actor',
+                                        'catalog/built_in/category/share/actor',
+                                        'catalog/model/category/share/actor'
+                                    ],
+                                    _code: null,
+                                    base: null
+                                }
+                            },
+                            description: null
+                        },
+                        {
+                            key: 'consumer-cert',
+                            type: {
+                                of: 'inner',
+                                inner: 'Certification'
+                            },
+                            description: 'データコンシューマー認定'
+                        },
+                        {
+                            key: 'data-trader-cert',
+                            type: {
+                                of: 'inner',
+                                inner: 'Certification'
+                            },
+                            description: 'データ取引サービスプロバイダー認定'
+                        },
+                        {
+                            key: 'identification-set',
+                            type: {
+                                of: 'inner[]',
+                                inner: 'Identification'
+                            },
+                            description: '採用した本人性確認事項の組み合わせ'
+                        },
+                        {
+                            key: 'main-block',
+                            type: {
+                                of: 'code',
+                                candidate: {
+                                    ns: null,
+                                    _code: null,
+                                    base: {
+                                        _value: 29,
+                                        _ver: null
+                                    }
+                                }
+                            },
+                            description: 'アクター参加時に割り当てられたPXR-Block'
+                        },
+                        {
+                            key: 'other-block',
+                            type: {
+                                of: 'code[]',
+                                candidate: {
+                                    ns: null,
+                                    _code: null,
+                                    base: {
+                                        _value: 29,
+                                        _ver: null
+                                    }
+                                }
+                            },
+                            description: '他アクターから引き継いだPXR-Blockの配列'
+                        },
+                        {
+                            key: 'region-root-cert',
+                            type: {
+                                of: 'inner',
+                                inner: 'Certification'
+                            },
+                            description: '領域運営サービスプロバイダー認定'
+                        },
+                        {
+                            key: 'statement',
+                            type: {
+                                of: 'item[]',
+                                candidate: {
+                                    ns: null,
+                                    _code: [
+                                        {
+                                            _value: 61,
+                                            _ver: 1
+                                        }
+                                    ],
+                                    base: null
+                                }
+                            },
+                            description: '組織ステートメント'
+                        },
+                        {
+                            key: 'status',
+                            type: {
+                                of: 'inner[]',
+                                inner: 'CertStatus'
+                            },
+                            description: '認定の履歴'
+                        },
+                        {
+                            key: 'store-distribution-ratio',
+                            type: {
+                                of: 'inner[]',
+                                inner: 'DistributionRatio'
+                            },
+                            description: '蓄積分配比率'
+                        },
+                        {
+                            key: 'supply-distribution-ratio',
+                            type: {
+                                of: 'inner[]',
+                                inner: 'DistributionRatio'
+                            },
+                            description: '提供分配比率'
+                        },
+                        {
+                            key: 'wf-cert',
+                            type: {
+                                of: 'inner',
+                                inner: 'Certification'
+                            },
+                            description: 'ワークフロープロバイダー認定'
+                        }
+                    ],
+                    attribute: null
+                });
+                res.end();
+            }
+        };
+
+        // ハンドラーのイベントリスナーを追加、アプリケーションの起動
+        this._app.get('/catalog/:code/:version', _listener);
+        this._app.get('/catalog/:code', _listener);
         this._server = this._app.listen(3001);
     }
 }

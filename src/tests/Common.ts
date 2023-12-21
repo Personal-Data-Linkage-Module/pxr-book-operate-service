@@ -2,6 +2,7 @@
 Released under the MIT license.
 https://opensource.org/licenses/mit-license.php
 */
+import { Connection } from 'typeorm';
 import { connectDatabase } from './Connection';
 import path = require('path');
 import fs = require('fs');
@@ -122,12 +123,19 @@ export namespace Url {
 /**
  * テスト用共通クラス
  */
+/* eslint-disable no-trailing-spaces */
 export default class Common {
     /**
      * DB接続
      */
+    private conn: Connection;
     public async connect () {
         await connectDatabase();
+        this.conn = await connectDatabase();
+    }
+
+    async disconnect () {
+        this.conn.destroy();
     }
 
     /**
@@ -155,6 +163,7 @@ export default class Common {
     public async executeSqlString (sql: string) {
         // DBを初期化
         const connection = await connectDatabase();
-        await connection.query(sql);
+        const ret = await connection.query(sql);
+        return ret;
     }
 }
