@@ -81,7 +81,7 @@ export default class EntityOperation {
         const repository = getRepository(MyConditionBook, connection.name);
         let sql = repository
             .createQueryBuilder('my_condition_book')
-            .where('user_id = :userId', { userId: userId })
+            .where('user_id = :userId', { userId })
             .andWhere('is_disabled = :is_disabled', { is_disabled: false });
         if (app) {
             sql = sql.andWhere('app_catalog_code = :app_catalog_code', { app_catalog_code: app });
@@ -107,7 +107,7 @@ export default class EntityOperation {
             .where('is_disabled = :is_disabled', { is_disabled: false })
             .andWhere('document_id = :document_id', { document_id: documentId });
         if (title) {
-            sql = sql.andWhere('title = :title', { title: title });
+            sql = sql.andWhere('title = :title', { title });
         }
         const ret = await sql
             .orderBy('document_id')
@@ -132,7 +132,7 @@ export default class EntityOperation {
             .where('is_disabled = :is_disabled', { is_disabled: false })
             .andWhere('event_set_id = :event_set_id', { event_set_id: eventSetId });
         if (eventId) {
-            sql = sql.andWhere('event_id = :eventId', { eventId: eventId });
+            sql = sql.andWhere('event_id = :eventId', { eventId });
         }
         const ret = await sql
             .orderBy('event_set_id')
@@ -156,7 +156,7 @@ export default class EntityOperation {
             .createQueryBuilder('document')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('id = :id', { id: id })
+            .andWhere('id = :id', { id })
             .getRawOne();
         return ret ? new Document(ret) : null;
     }
@@ -218,7 +218,7 @@ export default class EntityOperation {
             .createQueryBuilder('event')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('id = :id', { id: id });
+            .andWhere('id = :id', { id });
         const ret = await sql.getRawOne();
         return ret ? new Event(ret) : null;
     }
@@ -288,7 +288,7 @@ export default class EntityOperation {
             .createQueryBuilder('thing')
             .select('thing.*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('id = :id', { id: id });
+            .andWhere('id = :id', { id });
         const ret = await sql.getRawOne();
         return ret ? new Thing(ret) : null;
     }
@@ -334,10 +334,10 @@ export default class EntityOperation {
             sql.where('is_disabled = :is_disabled', { is_disabled: false });
         }
         if (userId) {
-            sql = sql.andWhere('"1_1" = :userId', { userId: userId });
+            sql = sql.andWhere('"1_1" = :userId', { userId });
         }
         if (eventIdentifier) {
-            sql = sql.andWhere('"3_1_1" = :eventIdentifier', { eventIdentifier: eventIdentifier });
+            sql = sql.andWhere('"3_1_1" = :eventIdentifier', { eventIdentifier });
         }
         const ret = await sql.getRawMany();
         const list: CmatrixEvent[] = [];
@@ -384,7 +384,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_thing')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId: cmatrixEventId })
+            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId })
             .getRawMany();
         const list: CmatrixThing[] = [];
         if (ret) {
@@ -406,9 +406,9 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_thing')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId: cmatrixEventId });
+            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId });
         if (thingIdentifer) {
-            sql = sql.andWhere('"4_1_1" = :thingIdentifer', { thingIdentifer: thingIdentifer });
+            sql = sql.andWhere('"4_1_1" = :thingIdentifer', { thingIdentifer });
         }
         const ret = await sql.getRawMany();
         const list: CmatrixThing[] = [];
@@ -433,8 +433,8 @@ export default class EntityOperation {
             .innerJoin(CmatrixEvent, 'cmatrix_event', 'cmatrix_event.id = cmatrix_thing.cmatrix_event_id')
             .where('cmatrix_thing.is_disabled = :is_disabled', { is_disabled: false })
             .andWhere('cmatrix_event.is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event."1_1" = :userId', { userId: userId })
-            .andWhere('cmatrix_event."3_1_1" = :eventIdentifier', { eventIdentifier: eventIdentifier });
+            .andWhere('cmatrix_event."1_1" = :userId', { userId })
+            .andWhere('cmatrix_event."3_1_1" = :eventIdentifier', { eventIdentifier });
         const ret = await sql.getRawMany();
         const list: CmatrixThing[] = [];
         if (ret) {
@@ -458,9 +458,9 @@ export default class EntityOperation {
             .innerJoin(CmatrixEvent, 'cmatrix_event', 'cmatrix_event.id = cmatrix_thing.cmatrix_event_id')
             .where('cmatrix_thing.is_disabled = :is_disabled', { is_disabled: false })
             .andWhere('cmatrix_event.is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event."1_1" = :userId', { userId: userId })
-            .andWhere('cmatrix_event."3_1_1" = :eventIdentifier', { eventIdentifier: eventIdentifier })
-            .andWhere('cmatrix_thing."4_1_1" IN (:...thingIdentifiers)', { thingIdentifiers: thingIdentifiers });
+            .andWhere('cmatrix_event."1_1" = :userId', { userId })
+            .andWhere('cmatrix_event."3_1_1" = :eventIdentifier', { eventIdentifier })
+            .andWhere('cmatrix_thing."4_1_1" IN (:...thingIdentifiers)', { thingIdentifiers });
         const ret = await sql.getRawMany();
         const list: CmatrixThing[] = [];
         if (ret) {
@@ -485,13 +485,13 @@ export default class EntityOperation {
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false });
         if (typeof n === 'number') {
-            sql = sql.andWhere('n = :n', { n: n });
+            sql = sql.andWhere('n = :n', { n });
         }
         if (typeof cmatrixEventId === 'number') {
-            sql = sql.andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId: cmatrixEventId });
+            sql = sql.andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId });
         }
         if (typeof cmatrix2nId === 'number') {
-            sql = sql.andWhere('cmatrix_2n_id = :cmatrix2nId', { cmatrix2nId: cmatrix2nId });
+            sql = sql.andWhere('cmatrix_2n_id = :cmatrix2nId', { cmatrix2nId });
         }
         const ret = await sql
             .orderBy('id', 'ASC')
@@ -516,7 +516,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_2n_relation')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId: cmatrixEventId })
+            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId })
             .orderBy('n', 'ASC')
             .getRawMany();
         const list: Cmatrix2nRelation[] = [];
@@ -539,7 +539,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_2n_relation')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('n IN (:...docNs)', { docNs: docNs })
+            .andWhere('n IN (:...docNs)', { docNs })
             .orderBy('n', 'ASC')
             .getRawMany();
         const list: Cmatrix2nRelation[] = [];
@@ -1150,7 +1150,7 @@ export default class EntityOperation {
                 isDisabled: true,
                 updatedBy: register
             })
-            .where('cmatrix_thing_id IN (:...cmatrixThingIds)', { cmatrixThingIds: cmatrixThingIds })
+            .where('cmatrix_thing_id IN (:...cmatrixThingIds)', { cmatrixThingIds })
             .execute();
         return ret;
     }
@@ -1608,7 +1608,7 @@ export default class EntityOperation {
         const repository = getRepository(MyConditionBook, connection.name);
         let sql = repository
             .createQueryBuilder('my_condition_book')
-            .where('user_id = :userId', { userId: userId })
+            .where('user_id = :userId', { userId })
             .andWhere('is_disabled = :is_disabled', { is_disabled: false });
 
         sql = sql.andWhere('app_catalog_code = :app', { app: appCode });
@@ -1682,7 +1682,7 @@ export default class EntityOperation {
         // 期間指定でログを取得
         let sql = repository
             .createQueryBuilder('shared_access_log')
-            .where('my_condition_book_id = :bookId', { bookId: bookId });
+            .where('my_condition_book_id = :bookId', { bookId });
         if (start) {
             sql = sql.andWhere('access_at >= :start', { start: moment(start).utc().format('YYYY-MM-DD HH:mm:ss') });
         }
@@ -1816,9 +1816,9 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_event')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"1_1" = :userId', { userId: userId })
-            .andWhere('"3_1_2_1" = :dataTypeCode', { dataTypeCode: dataTypeCode })
-            .andWhere('"3_1_2_2" = :dataTypeVersion', { dataTypeVersion: dataTypeVersion });
+            .andWhere('"1_1" = :userId', { userId })
+            .andWhere('"3_1_2_1" = :dataTypeCode', { dataTypeCode })
+            .andWhere('"3_1_2_2" = :dataTypeVersion', { dataTypeVersion });
         if (offset && limit) {
             sql = sql.offset(offset).limit(limit);
         }
@@ -1865,7 +1865,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_event')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"1_1" = :userId', { userId: userId })
+            .andWhere('"1_1" = :userId', { userId })
             .andWhere('id IN ' +
                 `(
                     SELECT cmatrix_2_n_relation.cmatrix_event_id
@@ -1948,9 +1948,9 @@ export default class EntityOperation {
         const sql = repository
             .createQueryBuilder('cmatrix_event')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"1_1" = :userId', { userId: userId })
-            .andWhere('"3_1_2_1" = :dataTypeCode', { dataTypeCode: dataTypeCode })
-            .andWhere('"3_1_2_2" = :dataTypeVersion', { dataTypeVersion: dataTypeVersion });
+            .andWhere('"1_1" = :userId', { userId })
+            .andWhere('"3_1_2_1" = :dataTypeCode', { dataTypeCode })
+            .andWhere('"3_1_2_2" = :dataTypeVersion', { dataTypeVersion });
         const ret = await sql.getCount();
         return ret;
     }
@@ -1970,7 +1970,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_event')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"1_1" = :userId', { userId: userId })
+            .andWhere('"1_1" = :userId', { userId })
             .andWhere('id IN ' +
                 `(
                     SELECT cmatrix_2_n_relation.cmatrix_event_id
@@ -2309,7 +2309,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_2_n')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"_1_1" IN (:...documentIdentifiers)', { documentIdentifiers: documentIdentifiers })
+            .andWhere('"_1_1" IN (:...documentIdentifiers)', { documentIdentifiers })
             .getRawMany();
         const list: Cmatrix2n[] = [];
         if (ret) {
@@ -2353,7 +2353,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_2n_relation')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_2n_id = :cmatrix2nId', { cmatrix2nId: cmatrix2nId })
+            .andWhere('cmatrix_2n_id = :cmatrix2nId', { cmatrix2nId })
             .orderBy('n', 'ASC')
             .getRawMany();
         const list: Cmatrix2nRelation[] = [];
