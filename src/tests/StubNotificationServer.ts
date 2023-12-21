@@ -19,8 +19,8 @@ export default class StubNotificationServer {
     constructor (status: number) {
         this._app = express();
 
-        this._app.use(bodyParser.json({ limit: '100mb' }));
-        this._app.use(bodyParser.urlencoded({ extended: false }));
+        this._app.use(bodyParser.json({ limit: '100mb' }) as express.RequestHandler);
+        this._app.use(bodyParser.urlencoded({ extended: false }) as express.RequestHandler);
         this._app.use(cookieParser());
 
         // イベントハンドラー
@@ -49,13 +49,13 @@ export class BaseStubServer {
 
     async start () {
         return new Promise((resolve, reject) => {
-            this.server = this.app.listen(this.port, (...args) => { if (args.length > 0) { reject(args); } resolve(); });
+            this.server = this.app.listen(this.port, (...args) => { if (args.length > 0) { reject(args); } resolve(null); });
         });
     }
 
     async stop () {
         return new Promise((resolve, reject) => {
-            this.server.close(err => { if (err) { reject(err); } resolve(); });
+            this.server.close(err => { if (err) { reject(err); } resolve(null); });
         });
     }
 }

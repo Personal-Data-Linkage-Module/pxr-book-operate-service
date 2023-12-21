@@ -128,7 +128,7 @@ class StubOperatorServer {
             res.json({
                 sessionId: 'sessionId',
                 operatorId: 1,
-                type: type,
+                type,
                 loginId: 'loginid',
                 name: 'test-user',
                 mobilePhone: '0311112222',
@@ -158,7 +158,7 @@ class StubOperatorServer {
         };
         this._app.get('/operator/user/info', (req, res) => {
             if (infoStatus !== 200 || status !== 200) {
-                res.status(infoStatus === 200 ? status : infoStatus).json({ status: status, message: 'テストエラー' }).end();
+                res.status(infoStatus === 200 ? status : infoStatus).json({ status, message: 'テストエラー' }).end();
             } else {
                 res.status(status).json({
                     userId: req.query.userId,
@@ -232,6 +232,7 @@ describe('book-operate API', () => {
      * 全テスト実行の後処理
      */
     afterAll(async () => {
+        await common.disconnect();
         // サーバ停止
         app.stop();
     });

@@ -493,7 +493,7 @@ export default class StubOutsideStoreServer {
             res.status(status).end();
         };
         // ハンドラーのイベントリスナーを追加、アプリケーションの起動
-        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.json() as express.RequestHandler);
         this._app.post('/outsideStoreService', _listener);
         this._server = this._app.listen(3033);
     }

@@ -19,7 +19,7 @@ export default class StubOperatorServer {
             res.json({
                 sessionId: 'sessionId',
                 operatorId: 1,
-                type: type,
+                type,
                 loginId: 'loginid',
                 name: 'test-user',
                 mobilePhone: '0311112222',
@@ -74,7 +74,7 @@ export class StubOperatorServerType0 {
                 res.json({
                     sessionId: 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296',
                     operatorId: 2,
-                    type: type,
+                    type,
                     loginId: '58di2dfse2.osaka.u.society',
                     pxrId: '58di2dfse2.osaka.u.society',
                     mobilePhone: '09011112222',
@@ -97,7 +97,7 @@ export class StubOperatorServerType0 {
                 res.json({
                     sessionId: 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296',
                     operatorId: 2,
-                    type: type,
+                    type,
                     loginId: '58di2dfse2.osaka.u.society',
                     pxrId: '58di2dfse2.osaka.u.society',
                     mobilePhone: '09011112222',
@@ -142,7 +142,7 @@ export class StubOperatorServerType01 {
                 res.json({
                     sessionId: 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296',
                     operatorId: 2,
-                    type: type,
+                    type,
                     loginId: '58di2dfse2.osaka.u.society',
                     pxrId: '58di2dfse2.osaka.u.society',
                     mobilePhone: '09011112222',
@@ -165,7 +165,7 @@ export class StubOperatorServerType01 {
                 res.json({
                     sessionId: 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296',
                     operatorId: 2,
-                    type: type,
+                    type,
                     loginId: '58di2dfse2.osaka.u.society',
                     pxrId: '58di2dfse2.osaka.u.society',
                     mobilePhone: '09011112222',
@@ -188,7 +188,7 @@ export class StubOperatorServerType01 {
                 res.json({
                     sessionId: 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296',
                     operatorId: 2,
-                    type: type,
+                    type,
                     loginId: '58di2dfse2.osaka.u.society',
                     pxrId: '58di2dfse2.osaka.u.society',
                     mobilePhone: '09011112222',
@@ -267,7 +267,7 @@ export class StubOperatorServer06 {
             res.json({
                 sessionId: 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296',
                 operatorId: 2,
-                type: type,
+                type,
                 loginId: '58di2dfse2.osaka.u.society',
                 pxrId: '58di2dfse2.osaka.u.society',
                 mobilePhone: '09011112222',

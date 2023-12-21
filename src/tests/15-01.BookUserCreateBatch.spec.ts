@@ -33,8 +33,8 @@ class StubOperatorServer {
 
     constructor (status: number, type: number) {
         this._app = express();
-        this._app.use(bodyParser.json({ limit: '100mb' }));
-        this._app.use(bodyParser.urlencoded({ extended: false }));
+        this._app.use(bodyParser.json({ limit: '100mb' }) as express.RequestHandler);
+        this._app.use(bodyParser.urlencoded({ extended: false }) as express.RequestHandler);
         this._app.use(cookieParser());
 
         // イベントハンドラー
@@ -43,7 +43,7 @@ class StubOperatorServer {
             res.json({
                 sessionId: 'sessionId',
                 operatorId: 1,
-                type: type,
+                type,
                 loginId: 'loginid',
                 name: 'test-user',
                 mobilePhone: '0311112222',
@@ -131,6 +131,7 @@ describe('book-operate API', () => {
      * 全テスト実行の後処理
      */
     afterAll(async () => {
+        await common.disconnect();
         // サーバ停止
         app.stop();
     });

@@ -10,7 +10,7 @@ import StubOperatorServer from './StubOperatorServer';
 import StubOutsideStoreServer from './StubOutsideStoreServer';
 
 jest.mock('../common/Config', () => ({
-    ...jest.requireActual('../common/Config'),
+    ...jest.requireActual('../common/Config') as any,
     default: {
         ReadConfig: jest.fn((path: string) => {
             const fs = require('fs');
@@ -89,6 +89,7 @@ describe('book-operate API', () => {
      */
     afterAll(async () => {
         // サーバ停止
+        await common.disconnect();
         app.stop();
     });
     /**

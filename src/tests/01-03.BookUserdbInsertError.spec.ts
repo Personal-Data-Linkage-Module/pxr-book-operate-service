@@ -40,7 +40,7 @@ class StubOperatorServer {
             res.json({
                 sessionId: 'sessionId',
                 operatorId: 1,
-                type: type,
+                type,
                 loginId: 'loginid',
                 name: 'test-user',
                 mobilePhone: '0311112222',
@@ -124,6 +124,7 @@ describe('book-operate API', () => {
      * 全テスト実行の後処理
      */
     afterAll(async () => {
+        await common.disconnect();
         // サーバ停止
         app.stop();
     });
