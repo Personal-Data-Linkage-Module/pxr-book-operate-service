@@ -69,18 +69,24 @@ export default class PostUserDeleteResDto {
                 _value: this.actorCode,
                 _ver: this.actorVersion
             },
-            region: this.regionCode ? {
-                _value: this.regionCode,
-                _ver: this.regionVersion
-            } : undefined,
-            app: this.appCode ? {
-                _value: this.appCode,
-                _ver: this.appVersion
-            } : undefined,
-            wf: this.wfCode ? {
-                _value: this.wfCode,
-                _ver: this.wfVersion
-            } : undefined
+            region: this.regionCode
+                ? {
+                    _value: this.regionCode,
+                    _ver: this.regionVersion
+                }
+                : undefined,
+            app: this.appCode
+                ? {
+                    _value: this.appCode,
+                    _ver: this.appVersion
+                }
+                : undefined,
+            wf: this.wfCode
+                ? {
+                    _value: this.wfCode,
+                    _ver: this.wfVersion
+                }
+                : undefined
         };
         return resJson;
     }
