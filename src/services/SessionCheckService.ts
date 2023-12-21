@@ -58,7 +58,7 @@ export default class SessionCheckService {
                     ? CookieType.TYPE_APPLICATION_COOKIE
                     : CookieType.TYPE_MANAGER_COOKIE);
             // リクエストデータ生成
-            const data = JSON.stringify({ sessionId: sessionId });
+            const data = JSON.stringify({ sessionId });
             // 接続のためのオプションを生成
             const options: request.CoreOptions = {
                 headers: {

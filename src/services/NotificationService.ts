@@ -48,7 +48,7 @@ export default class NotificationService {
                 'Content-Length': Buffer.byteLength(body),
                 session: operator.getEncodeData()
             },
-            body: body
+            body
         };
 
         try {

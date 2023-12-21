@@ -38,6 +38,8 @@ import urljoin = require('url-join');
 import CatalogService from './CatalogService';
 import CatalogDto from './dto/CatalogDto';
 import OperatorReqDto from '../resources/dto/OperatorReqDto';
+import moment = require('moment');
+import { OperatorType } from '../common/Operator';
 /* eslint-enable */
 const config = Config.ReadConfig('./config/config.json');
 
@@ -46,6 +48,11 @@ export default class UserService {
     readonly REQUEST_STATUS = 0;
     readonly COOPERATING_STATUS = 1;
     readonly IND_OPERATOR = 0;
+    readonly MANAGE_TYPE_USER_ADD = 0; // 利用者作成
+    readonly MANAGE_TYPE_USER_CANCEL = 1; // 利用者削除
+    readonly GLOBAL_SETTING_NS: string = 'catalog/ext/%s/setting/global';
+    readonly BLOCK_TYPE_APP: string = 'app';
+    readonly BLOCK_TYPE_REGION: string = 'region-root';
 
     /**
      * 利用者作成
@@ -88,6 +95,9 @@ export default class UserService {
             await new CatalogService().getCatalogInfo(dto);
         }
 
+        // オペレータの所属block種別を取得
+        const operatorBlockType = await this.getOperatorBlockType(operator, message);
+
         // ログイン不可の個人を登録する
         const operatorAddDto: OperatorAddDto = new OperatorAddDto();
         operatorAddDto.setUrl(bookUserCreateDto.getOperatorUrl());
@@ -99,7 +109,7 @@ export default class UserService {
         await OperatorService.addProhibitedIndividual(operatorAddDto);
 
         // 利用者管理情報として、オペレーターサービスに連携する
-        await OperatorService.registerUserInformation(bookManageResult.userId, bookUserCreateDto.userInfo, operator.getEncodeData());
+        await OperatorService.registerUserInformation(operatorAddDto, operatorBlockType, bookUserCreateDto.userInfo, operator.getEncodeData());
 
         // My-Condition-Bookテーブルにレコードを登録する
         const nowTime: Date = new Date();
@@ -254,6 +264,9 @@ export default class UserService {
 
             await EntityOperation.deleteCondBookRecord(trans, myConditionBook, isPhysicalDelete);
 
+            // オペレータの所属block判定
+            await this.getOperatorBlockType(operator, message);
+
             // 通知サービス.登録APIを呼出し、連携解除通知を登録する
             const notificationCategoryCode = 158;
             const notificationCategoryVersion = 1;
@@ -281,6 +294,14 @@ export default class UserService {
 
         // レスポンスを生成
         const response: PostUserDeleteResDto = new PostUserDeleteResDto();
+        response.actorCode = parseInt(bookManageResult['actor']['_value']);
+        response.actorVersion = parseInt(bookManageResult['actor']['_ver']);
+        response.regionCode = bookManageResult['region'] ? parseInt(bookManageResult['region']['_value']) : null;
+        response.regionVersion = bookManageResult['region'] ? parseInt(bookManageResult['region']['_ver']) : null;
+        response.appCode = bookManageResult['app'] ? parseInt(bookManageResult['app']['_value']) : null;
+        response.appVersion = bookManageResult['app'] ? parseInt(bookManageResult['app']['_ver']) : null;
+        response.wfCode = bookManageResult['wf'] ? parseInt(bookManageResult['wf']['_value']) : null;
+        response.wfVersion = bookManageResult['wf'] ? parseInt(bookManageResult['wf']['_ver']) : null;
         response.userId = bookManageResult['userId'];
 
         // レスポンスを返す
@@ -299,6 +320,21 @@ export default class UserService {
         const message = searchUserListDto.getMessage();
         const userIdList = searchUserListDto.getUserIdList();
         const operator = searchUserListDto.getOperator();
+        // オペレータの種別が運営メンバーの場合、userId指定はエラー
+        if (operator.getType() === OperatorType.TYPE_MANAGE_MEMBER && (userIdList && userIdList.length > 0)) {
+            throw new AppError(message.SEARCH_WITH_USER_ID_IS_FORBIDDEN, 400);
+        }
+        let app: number;
+        let wf: number;
+        if (operator.getType() !== OperatorType.TYPE_MANAGE_MEMBER && searchUserListDto.getIncludeRequest()) {
+            // アプリケーションの場合、申請中を含むフラグがONの場合はエラー
+            throw new AppError(message.SEARCH_INCLUDE_REQUEST_IS_FORBIDDEN, 400);
+        } else {
+            // セッション情報からappコードを取得する
+            const appWfCodes = await OperatorService.getAppWfCatalogCodeByOperator(operator);
+            wf = null;
+            app = appWfCodes.appCatalogCode;
+        }
         let establishAtStartDate = null;
         if (searchUserListDto.getEstablishAtStart()) {
             const establishAtStart = new Date(searchUserListDto.getEstablishAtStart());
@@ -309,7 +345,7 @@ export default class UserService {
             const establishAtEnd = new Date(searchUserListDto.getEstablishAtEnd());
             establishAtEndDate = new Date(establishAtEnd.getUTCFullYear(), establishAtEnd.getUTCMonth(), establishAtEnd.getUTCDate(), establishAtEnd.getUTCHours(), establishAtEnd.getUTCMinutes(), establishAtEnd.getUTCSeconds());
         }
-        const myConditionBookDataList: MyConditionBook[] = await EntityOperation.getRecordFromUserIdOpenAt(userIdList, establishAtStartDate, establishAtEndDate);
+        const myConditionBookDataList: MyConditionBook[] = await EntityOperation.getRecordFromUserIdOpenAt(userIdList, wf, app, establishAtStartDate, establishAtEndDate);
 
         // My-Condition-Book管理サービス.データ蓄積定義取得APIを呼び出す
         // レスポンスが200 OK以外の場合エラーレスポンスを返却し終了
@@ -372,18 +408,31 @@ export default class UserService {
             } else {
                 const userInformation = await OperatorService.acquireUserInformation(
                     bookManageResult.userId,
+                    bookManageResult.wfCode,
+                    bookManageResult.appCode,
+                    bookManageResult.regionCode,
                     operator.getEncodeData()
                 );
                 jsonData = {
                     status: bookManageResult.status,
-                    app: bookManageResult.appCode ? {
-                        _value: bookManageResult.appCode,
-                        _ver: bookManageResult.appVersion
-                    } : null,
-                    wf: bookManageResult.wfCode ? {
-                        _value: bookManageResult.wfCode,
-                        _ver: bookManageResult.wfVersion
-                    } : null,
+                    app: bookManageResult.appCode
+                        ? {
+                            _value: bookManageResult.appCode,
+                            _ver: bookManageResult.appVersion
+                        }
+                        : null,
+                    wf: bookManageResult.wfCode
+                        ? {
+                            _value: bookManageResult.wfCode,
+                            _ver: bookManageResult.wfVersion
+                        }
+                        : null,
+                    region: bookManageResult.regionCode
+                        ? {
+                            _value: bookManageResult.regionCode,
+                            _ver: bookManageResult.regionVersion
+                        }
+                        : null,
                     userId: bookManageResult.userId,
                     establishAt: transformFromDateTimeToString(config['timezone'], bookManageResult.openStartAt),
                     attribute: bookManageResult.attribute ? bookManageResult.attribute : {},
@@ -392,7 +441,7 @@ export default class UserService {
                         event: bookManageResult.event,
                         thing: bookManageResult.thing
                     },
-                    userInformation: userInformation
+                    userInformation
                 };
             }
             response.push(jsonData);
@@ -449,6 +498,8 @@ export default class UserService {
             bookManageResult.wfVersion = myConditionBookData.wfCatalogVersion;
             bookManageResult.appCode = myConditionBookData.appCatalogCode;
             bookManageResult.appVersion = myConditionBookData.appCatalogVersion;
+            bookManageResult.regionCode = myConditionBookData.regionCatalogCode;
+            bookManageResult.regionVersion = myConditionBookData.regionCatalogVersion;
             bookManageResult.status = this.COOPERATING_STATUS;
             bookManageResult.identifyCode = myConditionBookData.identifyCode;
             bookManageResultList.push(bookManageResult);
@@ -539,5 +590,34 @@ export default class UserService {
         const response: PostUserCreateBatchResDto = new PostUserCreateBatchResDto();
         response.result = 'success';
         return response;
+    }
+
+    /**
+     * アクターカタログのNSからオペレータの所属Blockを判別する
+     * @param operator
+     * @param message
+     * @returns
+     */
+    private async getOperatorBlockType (operator: OperatorReqDto, message: any) {
+        // セッション情報のアクターコードからアクターカタログを取得
+        const actorCode = operator.getActorCode();
+        const catalogService = new CatalogService();
+        const catalogDto = new CatalogDto();
+        catalogDto.setOperator(operator);
+        catalogDto.setMessage(message);
+        catalogDto.setUrl(config['catalogUrl']);
+        catalogDto.setCode(actorCode);
+        const actorCatalog = await catalogService.getCatalogInfo(catalogDto);
+        if (!actorCatalog || !actorCatalog['catalogItem'] || !actorCatalog['catalogItem']['ns']) {
+            throw new AppError(message.NOT_FOUND_ACTOR_CATALOG, 401);
+        }
+        // NSの末尾から所属block種を取得
+        const ns: string = actorCatalog['catalogItem']['ns'];
+        const blockType = ns.slice(ns.lastIndexOf('/') + 1);
+        // 所属blockが'app', 'region'以外の場合エラー
+        if (blockType !== this.BLOCK_TYPE_APP && blockType !== this.BLOCK_TYPE_REGION) {
+            throw new AppError(message.INVALID_OPERATOR_BLOCK_TYPE, 401);
+        }
+        return blockType;
     }
 }
