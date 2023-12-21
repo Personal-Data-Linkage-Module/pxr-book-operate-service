@@ -102,8 +102,8 @@ export default class ThingController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret: PutThingByUserIdByEventIdResDto = await this.updateThingProc(reqParm);
@@ -128,8 +128,8 @@ export default class ThingController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret: PutThingByUserIdByEventIdResDto = await this.updateThingProc(reqParm);
@@ -192,8 +192,8 @@ export default class ThingController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret: DeleteThingByUserIdByEventIdResDto = await this.deleteThingProc(reqParm);
@@ -218,8 +218,8 @@ export default class ThingController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret: DeleteThingByUserIdByEventIdResDto = await this.deleteThingProc(reqParm);
