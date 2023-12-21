@@ -19,31 +19,31 @@ export default class Cmatrix2nRelation {
      * ドキュメント連番
      */
     @Column({ type: 'bigint', nullable: false, name: 'n' })
-    nDocumentNo: number = 0;
+        nDocumentNo: number = 0;
 
     /**
      * CMatrixイベントID
      */
     @Column({ type: 'bigint', nullable: false, name: 'cmatrix_event_id' })
-    cmatrixEventId: number = 0;
+        cmatrixEventId: number = 0;
 
     /**
      * CMatrix2(n)ID
      */
     @Column({ type: 'bigint', nullable: false, name: 'cmatrix_2n_id' })
-    cmatrix2nId: number = 0;
+        cmatrix2nId: number = 0;
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -55,7 +55,7 @@ export default class Cmatrix2nRelation {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

@@ -29,43 +29,43 @@ export default class ShareAccessLogDataType {
      * 共有アクセスログID
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_access_log_id' })
-    shareAccessLogId: number = 0;
+        shareAccessLogId: number = 0;
 
     /**
      * データ種
      */
     @Column({ type: 'smallint', nullable: false, default: false, name: 'data_type' })
-    dataType: number = 0;
+        dataType: number = 0;
 
     /**
      * データ種カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'data_type_catalog_code' })
-    dataTypeCatalogCode: number = 0;
+        dataTypeCatalogCode: number = 0;
 
     /**
      * データ種カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'data_type_catalog_version' })
-    dataTypeCatalogVersion: number = 0;
+        dataTypeCatalogVersion: number = 0;
 
     /**
      * 属性
      */
     @Column({ type: 'text' })
-    attributes: string = '';
+        attributes: string = '';
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -77,7 +77,7 @@ export default class ShareAccessLogDataType {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時
@@ -88,7 +88,7 @@ export default class ShareAccessLogDataType {
     /** 行列ハッシュテーブルのレコード */
     @ManyToOne(type => ShareAccessLog, shareAccessLog => shareAccessLog.dataTypes)
     @JoinColumn({ name: 'share_access_log_id', referencedColumnName: 'id' })
-    shareAccessLog: ShareAccessLog;
+        shareAccessLog: ShareAccessLog;
 
     /**
      * コンストラクタ

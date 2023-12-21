@@ -19,115 +19,115 @@ export default class Document {
      * my-condition-bookID
      */
     @Column({ type: 'bigint', nullable: false, name: 'my_condition_book_id' })
-    myConditionBookId: number = 0;
+        myConditionBookId: number = 0;
 
     /**
      * ソースID
      */
     @Column({ type: 'varchar', length: 255, name: 'source_id' })
-    sourceId: string = '';
+        sourceId: string = '';
 
     /**
      * ドキュメント識別子
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'doc_identifier' })
-    docIdentifier: string = '';
+        docIdentifier: string = '';
 
     /**
      * ドキュメント種別カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'doc_catalog_code' })
-    docCatalogCode: number = 0;
+        docCatalogCode: number = 0;
 
     /**
      * ドキュメント種別カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'doc_catalog_version' })
-    docCatalogVersion: number = 0;
+        docCatalogVersion: number = 0;
 
     /**
      * ドキュメント生成時間
      */
     @CreateDateColumn({ type: 'timestamp without time zone', name: 'doc_create_at' })
-    docCreateAt: Date = new Date();
+        docCreateAt: Date = new Date();
 
     /**
      * ドキュメントを発生させたアクター識別子カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'doc_actor_code' })
-    docActorCode: number = 0;
+        docActorCode: number = 0;
 
     /**
      * ドキュメントを発生させたアクター識別子カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'doc_actor_version' })
-    docActorVersion: number = 0;
+        docActorVersion: number = 0;
 
     /**
      * ワークフロー識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'wf_catalog_code' })
-    wfCatalogCode: number = 0;
+        wfCatalogCode: number = 0;
 
     /**
      * ワークフロー識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'wf_catalog_version' })
-    wfCatalogVersion: number = 0;
+        wfCatalogVersion: number = 0;
 
     /**
      * ワークフローロール識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'wf_role_code' })
-    wfRoleCode: number = 0;
+        wfRoleCode: number = 0;
 
     /**
      * ワークフローロール識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'wf_role_version' })
-    wfRoleVersion: number = 0;
+        wfRoleVersion: number = 0;
 
     /**
      * ワークフロー職員識別子
      */
     @Column({ type: 'varchar', length: 255, name: 'wf_staff_identifier' })
-    wfStaffIdentifier: string = '';
+        wfStaffIdentifier: string = '';
 
     /**
      * アプリケーション識別子カタログコード
      */
     @Column({ type: 'bigint', name: 'app_catalog_code' })
-    appCatalogCode: number = 0;
+        appCatalogCode: number = 0;
 
     /**
      * アプリケーション識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: 'app_catalog_version' })
-    appCatalogVersion: number = 0;
+        appCatalogVersion: number = 0;
 
     /**
      * テンプレート
      */
     @Column({ type: 'text' })
-    template: string = '';
+        template: string = '';
 
     /**
      * 属性
      */
     @Column({ type: 'text' })
-    attributes: string = '';
+        attributes: string = '';
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -139,7 +139,7 @@ export default class Document {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

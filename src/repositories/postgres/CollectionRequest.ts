@@ -19,49 +19,49 @@ export default class CollectionRequest {
      * ステータス
      */
     @Column({ type: 'smallint', nullable: false, default: 0, name: 'status' })
-    status: number = 0;
+        status: number = 0;
 
     /**
      * PCDコード
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'pcd_code' })
-    pcdCode: string;
+        pcdCode: string;
 
     /**
      * アクターコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'actor_code' })
-    actorCode: number;
+        actorCode: number;
 
     /**
      * ブロックコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'block_code' })
-    blockCode: number;
+        blockCode: number;
 
     /**
      * データ提供契約申込ID
      */
     @Column({ type: 'bigint', nullable: false, name: 'supply_proposal_id' })
-    supplyProposalId: number;
+        supplyProposalId: number;
 
     /**
      * データ提供契約ID
      */
     @Column({ type: 'bigint', nullable: false, name: 'contract_id' })
-    contractId: number;
+        contractId: number;
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -73,7 +73,7 @@ export default class CollectionRequest {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

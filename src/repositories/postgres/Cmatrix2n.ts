@@ -19,91 +19,91 @@ export default class Cmatrix2n {
      * ドキュメント識別子
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: '_1_1' })
-    docIdentifier: string = '';
+        docIdentifier: string = '';
 
     /**
      * ドキュメント種別カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: '_1_2_1' })
-    docCatalogCode: number = 0;
+        docCatalogCode: number = 0;
 
     /**
      * ドキュメント種別カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: '_1_2_2' })
-    docCatalogVersion: number = 0;
+        docCatalogVersion: number = 0;
 
     /**
      * ドキュメント作成時間
      */
     @Column({ type: 'timestamp without time zone', nullable: false, name: '_2_1' })
-    docCreateAt: Date = new Date();
+        docCreateAt: Date = new Date();
 
     /**
      * ドキュメントを発生させたアクター識別子カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: '_3_1_1' })
-    docActorCode: number = 0;
+        docActorCode: number = 0;
 
     /**
      * ドキュメントを発生させたアクター識別子カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: '_3_1_2' })
-    docActorVersion: number = 0;
+        docActorVersion: number = 0;
 
     /**
      * ワークフロー識別子カタログコード
      */
     @Column({ type: 'bigint', name: '_3_2_1' })
-    docWfCatalogCode: number = 0;
+        docWfCatalogCode: number = 0;
 
     /**
      * ワークフロー識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '_3_2_2' })
-    docWfCatalogVersion: number = 0;
+        docWfCatalogVersion: number = 0;
 
     /**
      * ワークフローロール識別子カタログコード
      */
     @Column({ type: 'bigint', name: '_3_3_1' })
-    docWfRoleCode: number = 0;
+        docWfRoleCode: number = 0;
 
     /**
      * ワークフローロール識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '_3_3_2' })
-    docWfRoleVersion: number = 0;
+        docWfRoleVersion: number = 0;
 
     /**
      * ワークフロー職員識別子
      */
     @Column({ type: 'varchar', length: 255, name: '_3_4' })
-    docWfStaffIdentifier: string = '';
+        docWfStaffIdentifier: string = '';
 
     /**
      * アプリケーション識別子カタログコード
      */
     @Column({ type: 'bigint', name: '_3_5_1' })
-    docAppCatalogCode: number = 0;
+        docAppCatalogCode: number = 0;
 
     /**
      * アプリケーション識別子カタログバージョン
      */
     @Column({ type: 'bigint', name: '_3_5_2' })
-    docAppCatalogVersion: number = 0;
+        docAppCatalogVersion: number = 0;
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -115,7 +115,7 @@ export default class Cmatrix2n {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時
