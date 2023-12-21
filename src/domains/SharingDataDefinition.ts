@@ -10,11 +10,11 @@ import { CodeVersionObject } from '../resources/dto/PostShareReqDto';
 /* eslint-enable */
 
 export class CodeObject {
-    @Transform(transformToNumber)
+    @Transform(({ value }) => { return transformToNumber(value); })
     @IsNumber()
     @IsNotEmpty()
     @IsDefined()
-    _value: number;
+        _value: number;
 }
 
 export class DataType {
@@ -22,13 +22,13 @@ export class DataType {
     @IsObject()
     @Type(type => CodeVersionObject)
     @ValidateNested()
-    code: CodeVersionObject;
+        code: CodeVersionObject;
 
     @IsOptional()
     @IsArray()
     @Type(type => CodeVersionObject)
     @ValidateNested()
-    thing: CodeVersionObject[];
+        thing: CodeVersionObject[];
 }
 
 export class Condition {
@@ -36,26 +36,26 @@ export class Condition {
     @IsArray()
     @Type(type => DataType)
     @ValidateNested()
-    document: DataType[];
+        document: DataType[];
 
     @IsOptional()
     @IsArray()
     @Type(type => DataType)
     @ValidateNested()
-    event: DataType[];
+        event: DataType[];
 
     @IsOptional()
     @IsArray()
     @Type(type => CodeVersionObject)
     @ValidateNested()
-    thing: CodeVersionObject[];
+        thing: CodeVersionObject[];
 }
 export class ShareObject {
     @IsDefined()
     @IsObject()
     @Type(type => CodeVersionObject)
     @ValidateNested()
-    code: CodeVersionObject;
+        code: CodeVersionObject;
 }
 
 export default class {
@@ -66,23 +66,23 @@ export default class {
     @IsObject()
     @Type(type => CodeObject)
     @ValidateNested()
-    actor: CodeObject;
+        actor: CodeObject;
 
     @IsOptional()
     @IsObject()
     @Type(type => CodeObject)
     @ValidateNested()
-    app: CodeObject;
+        app: CodeObject;
 
     @IsOptional()
     @IsObject()
     @Type(type => CodeObject)
     @ValidateNested()
-    wf: CodeObject;
+        wf: CodeObject;
 
     @IsDefined()
     @IsArray()
     @Type(type => ShareObject)
     @ValidateNested()
-    share: ShareObject[];
+        share: ShareObject[];
 }
