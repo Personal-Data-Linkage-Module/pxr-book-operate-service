@@ -103,8 +103,8 @@ export default class EventController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:PutEventByUserIdResDto = await this.updateEventProc(reqParm);
@@ -128,8 +128,8 @@ export default class EventController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:PutEventByUserIdResDto = await this.updateEventProc(reqParm);
@@ -190,8 +190,8 @@ export default class EventController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:DeleteEventByUserIdResDto = await this.deleteEventProc(reqParm);
@@ -215,8 +215,8 @@ export default class EventController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:DeleteEventByUserIdResDto = await this.deleteEventProc(reqParm);
