@@ -27,7 +27,7 @@ export default class PostUserListReqDto {
 
     /** establishAt */
     @Type(() => EstablishAt)
-    establishAt: EstablishAt;
+        establishAt: EstablishAt;
 
     includeRequest: boolean = false;
 }

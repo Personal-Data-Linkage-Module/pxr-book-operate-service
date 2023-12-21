@@ -27,26 +27,26 @@ const configure = Config.ReadConfig('./config/config.json');
  * POST: データ共有コードによるデータ取得のリクエストDTO
  */
 export class CodeVersionObject {
-    @Transform(transformToNumber)
+    @Transform(({ value }) => { return transformToNumber(value); })
     @IsNumber()
     @IsNotEmpty()
     @IsDefined()
     _value: number;
 
-    @Transform(transformToNumber)
+    @Transform(({ value }) => { return transformToNumber(value); })
     @IsNumber()
     @IsDefined()
     _ver: number;
 }
 
 export class DateStartEndObject {
-    @Transform(transformToDateTime)
+    @Transform(({ value }) => { return transformToDateTime(value); })
     @IsDate()
     @IsNotEmpty()
     @IsDefined()
     start: Date;
 
-    @Transform(transformToDateTime)
+    @Transform(({ value }) => { return transformToDateTime(value); })
     @IsDate()
     @IsDefined()
     end: Date;
