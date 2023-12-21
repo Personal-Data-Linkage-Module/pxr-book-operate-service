@@ -41,7 +41,7 @@ export async function doGetRequest (uri: string, options?: request.CoreOptions) 
                 }
             }
             resolve({
-                response: response,
+                response,
                 body: data
             });
         });
@@ -79,7 +79,7 @@ export async function doPostRequest (uri: string, options?: request.CoreOptions)
                 }
             }
             resolve({
-                response: response,
+                response,
                 body: data
             });
         });
@@ -117,7 +117,7 @@ export async function doPutRequest (uri: string, options?: request.CoreOptions) 
                 }
             }
             resolve({
-                response: response,
+                response,
                 body: data
             });
         });
@@ -155,7 +155,7 @@ export async function doDeleteRequest (uri: string, options?: request.CoreOption
                 }
             }
             resolve({
-                response: response,
+                response,
                 body: data
             });
         });
