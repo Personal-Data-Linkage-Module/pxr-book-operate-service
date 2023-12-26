@@ -40,12 +40,12 @@ export class CodeObject {
 }
 
 export class DateStartEndObject {
-    @Transform(transformToDateTime)
+    @Transform(({ value }) => { return transformToDateTime(value); })
     @IsDate()
     @IsOptional()
     start: Date;
 
-    @Transform(transformToDateTime)
+    @Transform(({ value }) => { return transformToDateTime(value); })
     @IsDate()
     @IsOptional()
     end: Date;

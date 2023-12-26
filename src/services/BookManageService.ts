@@ -361,6 +361,12 @@ export default class BookManageService {
     public async searchUser (bookManageDto: BookManageDto): Promise<any> {
         const operator = bookManageDto.getOperator();
         const message = bookManageDto.getMessage();
+        // 個人を特定するためのuserId, wf/app情報に過不足がある場合エラー
+        if (!bookManageDto.getUserId()) {
+            throw new AppError(message.EMPTY_USER_ID, 400);
+        } else if (!bookManageDto.getApplication()) {
+            throw new AppError(message.EMPTY_APP, 400);
+        }
 
         // URLを生成
         const url = bookManageDto.getUrl();
@@ -368,7 +374,9 @@ export default class BookManageService {
         // bodyを生成
         const bodyStr = JSON.stringify({
             actor: bookManageDto.getActor() ? bookManageDto.getActor() : operator.getActorCode(),
-            userId: bookManageDto.getUserId()
+            userId: bookManageDto.getUserId(),
+            app: bookManageDto.getApplication(),
+            wf: null
         });
 
         // 接続のためのオプションを生成

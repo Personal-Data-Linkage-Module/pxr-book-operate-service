@@ -18,6 +18,8 @@ import { Service } from 'typedi';
 import StoreServiceDto from './dto/StoreSreviceDto';
 import Config from '../common/Config';
 import AppError from '../common/AppError';
+import CatalogDto from './dto/CatalogDto';
+import CatalogService from './CatalogService';
 import EntityOperation from '../repositories/EntityOperation';
 import Document from '../repositories/postgres/Document';
 import DocumentEventSetRelation from '../repositories/postgres/DocumentEventSetRelation';
@@ -40,6 +42,8 @@ const Message = Config.ReadConfig('./config/message.json');
 
 @Service()
 export default class StoreService {
+    /** block type */
+    readonly BLOCK_TYPE_APP: string = 'app';
     /**
      * 蓄積イベント受信
      * @param dto
@@ -126,9 +130,12 @@ export default class StoreService {
      * RefactorDescription:
      *  #3803 : deleteCmatrix
      */
-    public async deleteUserStoreData (userId: string, physicalDelete: boolean, operator: Operator): Promise<any> {
+    public async deleteUserStoreData (userId: string, app: number, wf:number, physicalDelete: boolean, operator: Operator): Promise<any> {
+        // セッション情報からオペレータの所属block種別を判別し、対応したwf/appコードが設定されていない場合エラー
+        await this.checkOperatorBlockType(operator, app, wf, Message);
+
         // ドキュメントテーブルのレコードを取得
-        const documents: Document[] = await EntityOperation.getDocumentRecord(userId, null, null);
+        const documents: Document[] = await EntityOperation.getDocumentRecord(userId, null, null, app, wf);
         // 対象データが存在しない場合
         if (!documents || documents.length <= 0) {
             // エラーを返す
@@ -136,26 +143,28 @@ export default class StoreService {
         }
         const targetDocumentIds: number[] = [];
         const targetDocumentIdentifies: string[] = [];
-        documents.forEach((ele: Document) => {
-            targetDocumentIds.push(ele.getId());
-            targetDocumentIdentifies.push(ele.getdocIdentifier());
-        });
-        // ドキュメントイベントセットリレーションのレコード取得
-        const documentEventSetRelations = await EntityOperation.getDocumentEventSetRelations(targetDocumentIds);
         const targetEventSetIds: number[] = [];
-        documentEventSetRelations.forEach((ele: DocumentEventSetRelation) => {
-            targetEventSetIds.push(ele.getId());
-        });
+        if (documents && documents.length > 0) {
+            documents.forEach((ele: Document) => {
+                targetDocumentIds.push(ele.getId());
+                targetDocumentIdentifies.push(ele.getdocIdentifier());
+            });
+            // ドキュメントイベントセットリレーションのレコード取得
+            const documentEventSetRelations = await EntityOperation.getDocumentEventSetRelations(targetDocumentIds);
+            documentEventSetRelations.forEach((ele: DocumentEventSetRelation) => {
+                targetEventSetIds.push(ele.getId());
+            });
+        }
 
         // イベントテーブルのレコードを取得
-        const events: Event[] = await EntityOperation.getEventRecord(userId, null, null);
+        const events: Event[] = await EntityOperation.getEventRecord(userId, null, null, app, wf);
         // 対象データが存在しない場合
         if (!events || events.length <= 0) {
             // エラーを返す
             throw new AppError(Message.TARGET_NO_DATA, ResponseCode.NOT_FOUND);
         }
         // モノテーブルのレコードを取得
-        const things: Thing[] = await EntityOperation.getThingRecord(userId, null, null, null);
+        const things: Thing[] = await EntityOperation.getThingRecord(userId, null, null, null, app, wf);
         if (!things || things.length <= 0) {
             // エラーを返す
             throw new AppError(Message.TARGET_NO_DATA, ResponseCode.NOT_FOUND);
@@ -163,14 +172,18 @@ export default class StoreService {
 
         const targetEventIds: number[] = [];
         const targetEventIdentifies: string[] = [];
-        events.forEach((ele: Event) => {
-            targetEventIds.push(ele.getId());
-            targetEventIdentifies.push(ele.getEventIdentifier());
-        });
+        if (events && events.length > 0) {
+            events.forEach((ele: Event) => {
+                targetEventIds.push(ele.getId());
+                targetEventIdentifies.push(ele.getEventIdentifier());
+            });
+        }
         const targetThingIds: number[] = [];
-        things.forEach((ele: Thing) => {
-            targetThingIds.push(ele.getId());
-        });
+        if (things && things.length > 0) {
+            things.forEach((ele: Thing) => {
+                targetThingIds.push(ele.getId());
+            });
+        }
 
         // トランザクションを開始
         const connection = await connectDatabase();
@@ -224,17 +237,27 @@ export default class StoreService {
      * @param operator
      */
     private async deleteCmatrix (userId: string, targetEventIdentifies: string[], targetDocumentIdentifies: string[], trans: EntityManager, operator: Operator) {
-        // CMatrixイベントのレコードを取得
-        const cmatrixEvents: CmatrixEvent[] = await EntityOperation.getCMatrixEventsByEventIdentifier(userId, targetEventIdentifies);
-        if (!cmatrixEvents || cmatrixEvents.length <= 0) {
-            // 対象データが存在しない場合、エラーを返す
-            throw new AppError(Message.TARGET_NO_DATA, ResponseCode.NOT_FOUND);
+        let cmatrixEvents: CmatrixEvent[] = [];
+        const targetCmatrixEventIds: number[] = [];
+        if (targetEventIdentifies && targetEventIdentifies.length > 0) {
+            // CMatrixイベントのレコードを取得
+            cmatrixEvents = await EntityOperation.getCMatrixEventsByEventIdentifier(userId, targetEventIdentifies);
+            if (!cmatrixEvents || cmatrixEvents.length <= 0) {
+                // 対象データが存在しない場合、エラーを返す
+                throw new AppError(Message.TARGET_NO_DATA, ResponseCode.NOT_FOUND);
+            }
+            cmatrixEvents.forEach((ele: CmatrixEvent) => {
+                targetCmatrixEventIds.push(ele.getId());
+            });
         }
-        // CMatrix2nのレコードを取得
-        const cmatrix2ns: Cmatrix2n[] = await EntityOperation.getCMatrix2nsByDocumentIdentifier(targetDocumentIdentifies);
-        if (!cmatrix2ns || cmatrix2ns.length <= 0) {
-            // 対象データが存在しない場合、エラーを返す
-            throw new AppError(Message.TARGET_NO_DATA, ResponseCode.NOT_FOUND);
+
+        if (targetDocumentIdentifies && targetDocumentIdentifies.length > 0) {
+            // CMatrix2nのレコードを取得
+            const cmatrix2ns: Cmatrix2n[] = await EntityOperation.getCMatrix2nsByDocumentIdentifier(targetDocumentIdentifies);
+            if (!cmatrix2ns || cmatrix2ns.length <= 0) {
+                // 対象データが存在しない場合、エラーを返す
+                throw new AppError(Message.TARGET_NO_DATA, ResponseCode.NOT_FOUND);
+            }
         }
 
         // まとめて処理するための変数
@@ -296,6 +319,40 @@ export default class StoreService {
             // Local-CTokenをまとめて削除
             const ctokenService: CTokenService = new CTokenService();
             await ctokenService.deleteLocalCTokenList(ctokenDtos);
+        }
+    }
+
+    /**
+     * オペレータの所属Blockとクエリの整合性チェック
+     * @param operator
+     * @param app
+     * @param wf
+     * @param message
+     * @returns
+     */
+    private async checkOperatorBlockType (operator: Operator, app: number, wf: number, message: any) {
+        // セッション情報のアクターコードからアクターカタログを取得
+        const actorCode = operator.getActorCode();
+        const catalogService = new CatalogService();
+        const catalogDto = new CatalogDto();
+        catalogDto.setOperator(operator);
+        catalogDto.setMessage(message);
+        catalogDto.setUrl(Configure['catalogUrl']);
+        catalogDto.setCode(actorCode);
+        const actorCatalog = await catalogService.getCatalogInfo(catalogDto);
+        if (!actorCatalog || !actorCatalog['catalogItem'] || !actorCatalog['catalogItem']['ns']) {
+            throw new AppError(message.NOT_FOUND_ACTOR_CATALOG, 401);
+        }
+        // NSの末尾から所属block種を取得
+        const ns: string = actorCatalog['catalogItem']['ns'];
+        const blockType = ns.slice(ns.lastIndexOf('/') + 1);
+
+        if (blockType !== this.BLOCK_TYPE_APP) {
+            // 所属blockが'app'以外の場合エラー
+            throw new AppError(message.INVALID_OPERATOR_BLOCK_TYPE, 401);
+        } else if (blockType === this.BLOCK_TYPE_APP && !app) {
+            // 所属blockとクエリのサービスコードの種類が異なる場合はエラー
+            throw new AppError(message.MISMATCH_OPERATOR_BLOCK_TYPE_AND_SERVICE_CODE, 400);
         }
     }
 }

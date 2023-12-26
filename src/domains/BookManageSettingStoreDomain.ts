@@ -60,6 +60,16 @@ export default class BookManageSettingStoreDomain {
     public wfVersion: number = null;
 
     /**
+    * regionCode
+    */
+    public regionCode: number = null;
+
+    /**
+    * regionVersion
+    */
+    public regionVersion: number = null;
+
+    /**
      * document
      */
     public document: Array<any> = null;
@@ -118,6 +128,10 @@ export default class BookManageSettingStoreDomain {
             if (obj['wf']) {
                 this.wfCode = null;
                 this.wfVersion = null;
+            }
+            if (obj['region']) {
+                this.wfCode = obj['region']['_value'];
+                this.wfVersion = obj['region']['_ver'];
             }
             this.document = obj['document'];
             this.event = obj['event'];

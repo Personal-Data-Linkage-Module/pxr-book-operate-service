@@ -19,10 +19,10 @@ VALUES
     1, '20200221-1', 'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6',
     1000008, 1, 
 	1000004, 1, 
-    1000007, 1, 
-    1000005, 1, 
-    'staffId',
-    null, null,
+    null, null, 
+    null, null, 
+    null,
+    1000007, 1,
     '{"id":{"index":"4_1_1","value":"thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"},"code":{"index":"4_1_2","value":{"_value":1000008,"_ver":1}},"sourceId":"20200221-1","env":null,"x-axis":{"index":"4_2_2_1","value":null},"y-axis":{"index":"4_2_2_2","value":null},"z-axis":{"index":"4_2_2_3","value":null},"acquired_time":{"index":"4_2_2_4","value":"uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu"}}', 
     null, false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
 ),
@@ -51,8 +51,8 @@ VALUES
 (
     1,
 	'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6', 1000008, 1, 
-	1000004, 1, 1000007, 1, 1000005, 1, 'staffId',
-	null, null,
+	1000004, 1, null, null, null, null, null,
+	1000007, 1,
 	'XXXX', '2020-01-01 00:00:00',
 	false, 'pxr_user', '2020-02-20T00:00:00.000+0900', 'pxr_user', '2020-02-20T00:00:00.000+0900'
 ),

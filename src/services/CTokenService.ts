@@ -47,7 +47,7 @@ export default class CTokenService {
                 accept: 'application/json',
                 session: encodeURIComponent(JSON.stringify(ctokenDto.getOperator()))
             },
-            body: body
+            body
         };
 
         try {
@@ -205,7 +205,7 @@ export default class CTokenService {
                 accept: 'application/json',
                 session: encodeURIComponent(JSON.stringify(ctokenDto.getOperator()))
             },
-            body: body
+            body
         };
 
         try {
@@ -294,7 +294,7 @@ export default class CTokenService {
                 accept: 'application/json',
                 session: encodeURIComponent(JSON.stringify(ctokenDtos[0].getOperator()))
             },
-            body: body
+            body
         };
 
         try {

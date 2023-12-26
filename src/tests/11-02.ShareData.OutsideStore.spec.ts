@@ -93,6 +93,7 @@ describe('book-operate API', () => {
      * 全テスト実行の後処理
      */
     afterAll(async () => {
+        await common.disconnect();
         // サーバ停止
         app.stop();
     });
@@ -129,7 +130,7 @@ describe('book-operate API', () => {
     describe('データ共有(外部蓄積機能使用)', () => {
         test('正常：', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _outsideStoreServer = new StubOutsideStoreServer(200);
@@ -138,13 +139,13 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user2',
                         updatedAt: {
                             start: '2020-01-01T00:00:00.000+0900',
-                            end: '2023-01-01T00:00:00.000+0900'
+                            end: '2500-01-01T00:00:00.000+0900'
                         },
                         identifier: [
                             'doc-4f75161a-449a-4839-be6a-4cc577b8a8d0',
@@ -421,7 +422,7 @@ describe('book-operate API', () => {
         });
         test('正常：対象データなし', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _outsideStoreServer = new StubOutsideStoreServer(200);
@@ -430,7 +431,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -465,7 +466,7 @@ describe('book-operate API', () => {
         });
         test('正常：外部蓄積からの返却データがnull', async () => {
             // スタブサーバー起動
-            _operatorServer = new StubOperatorServerType0(200, 3);
+            _operatorServer = new StubOperatorServerType0(200, 2);
             _bookManageServer = new StubBookManageServer(200, 2);
             _proxyServer = new StubProxyServer(3003, 200);
             _outsideStoreServer = new StubOutsideStoreServer(200, 1);
@@ -474,7 +475,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(Url.ShareSearchURI)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set('Cookie', ['operator_type3_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
+                .set('Cookie', ['operator_type2_session=' + 'd89171efae04aa55357bdd2ebf8338725c8fd17ffdfbe61be66ca96c7590b296'])
                 .send(JSON.stringify(
                     {
                         userId: 'test_user1',
@@ -483,9 +484,9 @@ describe('book-operate API', () => {
                             end: '2023-01-01T00:00:00.000+0900'
                         },
                         identifier: [
-                            'doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6',
-                            'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6',
-                            'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
+                            'doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c7',
+                            'event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c7',
+                            'thing-fedc51ce-2efd-4ade-9bbe-45dc445ae9c7'
                         ],
                         logIdentifier: '1',
                         wf: null,

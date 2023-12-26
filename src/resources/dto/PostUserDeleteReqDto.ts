@@ -22,5 +22,5 @@ export default class PostUserDeleteReqDto {
     @IsDefined()
     @IsString()
     @IsNotEmpty()
-    identifyCode: string = null;
+        identifyCode: string = null;
 }

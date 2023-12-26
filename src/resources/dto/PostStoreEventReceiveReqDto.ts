@@ -24,13 +24,13 @@ import { transformToDateTime, transformToNumber } from '../../common/Transform';
  * POST: データ共有のリクエストDTO
  */
 export class CodeObject {
-    @Transform(transformToNumber)
+    @Transform(({ value }) => { return transformToNumber(value); })
     @IsNumber()
     @IsNotEmpty()
     @IsDefined()
     _value: number;
 
-    @Transform(transformToNumber)
+    @Transform(({ value }) => { return transformToNumber(value); })
     @IsNumber()
     @IsDefined()
     _ver: number;

@@ -19,43 +19,43 @@ export default class BinaryFile {
      * モノID
      */
     @Column({ type: 'bigint', nullable: false, name: 'thing_id' })
-    thingId: number = 0;
+        thingId: number = 0;
 
     /**
      * ファイルパス
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'file_path' })
-    filePath: string = '';
+        filePath: string = '';
 
     /**
      * MIMEタイプ
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'mime_type' })
-    mimeType: string = '';
+        mimeType: string = '';
 
     /**
      * ファイルサイズ
      */
     @Column({ type: 'bigint', nullable: false, name: 'file_size' })
-    fileSize: number = 0;
+        fileSize: number = 0;
 
     /**
      * ファイルハッシュ
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'file_hash' })
-    fileHash: string = '';
+        fileHash: string = '';
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -67,7 +67,7 @@ export default class BinaryFile {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

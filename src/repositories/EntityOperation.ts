@@ -5,6 +5,8 @@ https://opensource.org/licenses/mit-license.php
 /* eslint-disable */
 import { InsertResult, UpdateResult, EntityManager, getRepository, Brackets, DeleteResult } from 'typeorm';
 import { CodeVersionObject, DateStartEndObject, CodeObject } from '../resources/dto/PostGetBookReqDto';
+import AppError from '../common/AppError';
+import Config from '../common/Config';
 /* eslint-enable */
 import { connectDatabase } from '../common/Connection';
 import MyConditionBook from './postgres/MyConditionBook';
@@ -23,6 +25,7 @@ import ShareAccessLog from './postgres/ShareAccessLog';
 import ShareAccessLogDataType from './postgres/ShareAccessLogDataType';
 import CollectionRequestConsent from './postgres/CollectionRequestConsent';
 import moment = require('moment-timezone');
+const message = Config.ReadConfig('./config/message.json');
 
 /**
  * 各エンティティ操作クラス
@@ -34,7 +37,7 @@ export default class EntityOperation {
      * @param openAtStart
      * @param openAtEnd
      */
-    static async getRecordFromUserIdOpenAt (userIdList: Array<string>, openAtStart: Date, openAtEnd: Date): Promise<MyConditionBook[]> {
+    static async getRecordFromUserIdOpenAt (userIdList: Array<string>, wf: number, app: number, openAtStart: Date, openAtEnd: Date): Promise<MyConditionBook[]> {
         const connection = await connectDatabase();
         const repository = getRepository(MyConditionBook, connection.name);
         let sql = repository
@@ -42,6 +45,12 @@ export default class EntityOperation {
             .where('is_disabled = :is_disabled', { is_disabled: false });
         if (userIdList) {
             sql = sql.andWhere('user_id IN (:...ids)', { ids: userIdList });
+        }
+        if (wf) {
+            sql = sql.andWhere('wf_catalog_code = :wfCatalogCode', { wfCatalogCode: wf });
+        }
+        if (app) {
+            sql = sql.andWhere('app_catalog_code = :appCatalogCode', { appCatalogCode: app });
         }
         if (openAtStart) {
             sql = sql.andWhere('open_start_at >= :start', { start: openAtStart });
@@ -61,15 +70,28 @@ export default class EntityOperation {
      * My-Condition-BookをuserIdをもとに取得
      * @param userId
      */
-    static async getContBookRecordFromUserId (userId: string): Promise<MyConditionBook> {
+    static async getContBookRecordFromUserId (userId: string, app: number, wf: number): Promise<MyConditionBook> {
+        // 個人を特定するためのuserId, wf/app情報に過不足がある場合エラー
+        if (!userId) {
+            throw new AppError(message.EMPTY_USER_ID, 400);
+        } else if (!app) {
+            throw new AppError(message.EMPTY_APP, 400);
+        }
         const connection = await connectDatabase();
         const repository = getRepository(MyConditionBook, connection.name);
-        const ret = await repository
+        let sql = repository
             .createQueryBuilder('my_condition_book')
-            .where('user_id = :userId', { userId: userId })
-            .andWhere('is_disabled = :is_disabled', { is_disabled: false })
-            .getRawOne();
-        return ret ? new MyConditionBook(ret) : null;
+            .where('user_id = :userId', { userId })
+            .andWhere('is_disabled = :is_disabled', { is_disabled: false });
+        if (app) {
+            sql = sql.andWhere('app_catalog_code = :app_catalog_code', { app_catalog_code: app });
+        }
+        const ret = await sql.getRawMany();
+        // 取得結果が2件以上の場合はエラー
+        if (ret && ret.length > 1) {
+            throw new AppError(message.COULD_NOT_SPECIFY_USER_BOOK, 400);
+        }
+        return ret.length > 0 ? new MyConditionBook(ret[0]) : null;
     }
 
     /**
@@ -85,7 +107,7 @@ export default class EntityOperation {
             .where('is_disabled = :is_disabled', { is_disabled: false })
             .andWhere('document_id = :document_id', { document_id: documentId });
         if (title) {
-            sql = sql.andWhere('title = :title', { title: title });
+            sql = sql.andWhere('title = :title', { title });
         }
         const ret = await sql
             .orderBy('document_id')
@@ -110,7 +132,7 @@ export default class EntityOperation {
             .where('is_disabled = :is_disabled', { is_disabled: false })
             .andWhere('event_set_id = :event_set_id', { event_set_id: eventSetId });
         if (eventId) {
-            sql = sql.andWhere('event_id = :eventId', { eventId: eventId });
+            sql = sql.andWhere('event_id = :eventId', { eventId });
         }
         const ret = await sql
             .orderBy('event_set_id')
@@ -134,7 +156,7 @@ export default class EntityOperation {
             .createQueryBuilder('document')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('id = :id', { id: id })
+            .andWhere('id = :id', { id })
             .getRawOne();
         return ret ? new Document(ret) : null;
     }
@@ -144,8 +166,20 @@ export default class EntityOperation {
      * @param userId
      * @param eventIdentifer
      * @param sourceId
+     * @param app
+     * @param wf
      */
-    static async getEventRecord (userId: string, eventIdentifer: string, sourceId: string): Promise<Event[]> {
+    static async getEventRecord (userId: string, eventIdentifer: string, sourceId: string, app: number, wf: number): Promise<Event[]> {
+        // 個人を特定するためのuserId, wf/app情報に過不足がある場合エラー
+        if (!userId) {
+            throw new AppError(message.EMPTY_USER_ID, 400);
+        } else if (!app && !wf) {
+            throw new AppError(message.EMPTY_APP, 400);
+        }
+        // 対象データの識別子とソースIDの同時指定は想定しないためガード
+        if (eventIdentifer && sourceId) {
+            throw new AppError(message.SET_IDENTIFIER_AND_SOURCE_ID, 400);
+        }
         const connection = await connectDatabase();
         const repository = getRepository(Event, connection.name);
         let sql = repository
@@ -160,6 +194,9 @@ export default class EntityOperation {
         }
         if (sourceId) {
             sql = sql.andWhere('event.source_id = :source_id', { source_id: sourceId });
+        }
+        if (app) {
+            sql = sql.andWhere('event.app_catalog_code = :app_catalog_code', { app_catalog_code: app });
         }
         sql = sql.orderBy('event.id');
         const ret = await sql.getRawMany();
@@ -181,7 +218,7 @@ export default class EntityOperation {
             .createQueryBuilder('event')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('id = :id', { id: id });
+            .andWhere('id = :id', { id });
         const ret = await sql.getRawOne();
         return ret ? new Event(ret) : null;
     }
@@ -193,7 +230,19 @@ export default class EntityOperation {
      * @param thingIdentifer
      * @param sourceId
      */
-    static async getThingRecord (userId: string, eventIdentifer: string, thingIdentifer: string, sourceId: string): Promise<Thing[]> {
+    static async getThingRecord (userId: string, eventIdentifer: string, thingIdentifer: string, sourceId: string, app: number, wf: number): Promise<Thing[]> {
+        // 個人を特定するためのuserId, wf/app情報に過不足がある場合エラー
+        if (!userId) {
+            throw new AppError(message.EMPTY_USER_ID, 400);
+        } else if (!app && !wf) {
+            throw new AppError(message.EMPTY_WF_AND_APP, 400);
+        } else if (app && wf) {
+            throw new AppError(message.SET_WF_AND_APP, 400);
+        }
+        // 対象データの識別子とソースIDの同時指定は想定しないためガード
+        if (thingIdentifer && sourceId) {
+            throw new AppError(message.SET_IDENTIFIER_AND_SOURCE_ID, 400);
+        }
         const connection = await connectDatabase();
         const repository = getRepository(Thing, connection.name);
         let sql = repository
@@ -212,6 +261,12 @@ export default class EntityOperation {
         }
         if (sourceId) {
             sql = sql.andWhere('thing.source_id = :source_id', { source_id: sourceId });
+        }
+        if (app) {
+            sql = sql.andWhere('event.app_catalog_code = :app_catalog_code', { app_catalog_code: app });
+        }
+        if (wf) {
+            sql = sql.andWhere('event.wf_catalog_code = :wf_catalog_code', { wf_catalog_code: wf });
         }
         sql = sql.orderBy('thing.id');
         const ret = await sql.getRawMany();
@@ -233,7 +288,7 @@ export default class EntityOperation {
             .createQueryBuilder('thing')
             .select('thing.*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('id = :id', { id: id });
+            .andWhere('id = :id', { id });
         const ret = await sql.getRawOne();
         return ret ? new Thing(ret) : null;
     }
@@ -279,10 +334,10 @@ export default class EntityOperation {
             sql.where('is_disabled = :is_disabled', { is_disabled: false });
         }
         if (userId) {
-            sql = sql.andWhere('"1_1" = :userId', { userId: userId });
+            sql = sql.andWhere('"1_1" = :userId', { userId });
         }
         if (eventIdentifier) {
-            sql = sql.andWhere('"3_1_1" = :eventIdentifier', { eventIdentifier: eventIdentifier });
+            sql = sql.andWhere('"3_1_1" = :eventIdentifier', { eventIdentifier });
         }
         const ret = await sql.getRawMany();
         const list: CmatrixEvent[] = [];
@@ -329,7 +384,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_thing')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId: cmatrixEventId })
+            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId })
             .getRawMany();
         const list: CmatrixThing[] = [];
         if (ret) {
@@ -351,9 +406,9 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_thing')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId: cmatrixEventId });
+            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId });
         if (thingIdentifer) {
-            sql = sql.andWhere('"4_1_1" = :thingIdentifer', { thingIdentifer: thingIdentifer });
+            sql = sql.andWhere('"4_1_1" = :thingIdentifer', { thingIdentifer });
         }
         const ret = await sql.getRawMany();
         const list: CmatrixThing[] = [];
@@ -378,8 +433,8 @@ export default class EntityOperation {
             .innerJoin(CmatrixEvent, 'cmatrix_event', 'cmatrix_event.id = cmatrix_thing.cmatrix_event_id')
             .where('cmatrix_thing.is_disabled = :is_disabled', { is_disabled: false })
             .andWhere('cmatrix_event.is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event."1_1" = :userId', { userId: userId })
-            .andWhere('cmatrix_event."3_1_1" = :eventIdentifier', { eventIdentifier: eventIdentifier });
+            .andWhere('cmatrix_event."1_1" = :userId', { userId })
+            .andWhere('cmatrix_event."3_1_1" = :eventIdentifier', { eventIdentifier });
         const ret = await sql.getRawMany();
         const list: CmatrixThing[] = [];
         if (ret) {
@@ -403,9 +458,9 @@ export default class EntityOperation {
             .innerJoin(CmatrixEvent, 'cmatrix_event', 'cmatrix_event.id = cmatrix_thing.cmatrix_event_id')
             .where('cmatrix_thing.is_disabled = :is_disabled', { is_disabled: false })
             .andWhere('cmatrix_event.is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event."1_1" = :userId', { userId: userId })
-            .andWhere('cmatrix_event."3_1_1" = :eventIdentifier', { eventIdentifier: eventIdentifier })
-            .andWhere('cmatrix_thing."4_1_1" IN (:...thingIdentifiers)', { thingIdentifiers: thingIdentifiers });
+            .andWhere('cmatrix_event."1_1" = :userId', { userId })
+            .andWhere('cmatrix_event."3_1_1" = :eventIdentifier', { eventIdentifier })
+            .andWhere('cmatrix_thing."4_1_1" IN (:...thingIdentifiers)', { thingIdentifiers });
         const ret = await sql.getRawMany();
         const list: CmatrixThing[] = [];
         if (ret) {
@@ -430,13 +485,13 @@ export default class EntityOperation {
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false });
         if (typeof n === 'number') {
-            sql = sql.andWhere('n = :n', { n: n });
+            sql = sql.andWhere('n = :n', { n });
         }
         if (typeof cmatrixEventId === 'number') {
-            sql = sql.andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId: cmatrixEventId });
+            sql = sql.andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId });
         }
         if (typeof cmatrix2nId === 'number') {
-            sql = sql.andWhere('cmatrix_2n_id = :cmatrix2nId', { cmatrix2nId: cmatrix2nId });
+            sql = sql.andWhere('cmatrix_2n_id = :cmatrix2nId', { cmatrix2nId });
         }
         const ret = await sql
             .orderBy('id', 'ASC')
@@ -461,7 +516,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_2n_relation')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId: cmatrixEventId })
+            .andWhere('cmatrix_event_id = :cmatrixEventId', { cmatrixEventId })
             .orderBy('n', 'ASC')
             .getRawMany();
         const list: Cmatrix2nRelation[] = [];
@@ -484,7 +539,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_2n_relation')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('n IN (:...docNs)', { docNs: docNs })
+            .andWhere('n IN (:...docNs)', { docNs })
             .orderBy('n', 'ASC')
             .getRawMany();
         const list: Cmatrix2nRelation[] = [];
@@ -514,6 +569,8 @@ export default class EntityOperation {
                 appCatalogVersion: myConditionBook.appCatalogVersion,
                 wfCatalogCode: myConditionBook.wfCatalogCode,
                 wfCatalogVersion: myConditionBook.wfCatalogVersion,
+                regionCatalogCode: myConditionBook.regionCatalogCode,
+                regionCatalogVersion: myConditionBook.regionCatalogVersion,
                 openStartAt: myConditionBook.openStartAt,
                 identifyCode: myConditionBook.identifyCode,
                 createdBy: myConditionBook.createdBy,
@@ -660,6 +717,9 @@ export default class EntityOperation {
      * @param register
      */
     static async deleteEvents (em: EntityManager, eventIds: number[], register: string): Promise<UpdateResult> {
+        if (eventIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -679,6 +739,9 @@ export default class EntityOperation {
      * @param eventIds
      */
     static async physicalDeleteEvents (em: EntityManager, eventIds: number[]): Promise<DeleteResult> {
+        if (eventIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -1087,7 +1150,7 @@ export default class EntityOperation {
                 isDisabled: true,
                 updatedBy: register
             })
-            .where('cmatrix_thing_id IN (:...cmatrixThingIds)', { cmatrixThingIds: cmatrixThingIds })
+            .where('cmatrix_thing_id IN (:...cmatrixThingIds)', { cmatrixThingIds })
             .execute();
         return ret;
     }
@@ -1206,6 +1269,9 @@ export default class EntityOperation {
      * @param register
      */
     static async deleteThingsForEventIds (em: EntityManager, eventIds: number[], register: string): Promise<UpdateResult> {
+        if (eventIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -1225,6 +1291,9 @@ export default class EntityOperation {
      * @param eventIds
      */
     static async physicalDeleteThingsForEventIds (em: EntityManager, eventIds: number[]): Promise<DeleteResult> {
+        if (eventIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -1539,7 +1608,7 @@ export default class EntityOperation {
         const repository = getRepository(MyConditionBook, connection.name);
         let sql = repository
             .createQueryBuilder('my_condition_book')
-            .where('user_id = :userId', { userId: userId })
+            .where('user_id = :userId', { userId })
             .andWhere('is_disabled = :is_disabled', { is_disabled: false });
 
         sql = sql.andWhere('app_catalog_code = :app', { app: appCode });
@@ -1613,7 +1682,7 @@ export default class EntityOperation {
         // 期間指定でログを取得
         let sql = repository
             .createQueryBuilder('shared_access_log')
-            .where('my_condition_book_id = :bookId', { bookId: bookId });
+            .where('my_condition_book_id = :bookId', { bookId });
         if (start) {
             sql = sql.andWhere('access_at >= :start', { start: moment(start).utc().format('YYYY-MM-DD HH:mm:ss') });
         }
@@ -1747,9 +1816,9 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_event')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"1_1" = :userId', { userId: userId })
-            .andWhere('"3_1_2_1" = :dataTypeCode', { dataTypeCode: dataTypeCode })
-            .andWhere('"3_1_2_2" = :dataTypeVersion', { dataTypeVersion: dataTypeVersion });
+            .andWhere('"1_1" = :userId', { userId })
+            .andWhere('"3_1_2_1" = :dataTypeCode', { dataTypeCode })
+            .andWhere('"3_1_2_2" = :dataTypeVersion', { dataTypeVersion });
         if (offset && limit) {
             sql = sql.offset(offset).limit(limit);
         }
@@ -1796,7 +1865,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_event')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"1_1" = :userId', { userId: userId })
+            .andWhere('"1_1" = :userId', { userId })
             .andWhere('id IN ' +
                 `(
                     SELECT cmatrix_2_n_relation.cmatrix_event_id
@@ -1879,9 +1948,9 @@ export default class EntityOperation {
         const sql = repository
             .createQueryBuilder('cmatrix_event')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"1_1" = :userId', { userId: userId })
-            .andWhere('"3_1_2_1" = :dataTypeCode', { dataTypeCode: dataTypeCode })
-            .andWhere('"3_1_2_2" = :dataTypeVersion', { dataTypeVersion: dataTypeVersion });
+            .andWhere('"1_1" = :userId', { userId })
+            .andWhere('"3_1_2_1" = :dataTypeCode', { dataTypeCode })
+            .andWhere('"3_1_2_2" = :dataTypeVersion', { dataTypeVersion });
         const ret = await sql.getCount();
         return ret;
     }
@@ -1901,7 +1970,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_event')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"1_1" = :userId', { userId: userId })
+            .andWhere('"1_1" = :userId', { userId })
             .andWhere('id IN ' +
                 `(
                     SELECT cmatrix_2_n_relation.cmatrix_event_id
@@ -1939,6 +2008,9 @@ export default class EntityOperation {
      * @param register
      */
     static async deleteBinaryFiles (em: EntityManager, thingIds: number[], register: string): Promise<UpdateResult> {
+        if (thingIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -1958,6 +2030,9 @@ export default class EntityOperation {
      * @param thingIds
      */
     static async physicalDeleteBinaryFiles (em: EntityManager, thingIds: number[]): Promise<DeleteResult> {
+        if (thingIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -1973,8 +2048,20 @@ export default class EntityOperation {
      * @param userId
      * @param documentIdentifer
      * @param sourceId
+     * @param appCatalogCode
+     * @param wfCatalogCode
      */
-    static async getDocumentRecord (userId: string, documentIdentifer: string, sourceId: string): Promise<Document[]> {
+    static async getDocumentRecord (userId: string, documentIdentifer: string, sourceId: string, appCatalogCode: number, wfCatalogCode: number): Promise<Document[]> {
+        // 個人を特定するためのuserId, wf/app情報に過不足がある場合エラー
+        if (!userId) {
+            throw new AppError(message.EMPTY_USER_ID, 400);
+        } else if (!appCatalogCode && !wfCatalogCode) {
+            throw new AppError(message.EMPTY_APP, 400);
+        }
+        // 対象データの識別子とソースIDの同時指定は想定しないためガード
+        if (documentIdentifer && sourceId) {
+            throw new AppError(message.SET_IDENTIFIER_AND_SOURCE_ID, 400);
+        }
         const connection = await connectDatabase();
         const repository = getRepository(Document, connection.name);
         let sql = repository
@@ -1989,6 +2076,9 @@ export default class EntityOperation {
         }
         if (sourceId) {
             sql = sql.andWhere('document.source_id = :source_id', { source_id: sourceId });
+        }
+        if (appCatalogCode) {
+            sql = sql.andWhere('document.app_catalog_code = :app_catalog_code', { app_catalog_code: appCatalogCode });
         }
         sql = sql.orderBy('document.id');
         const ret = await sql.getRawMany();
@@ -2027,6 +2117,9 @@ export default class EntityOperation {
      * @param register
      */
     static async deleteDocuments (em: EntityManager, documentIds: number[], register: string): Promise<UpdateResult> {
+        if (documentIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -2046,6 +2139,9 @@ export default class EntityOperation {
      * @param documentIds
      */
     static async physicalDeleteDocuments (em: EntityManager, documentIds: number[]): Promise<DeleteResult> {
+        if (documentIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -2063,6 +2159,9 @@ export default class EntityOperation {
      * @param register
      */
     static async deleteDocumentEventSetRelations (em: EntityManager, documentIds: number[], register: string): Promise<UpdateResult> {
+        if (documentIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -2083,6 +2182,9 @@ export default class EntityOperation {
      * @param register
      */
     static async deleteEventSetEventRelations (em: EntityManager, eventSetIds: number[], register: string): Promise<UpdateResult> {
+        if (eventSetIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -2102,6 +2204,9 @@ export default class EntityOperation {
      * @param documentIds
      */
     static async physicalDeleteDocumentEventSetRelations (em: EntityManager, documentIds: number[]): Promise<DeleteResult> {
+        if (documentIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -2180,6 +2285,9 @@ export default class EntityOperation {
      * @param eventSetIds
      */
     static async physicalDeleteEventSetEventRelations (em: EntityManager, eventSetIds: number[]): Promise<DeleteResult> {
+        if (eventSetIds.length === 0) {
+            return;
+        }
         // SQLを生成及び実行
         const ret = await em
             .createQueryBuilder()
@@ -2201,7 +2309,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_2_n')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('"_1_1" IN (:...documentIdentifiers)', { documentIdentifiers: documentIdentifiers })
+            .andWhere('"_1_1" IN (:...documentIdentifiers)', { documentIdentifiers })
             .getRawMany();
         const list: Cmatrix2n[] = [];
         if (ret) {
@@ -2245,7 +2353,7 @@ export default class EntityOperation {
             .createQueryBuilder('cmatrix_2n_relation')
             .select('*')
             .where('is_disabled = :is_disabled', { is_disabled: false })
-            .andWhere('cmatrix_2n_id = :cmatrix2nId', { cmatrix2nId: cmatrix2nId })
+            .andWhere('cmatrix_2n_id = :cmatrix2nId', { cmatrix2nId })
             .orderBy('n', 'ASC')
             .getRawMany();
         const list: Cmatrix2nRelation[] = [];

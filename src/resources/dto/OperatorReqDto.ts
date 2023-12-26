@@ -82,6 +82,11 @@ export default class Operator {
     private actor: {} = null;
 
     /**
+     * APP カタログ
+     */
+    private service: {} = null;
+
+    /**
      * PXR-ID
      */
     private pxrId: string = '';
@@ -165,10 +170,24 @@ export default class Operator {
     }
 
     /**
+     * roles取得
+     */
+    public getRoles (): object {
+        return this.roles;
+    }
+
+    /**
      * エンコード済みデータ取得
      */
     public getEncodeData (): string {
         return this.encodeData;
+    }
+
+    /**
+     * APP カタログ
+     */
+    public getService (): {} {
+        return this.service;
     }
 
     /**
@@ -198,6 +217,9 @@ export default class Operator {
                 _value: Number(obj['actor']['_value']),
                 _ver: Number(obj['actor']['_ver'])
             };
+        }
+        if (obj['service'] && typeof obj['service'] === 'object') {
+            this.service = obj['service'];
         }
         this.encodeData = encodeURIComponent(JSON.stringify(obj));
     }

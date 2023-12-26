@@ -7,6 +7,7 @@ import { Server } from 'net';
 
 import * as express from 'express';
 import { ResponseCode } from '../common/ResponseCode';
+import bodyParser = require('body-parser');
 
 export default class StubProxyServer {
     _app: express.Express;
@@ -5578,6 +5579,265 @@ export default class StubProxyServer {
         this._app = express();
         this._app.post('/pxr-block-proxy', _listener);
         this._server = this._app.listen(port);
+    }
+}
+export class ProxyServer {
+    _app: express.Express;
+    _server: Server;
+    constructor (status: number, appflg: boolean, pxrId: string) {
+        this._app = express();
+        // イベントハンドラー
+        const _listener = (req: express.Request, res: express.Response) => {
+            if (status === 400) {
+                res.status(400);
+                res.json({
+                    message: '指定された本人性確認コードは、有効期限切れです',
+                    status: 400
+                });
+            } 
+            res.status(status);
+            const code = req.body['identifyCode'];
+            if (pxrId === '1') {
+                res.json({
+                    pxrId: pxrId,
+                    actor: {
+                        _value: 1000003,
+                        _ver: 1
+                    },
+                    wf: {
+                        _value: 1000004,
+                        _ver: 1
+                    }
+                });
+            } else if (pxrId === 'region') {
+                res.json({
+                    pxrId: pxrId,
+                    actor: {
+                        _value: 1000003,
+                        _ver: 1
+                    },
+                    region: {
+                        _value: 1000004,
+                        _ver: 1
+                    },
+                    userId: '111111111'
+                });
+            } else if (pxrId === 'notOrgId') {
+                res.json({
+                    pxrId: pxrId,
+                    actor: {
+                        _value: 1000003,
+                        _ver: 1
+                    },
+                    userId: '333333333'
+                });
+            } else {
+                if (appflg) {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000003,
+                            _ver: 1
+                        },
+                        app: {
+                            _value: 1000004,
+                            _ver: 1
+                        },
+                        userId: '2222222222'
+                    });
+                } else if (code === 'cooperate_request') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        userId: null
+                    });
+                } else if (code === 'disabled_cooporete_request') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        userId: null
+                    });
+                } else if (code === 'release_coopeate') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        userId: '111111111'
+                    });
+                } else if (code === 'disabled_release_request') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        userId: '444444444'
+                    });
+                } else if (code === 'identifyCodeWf1000007') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000001,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        userId: null
+                    });
+                } else if (code === 'identifyCodeWf1000047') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000001,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000047,
+                            _ver: 1
+                        },
+                        userId: 'wfUser01'
+                    });
+                } else if (code === 'identifyCodeWf1000017') {
+                    // 連携申請
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000001,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000017,
+                            _ver: 1
+                        },
+                        userId: null
+                    });
+                }  else if (code === 'identifyCodeWf1000017Release') {
+                    // 連携解除申請
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000001,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000017,
+                            _ver: 1
+                        },
+                        userId: 'wfUser01'
+                    });
+                } else if (code === 'identifyCodeWf1000027Release') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000001,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000027,
+                            _ver: 1
+                        },
+                        userId: 'wfUser01'
+                    });
+                } else if (code === 'identifyCodeWf1000037Release') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000001,
+                            _ver: 1
+                        },
+                        wf: {
+                            _value: 1000037,
+                            _ver: 1
+                        },
+                        userId: 'wfUser01'
+                    });
+                } else if (code === 'identifyCodeApp1000012Release') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000436,
+                            _ver: 1
+                        },
+                        app: {
+                            _value: 1000012,
+                            _ver: 1
+                        },
+                        userId: 'appUser01'
+                    });
+                } else if (code === 'identifyCodeApp1000022Release') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000436,
+                            _ver: 1
+                        },
+                        app: {
+                            _value: 1000022,
+                            _ver: 1
+                        },
+                        userId: 'appUser01'
+                    });
+                } else if (code === 'identifyCodeRegion1000013Release') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000432,
+                            _ver: 1
+                        },
+                        region: {
+                            _value: 1000013,
+                            _ver: 1
+                        },
+                        userId: 'regionUser01'
+                    });
+                } else if (code === 'identifyCodeRegion1000023Release') {
+                    res.json({
+                        pxrId: pxrId,
+                        actor: {
+                            _value: 1000432,
+                            _ver: 1
+                        },
+                        region: {
+                            _value: 1000023,
+                            _ver: 1
+                        },
+                        userId: 'regionUser01'
+                    });
+                } else {
+                    res.json({});
+                }
+            }
+        };
+        // ハンドラーのイベントリスナーを追加、アプリケーションの起動
+        this._app.use(bodyParser.json());
+        this._app.post('/pxr-block-proxy', _listener);
+        this._server = this._app.listen(3003);
     }
 }
 /* eslint-enable */

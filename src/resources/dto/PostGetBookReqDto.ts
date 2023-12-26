@@ -42,13 +42,13 @@ export class CodeObject {
 }
 
 export class DateStartEndObject {
-    @Transform(transformToDateTime)
+    @Transform(({ value }) => { return transformToDateTime(value); })
     @IsDate()
     @IsNotEmpty()
     @IsDefined()
     start: Date;
 
-    @Transform(transformToDateTime)
+    @Transform(({ value }) => { return transformToDateTime(value); })
     @IsDate()
     @IsDefined()
     end: Date;

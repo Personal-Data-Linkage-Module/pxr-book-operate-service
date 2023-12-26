@@ -19,85 +19,85 @@ export default class MyConditionBook {
      * 利用者ID
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'user_id' })
-    userId: string = '';
+        userId: string = '';
 
     /**
      * アクターカタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'actor_catalog_code' })
-    actorCatalogCode: number = 0;
+        actorCatalogCode: number = 0;
 
     /**
      * アクターカタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'actor_catalog_version' })
-    actorCatalogVersion: number = 0;
+        actorCatalogVersion: number = 0;
 
     /**
      * リージョンカタログコード
      */
     @Column({ type: 'bigint', name: 'region_catalog_code' })
-    regionCatalogCode: number = 0;
+        regionCatalogCode: number = 0;
 
     /**
      * リージョンカタログバージョン
      */
     @Column({ type: 'bigint', name: 'region_catalog_version' })
-    regionCatalogVersion: number = 0;
+        regionCatalogVersion: number = 0;
 
     /**
      * アプリケーションカタログコード
      */
     @Column({ type: 'bigint', name: 'app_catalog_code' })
-    appCatalogCode: number = 0;
+        appCatalogCode: number = 0;
 
     /**
      * アプリケーションカタログバージョン
      */
     @Column({ type: 'bigint', name: 'app_catalog_version' })
-    appCatalogVersion: number = 0;
+        appCatalogVersion: number = 0;
 
     /**
      * ワークフローカタログコード
      */
     @Column({ type: 'bigint', name: 'wf_catalog_code' })
-    wfCatalogCode: number = 0;
+        wfCatalogCode: number = 0;
 
     /**
      * ワークフローカタログバージョン
      */
     @Column({ type: 'bigint', name: 'wf_catalog_version' })
-    wfCatalogVersion: number = 0;
+        wfCatalogVersion: number = 0;
 
     /**
      * 開設日時
      */
     @CreateDateColumn({ type: 'timestamp without time zone', name: 'open_start_at' })
-    openStartAt: Date = new Date();
+        openStartAt: Date = new Date();
 
     /**
      * 本人性確認コード
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'identify_code' })
-    identifyCode: string = '';
+        identifyCode: string = '';
 
     /**
      * 属性
      */
     @Column({ type: 'text' })
-    attributes: string = '';
+        attributes: string = '';
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -109,7 +109,7 @@ export default class MyConditionBook {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

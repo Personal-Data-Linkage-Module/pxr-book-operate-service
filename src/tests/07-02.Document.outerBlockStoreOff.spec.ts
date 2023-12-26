@@ -94,6 +94,7 @@ describe('book-operate API', () => {
      * 全テスト実行の後処理
      */
     afterAll(async () => {
+        await common.disconnect();
         // サーバ停止
         app.stop();
     });
@@ -272,7 +273,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify({}));
 
             // レスポンスチェック
@@ -290,7 +291,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         code: {
@@ -366,7 +367,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -445,7 +446,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -514,7 +515,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -593,7 +594,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -662,7 +663,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -735,7 +736,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -814,7 +815,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -883,7 +884,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -959,7 +960,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1038,7 +1039,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1107,7 +1108,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1176,7 +1177,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1255,7 +1256,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1324,7 +1325,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1393,7 +1394,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1469,7 +1470,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1548,7 +1549,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1617,7 +1618,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1696,7 +1697,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1765,7 +1766,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1844,7 +1845,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1913,7 +1914,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -1987,7 +1988,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2040,7 +2041,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2102,7 +2103,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2170,7 +2171,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2239,7 +2240,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2304,7 +2305,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2372,7 +2373,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2441,7 +2442,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2510,7 +2511,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2578,7 +2579,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2647,7 +2648,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2716,7 +2717,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2778,7 +2779,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2846,7 +2847,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2915,7 +2916,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -2980,7 +2981,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3048,7 +3049,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3117,7 +3118,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3186,7 +3187,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3254,7 +3255,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3323,7 +3324,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3392,7 +3393,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3451,7 +3452,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3510,7 +3511,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3577,7 +3578,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3644,7 +3645,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -3711,7 +3712,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -4464,7 +4465,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -4540,7 +4541,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -4617,7 +4618,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -4686,7 +4687,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -4755,7 +4756,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -4823,7 +4824,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).post(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5042,7 +5043,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5125,7 +5126,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5205,7 +5206,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5286,7 +5287,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5361,7 +5362,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5439,7 +5440,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify({}));
 
             // レスポンスチェック
@@ -5457,7 +5458,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         code: {
@@ -5533,7 +5534,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5612,7 +5613,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5681,7 +5682,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5760,7 +5761,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5829,7 +5830,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5902,7 +5903,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -5981,7 +5982,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6050,7 +6051,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6115,7 +6116,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6183,7 +6184,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6252,7 +6253,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6331,7 +6332,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6400,7 +6401,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6476,7 +6477,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6555,7 +6556,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6624,7 +6625,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6703,7 +6704,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6772,7 +6773,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6851,7 +6852,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6920,7 +6921,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -6973,7 +6974,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7035,7 +7036,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7103,7 +7104,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7172,7 +7173,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7237,7 +7238,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7305,7 +7306,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7374,7 +7375,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7443,7 +7444,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7511,7 +7512,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7580,7 +7581,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7649,7 +7650,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7711,7 +7712,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7779,7 +7780,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7848,7 +7849,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7913,7 +7914,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -7981,7 +7982,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8050,7 +8051,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8119,7 +8120,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8187,7 +8188,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8256,7 +8257,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8325,7 +8326,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8384,7 +8385,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8443,7 +8444,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8509,7 +8510,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8576,7 +8577,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -8643,7 +8644,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9322,7 +9323,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9405,7 +9406,7 @@ describe('book-operate API', () => {
                     1000004, 1,
                     null, null,
                     null, null, null,
-                    1001007, 1,
+                    1000007, 1,
                     '{"id":{"index":"2_1_1","value":"doc-4f75161a-449a-4839-be6a-4cc577b8a8d0"},"code":{"index":"2_1_2","value":{"_value":1000008,"_ver":1}},"createdAt":{"index":"2_2_1","value":"2020-02-20T00:00:00.000+0900"},"chapter":[{"title":"タイトル１","event":["event-4f75161a-449a-4839-be6a-4cc577b8a8d0"]}]}',
                     null, false, 'pxr_user', NOW(), 'pxr_user', NOW()
                 )
@@ -9494,7 +9495,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9562,7 +9563,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9630,7 +9631,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9698,7 +9699,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9766,7 +9767,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9834,7 +9835,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9902,7 +9903,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -9977,7 +9978,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10053,7 +10054,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10152,7 +10153,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10228,7 +10229,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10297,7 +10298,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10366,7 +10367,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10434,7 +10435,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10576,7 +10577,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10644,7 +10645,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10734,9 +10735,9 @@ describe('book-operate API', () => {
                     1000008, 1,
                     '2020-02-20 00:00:00',
                     1000004, 1,
-                    1000007, 1,
-                    1000005, 1, 'staffId',
+                    null, null, null,
                     null, null,
+                    1000007, 1,
                     '{"id":{"index":"2_1_1","value":"doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"},"code":{"index":"2_1_2","value":{"_value":1000008,"_ver":1}},"createdAt":{"index":"2_2_1","value":"2020-02-20T00:00:00.000+0900"},"chapter":[{"title":"タイトル１","event":["event-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"]}]}',
                     null, false, 'pxr_user', NOW(), 'pxr_user', NOW()
                 )
@@ -10748,7 +10749,7 @@ describe('book-operate API', () => {
             // 対象APIに送信
             const response = await supertest(expressApp).put(url)
                 .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send(JSON.stringify(
                     {
                         id: {
@@ -10818,7 +10819,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11009,7 +11010,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11026,7 +11027,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11043,7 +11044,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11060,7 +11061,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11076,7 +11077,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11093,7 +11094,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11130,7 +11131,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11143,7 +11144,7 @@ describe('book-operate API', () => {
 
             // 対象APIに送信
             const response = await supertest(expressApp).delete(url)
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
+                .set({ session: JSON.stringify(Session.application) })
                 .send();
 
             // レスポンスチェック
@@ -11174,5 +11175,997 @@ describe('book-operate API', () => {
 
         // レスポンスチェック
         expect(response.status).toBe(200);
+    });
+
+    describe('利用者ID重複対応追加ケース', () => {
+        // DoRequestメソッドのmock化
+        const doRequet = require('../common/DoRequest');
+        const mockDoPostRequest = jest.spyOn(doRequet, 'doPostRequest');
+        let documentIdentifer12: string = null;
+        let documentIdentifer14: string = null;
+        beforeAll(async () => {
+            // DB初期化
+            await common.executeSqlFile('initialData.sql');
+            // test_user_id3, test_user_id4, test_user_id5 が重複
+            await common.executeSqlFile('initialMyConditionDataMultiBook.sql');
+            await common.executeSqlFile('initialDocumentData.sql');
+        });
+        afterAll(async () => {
+            mockDoPostRequest.mockRestore();
+        });
+        beforeEach(async () => {
+            mockDoPostRequest.mockClear();
+        });
+        describe('ドキュメント蓄積', () => {
+            describe('正常系', () => {
+                describe('My-Condition-Bookテーブルに 同じuserIdの利用者が存在しない', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id2');
+
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).post(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '2_1_1',
+                                        value: null
+                                    },
+                                    code: {
+                                        index: '2_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    createdAt: {
+                                        index: '2_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    sourceId: '2023_6948_2',
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '2_3_1',
+                                            value: {
+                                                _value: 1000117,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '2_3_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    userId: {
+                                        index: '2_4_1',
+                                        value: 'test_user_id2'
+                                    },
+                                    chapter: [
+                                        {
+                                            title: 'イベント識別子',
+                                            event: [
+                                                'event-4f75161a-449a-4839-be6a-4cc577b8a8d0'
+                                            ],
+                                            sourceId: [
+                                                '202108-1-1'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ));
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        documentIdentifer12 = response.body.id.value;
+                        // ドキュメントテーブルの確認 doc_identifier で取得
+                        const document = await common.executeSqlString(`select * from pxr_book_operate.document where doc_identifier='${documentIdentifer12}';`);
+                        expect(document.length).toBe(1);
+                        expect(parseInt(document[0]['my_condition_book_id'])).toBe(2);
+                        // Local-CTokenサービス.Local-CToken登録APIへのリクエスト
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos[0][1]['body']).toBe(JSON.stringify({
+                            add: [
+                                {
+                                    '1_1': 'test_user_id2',
+                                    document: [
+                                        {
+                                            '2_n_1_1': documentIdentifer12,
+                                            '2_n_1_2_1': 1000008,
+                                            '2_n_1_2_2': 1,
+                                            '2_n_2_1': '2020-02-19T15:00:00.000Z',
+                                            '2_n_3_1_1': 1000117,
+                                            '2_n_3_1_2': 1,
+                                            '2_n_3_2_1': 0,
+                                            '2_n_3_2_2': 0,
+                                            '2_n_3_5_1': 1000007,
+                                            '2_n_3_5_2': 1
+                                        }
+                                    ],
+                                    event: {
+                                        '3_1_1': 'event-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                                        '3_1_2_1': 1000008,
+                                        '3_1_2_2': 1,
+                                        '3_2_1': null,
+                                        '3_2_2': null,
+                                        '3_5_1_1': 1000004,
+                                        '3_5_1_2': 1,
+                                        '3_5_2_1': 0,
+                                        '3_5_2_2': 0,
+                                        '3_5_5_1': 1000007,
+                                        '3_5_5_2': 1
+                                    },
+                                    thing: [
+                                        {
+                                            '4_1_1': 'thing-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                                            '4_1_2_1': 1000008,
+                                            '4_1_2_2': 1,
+                                            '4_4_1_1': 1000004,
+                                            '4_4_1_2': 1,
+                                            '4_4_2_1': 0,
+                                            '4_4_2_2': 0,
+                                            '4_4_5_1': 1000007,
+                                            '4_4_5_2': 1,
+                                            rowHash: 'XXXX',
+                                            rowHashCreateAt: '2019-12-31T15:00:00.000Z'
+                                        }
+                                    ]
+                                }
+                            ],
+                            update: [],
+                            delete: []
+                        }));
+                    });
+                });
+                describe('My-Condition-Bookテーブルに 別のAPP/WFに同じuserIdの利用者が存在する', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id4');
+
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).post(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '2_1_1',
+                                        value: null
+                                    },
+                                    code: {
+                                        index: '2_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    createdAt: {
+                                        index: '2_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    sourceId: '20200221-1',
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '2_3_1',
+                                            value: {
+                                                _value: 1000117,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '2_3_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    userId: {
+                                        index: '2_4_1',
+                                        value: 'test_user_id4'
+                                    },
+                                    chapter: [
+                                        {
+                                            title: 'イベント識別子',
+                                            event: [
+                                                'event-4f75161a-449a-4839-be6a-4cc577b8a8d0'
+                                            ],
+                                            sourceId: [
+                                                '202108-1-1'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ));
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        documentIdentifer14 = response.body.id.value;
+                        // ドキュメントテーブルの確認 doc_identifier で取得
+                        const document = await common.executeSqlString(`select * from pxr_book_operate.document where doc_identifier='${documentIdentifer14}';`);
+                        expect(document.length).toBe(1);
+                        expect(parseInt(document[0]['my_condition_book_id'])).toBe(7);
+
+                        // thingが紐づかないためLocal-Ctokenサービスへのリクエストが飛ばないこと
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos.length).toBe(0);
+                    });
+                });
+            });
+            describe('異常系', () => {
+                describe('Book取得時にAPP/WFのコードが設定されていない', () => {
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id3');
+                        const serviceValue = Session.application.service._value;
+                        Session.application.service._value = 0;
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).post(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '2_1_1',
+                                        value: null
+                                    },
+                                    code: {
+                                        index: '2_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    createdAt: {
+                                        index: '2_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    sourceId: '20200221-1',
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '2_3_1',
+                                            value: {
+                                                _value: 1000117,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '2_3_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    userId: {
+                                        index: '2_4_1',
+                                        value: 'test_user_id3'
+                                    },
+                                    chapter: [
+                                        {
+                                            title: 'イベント識別子',
+                                            event: [
+                                                'event-4f75161a-449a-4839-be6a-4cc577b8a8d0'
+                                            ],
+                                            sourceId: [
+                                                '202108-1-1'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ));
+                        Session.application.service._value = serviceValue;
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(400);
+                        expect(response.body.message).toBe(Message.EMPTY_APP);
+                    });
+                });
+                describe('Bookの取得結果が 2件以上', () => {
+                    beforeAll(async () => {
+                        // userId,app,wf が同じBookを作成
+                        await common.executeSqlString(`
+                        INSERT INTO pxr_book_operate.my_condition_book
+                        (
+                            user_id,
+                            actor_catalog_code, actor_catalog_version,
+                            app_catalog_code, app_catalog_version,
+                            wf_catalog_code, wf_catalog_version,
+                            open_start_at,
+                            attributes, is_disabled, created_by, created_at, updated_by, updated_at
+                        )
+                        VALUES
+                        (
+                            'test_user_id1',
+                            1000004, 1,
+                            null, null,
+                            1000007, 1,
+                            '2020-02-01T00:00:00.000+0900',
+                            null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                        ),
+                        (
+                            'test_user_id2',
+                            1000004, 1,
+                            1000007, 1,
+                            null, null,
+                            '2020-03-02T00:00:00.000+0900',
+                            null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                        )
+                        `);
+                    });
+                    afterAll(async () => {
+                        // 追加した userId,app,wf が同じBookを削除
+                        await common.executeSqlString(`
+                        delete from pxr_book_operate.my_condition_book where id > 8;
+                        `);
+                    });
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id2');
+
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).post(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '2_1_1',
+                                        value: null
+                                    },
+                                    code: {
+                                        index: '2_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    createdAt: {
+                                        index: '2_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    sourceId: '2023_6948_2',
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '2_3_1',
+                                            value: {
+                                                _value: 1000117,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '2_3_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    userId: {
+                                        index: '2_4_1',
+                                        value: 'test_user_id2'
+                                    },
+                                    chapter: [
+                                        {
+                                            title: 'イベント識別子',
+                                            event: [
+                                                'event-4f75161a-449a-4839-be6a-4cc577b8a8d0'
+                                            ],
+                                            sourceId: [
+                                                '202108-1-1'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ));
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(400);
+                        expect(response.body.message).toBe(Message.COULD_NOT_SPECIFY_USER_BOOK);
+                    });
+                });
+            });
+        });
+        describe('ソースIDによるドキュメント更新', () => {
+            describe('正常系', () => {
+                beforeAll(async () => {
+                    // bookId、sourceId が同じで app,wf が違うドキュメントを作成
+                    await common.executeSqlString(`
+                    INSERT INTO pxr_book_operate.document
+                    (
+                        my_condition_book_id, source_id, doc_identifier, 
+                        doc_catalog_code, doc_catalog_version,
+                        doc_create_at,
+                        doc_actor_code, doc_actor_version, 
+                        wf_catalog_code, wf_catalog_version, 
+                        wf_role_code, wf_role_version, wf_staff_identifier, 
+                        app_catalog_code, app_catalog_version, 
+                        template, 
+                        attributes, is_disabled, created_by, 
+                        created_at, updated_by, updated_at)
+                    VALUES
+                    (
+                        6, '20200221-1', 'doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6', 
+                        1000008, 1, 
+                        '2020-02-20 00:00:00',
+                        1000004, 1, 
+                        2000007, 1,
+                        1000005, 1, 'staffId',
+                        null, null,
+                        '{"id":{"index":"3_1_1","value":"doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"sourceId":"20200221-1","env":null,"app":null,"wf":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"wf":{"index":"3_5_2","value":{"_value":1000007,"_ver":1}},"role":{"index":"3_5_3","value":{"_value":1000005,"_ver":1}},"staffId":{"index":"3_5_4","value":"staffId"}},"thing":[]}', 
+                        null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                    ),
+                    (
+                        7, '20200221-1', 'doc-4f75161a-449a-4839-be6a-4cc577b8a8d0', 
+                        1000008, 1, 
+                        '2020-02-20 00:00:00',
+                        1000004, 1, 
+                        null, null,
+                        null, null, null,
+                        2000007, 1,
+                        '{"id":{"index":"3_1_1","value":"doc-4f75161a-449a-4839-be6a-4cc577b8a8d0"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"sourceId":"20200221-1","env":null,"app":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"app":{"index":"3_5_5","value":{"_value":1000007,"_ver":1}}},"wf":null,"thing":[]}', 
+                        null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                    )
+                    `);
+                });
+                describe('ドキュメントテーブルに 同じuserId、sourceIdのイベントが存在しない', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id2', '?documentSourceId=2023_6948_2');
+
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).put(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '2_1_1',
+                                        value: documentIdentifer12
+                                    },
+                                    code: {
+                                        index: '2_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    createdAt: {
+                                        index: '2_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    sourceId: '2023_6948_2',
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '2_3_1',
+                                            value: {
+                                                _value: 1000117,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '2_3_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    userId: {
+                                        index: '2_4_1',
+                                        value: 'test_user_id2'
+                                    },
+                                    chapter: [
+                                        {
+                                            title: 'イベント識別子',
+                                            event: [
+                                                'event-4f75161a-449a-4839-be6a-4cc577b8a8d0'
+                                            ],
+                                            sourceId: [
+                                                '202108-1'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ));
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        // ドキュメントテーブルの確認 doc_identifier で取得
+                        const document = await common.executeSqlString(`select * from pxr_book_operate.document where doc_identifier='${documentIdentifer12}';`);
+                        expect(document.length).toBe(1);
+                        expect(new Date(document[0]['updated_at']).getTime()).toBeGreaterThan(new Date(document[0]['created_at']).getTime());
+
+                        expect(parseInt(document[0]['my_condition_book_id'])).toBe(2);
+                        // Local-CTokenサービス.Local-CToken登録APIへのリクエスト
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos[0][1]['body']).toBe(JSON.stringify({
+                            add: [],
+                            update: [
+                                {
+                                    '1_1': 'test_user_id2',
+                                    document: [
+                                        {
+                                            '2_n_1_1': documentIdentifer12,
+                                            '2_n_1_2_1': 1000008,
+                                            '2_n_1_2_2': 1,
+                                            '2_n_2_1': '2020-02-20T00:00:00.000+0900',
+                                            '2_n_3_1_1': 1000117,
+                                            '2_n_3_1_2': 1,
+                                            '2_n_3_2_1': 0,
+                                            '2_n_3_2_2': 0,
+                                            '2_n_3_5_1': 1000007,
+                                            '2_n_3_5_2': 1
+                                        }
+                                    ],
+                                    event: {
+                                        '3_1_1': 'event-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                                        '3_1_2_1': 1000008,
+                                        '3_1_2_2': 1,
+                                        '3_2_1': null,
+                                        '3_2_2': null,
+                                        '3_5_1_1': 1000004,
+                                        '3_5_1_2': 1,
+                                        '3_5_2_1': 0,
+                                        '3_5_2_2': 0,
+                                        '3_5_5_1': 1000007,
+                                        '3_5_5_2': 1
+                                    },
+                                    thing: [
+                                        {
+                                            '4_1_1': 'thing-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                                            '4_1_2_1': 1000008,
+                                            '4_1_2_2': 1,
+                                            '4_4_1_1': 1000004,
+                                            '4_4_1_2': 1,
+                                            '4_4_2_1': 0,
+                                            '4_4_2_2': 0,
+                                            '4_4_5_1': 1000007,
+                                            '4_4_5_2': 1,
+                                            rowHash: 'XXXX',
+                                            rowHashCreateAt: '2019-12-31T15:00:00.000Z'
+                                        }
+                                    ]
+                                }
+                            ],
+                            delete: []
+                        }));
+                    });
+                });
+                describe('ドキュメントテーブルに 別のAPP/WFに同じuserId、sourceId のイベントが存在する', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id4', '?documentSourceId=20200221-1');
+
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).put(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '2_1_1',
+                                        value: documentIdentifer14
+                                    },
+                                    code: {
+                                        index: '2_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    createdAt: {
+                                        index: '2_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    sourceId: '20200221-1',
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '2_3_1',
+                                            value: {
+                                                _value: 1000117,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '2_3_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    userId: {
+                                        index: '2_4_1',
+                                        value: 'test_user_id4'
+                                    },
+                                    chapter: [
+                                        {
+                                            title: 'イベント識別子',
+                                            event: [
+                                                'event-4f75161a-449a-4839-be6a-4cc577b8a8d0'
+                                            ],
+                                            sourceId: [
+                                                '202108-1'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ));
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        // ドキュメントテーブルの確認 doc_identifier で取得
+                        const document = await common.executeSqlString(`select * from pxr_book_operate.document where doc_identifier='${documentIdentifer14}';`);
+                        expect(document.length).toBe(1);
+                        expect(new Date(document[0]['updated_at']).getTime()).toBeGreaterThan(new Date(document[0]['created_at']).getTime());
+
+                        expect(parseInt(document[0]['my_condition_book_id'])).toBe(7);
+
+                        // thingが紐づかないためLocal-Ctokenサービスへのリクエストが飛ばないこと
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos.length).toBe(0);
+                    });
+                });
+            });
+            describe('異常系', () => {
+                describe('ドキュメントレコード取得時にAPP/WFのコードが設定されていない', () => {
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id2', '?documentSourceId=2023_6948_2');
+                        const serviceValue = Session.application.service._value;
+                        Session.application.service._value = 0;
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).put(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '2_1_1',
+                                        value: documentIdentifer12
+                                    },
+                                    code: {
+                                        index: '2_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    createdAt: {
+                                        index: '2_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    sourceId: '202108-1',
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '2_3_1',
+                                            value: {
+                                                _value: 1000117,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '2_3_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    userId: {
+                                        index: '2_4_1',
+                                        value: 'test_user_id2'
+                                    },
+                                    chapter: [
+                                        {
+                                            title: 'イベント識別子',
+                                            event: [
+                                                'event-4f75161a-449a-4839-be6a-4cc577b8a8d0'
+                                            ],
+                                            sourceId: [
+                                                '202108-1'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ));
+                        Session.application.service._value = serviceValue;
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(400);
+                        expect(response.body.message).toBe(Message.EMPTY_APP);
+                    });
+                });
+                describe('ドキュメントレコードの取得結果が 2件以上', () => {
+                    beforeAll(async () => {
+                        // sourceIdId,app,wf が同じドキュメントを作成
+                        await common.executeSqlString(`
+                            INSERT INTO pxr_book_operate.document
+                            (
+                                my_condition_book_id, source_id, doc_identifier, 
+                                doc_catalog_code, doc_catalog_version,
+                                doc_create_at,
+                                doc_actor_code, doc_actor_version, 
+                                wf_catalog_code, wf_catalog_version, 
+                                wf_role_code, wf_role_version, wf_staff_identifier, 
+                                app_catalog_code, app_catalog_version, 
+                                template, 
+                                attributes, is_disabled, created_by, 
+                                created_at, updated_by, updated_at)
+                            VALUES
+                            (
+                                1, '2023_6948_1', 'doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6', 
+                                1000008, 1, 
+                                '2020-02-20 00:00:00',
+                                1000004, 1, 
+                                1000007, 1,
+                                1000005, 1, 'staffId',
+                                null, null,
+                                '{"id":{"index":"3_1_1","value":"doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"sourceId":"20200221-1","env":null,"app":null,"wf":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"wf":{"index":"3_5_2","value":{"_value":1000007,"_ver":1}},"role":{"index":"3_5_3","value":{"_value":1000005,"_ver":1}},"staffId":{"index":"3_5_4","value":"staffId"}},"thing":[]}', 
+                                null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                            ),
+                            (
+                                2, '2023_6948_2', 'doc-4f75161a-449a-4839-be6a-4cc577b8a8d0', 
+                                1000008, 1, 
+                                '2020-02-20 00:00:00',
+                                1000004, 1, 
+                                null, null,
+                                null, null, null,
+                                1000007, 1,
+                                '{"id":{"index":"3_1_1","value":"doc-4f75161a-449a-4839-be6a-4cc577b8a8d0"},"code":{"index":"3_1_2","value":{"_value":1000008,"_ver":1}},"start":{"index":"3_2_1","value":"2020-02-20T00:00:00.000+0900"},"sourceId":"20200221-1","env":null,"app":{"code":{"index":"3_5_1","value":{"_value":1000004,"_ver":1}},"app":{"index":"3_5_5","value":{"_value":1000007,"_ver":1}}},"wf":null,"thing":[]}', 
+                                null, false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+                            )
+                        `);
+                    });
+                    afterAll(async () => {
+                        // sourceIdId,app,wf が同じドキュメントを削除
+                        await common.executeSqlString(`
+                            delete from pxr_book_operate.document
+                            where source_id = '2023_6948_1' and doc_identifier = 'doc-fedc51ce-2efd-4ade-9bbe-45dc445ae9c6' and my_condition_book_id = 1;
+                            delete from pxr_book_operate.document
+                            where source_id = '2023_6948_2' and doc_identifier = 'doc-4f75161a-449a-4839-be6a-4cc577b8a8d0' and my_condition_book_id = 2;
+                        `);
+                    });
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id2', '?documentSourceId=2023_6948_2');
+
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).put(url)
+                            .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send(JSON.stringify(
+                                {
+                                    id: {
+                                        index: '2_1_1',
+                                        value: documentIdentifer12
+                                    },
+                                    code: {
+                                        index: '2_1_2',
+                                        value: {
+                                            _value: 1000008,
+                                            _ver: 1
+                                        }
+                                    },
+                                    createdAt: {
+                                        index: '2_2_1',
+                                        value: '2020-02-20T00:00:00.000+0900'
+                                    },
+                                    sourceId: '2023_6948_2',
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '2_3_1',
+                                            value: {
+                                                _value: 1000117,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '2_3_5',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    userId: {
+                                        index: '2_4_1',
+                                        value: 'test_user_id2'
+                                    },
+                                    chapter: [
+                                        {
+                                            title: 'イベント識別子',
+                                            event: [
+                                                'event-4f75161a-449a-4839-be6a-4cc577b8a8d0'
+                                            ],
+                                            sourceId: [
+                                                '202108-1'
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ));
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(404);
+                        expect(response.body.message).toBe(Message.TARGET_NO_DATA);
+                    });
+                });
+            });
+        });
+        describe('ソースIDによるドキュメント削除', () => {
+            describe('正常系', () => {
+                describe('ドキュメントテーブルに 同じuserId、sourceIdのドキュメントが存在しない', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+                        const before = new Date();
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id2', '?documentSourceId=2023_6948_2');
+
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).delete(url)
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send();
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        // ドキュメントテーブルの確認 doc_identifier で取得
+                        const document = await common.executeSqlString(`select * from pxr_book_operate.document where doc_identifier='${documentIdentifer12}';`);
+                        expect(document.length).toBe(1);
+                        expect(new Date(document[0]['updated_at']).getTime()).toBeGreaterThan(before.getTime());
+                        expect(document[0]['is_disabled']).toBe(true);
+
+                        expect(parseInt(document[0]['my_condition_book_id'])).toBe(2);
+                        // Local-CTokenサービス.Local-CToken登録APIへのリクエスト
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos[0][1]['body']).toBe(JSON.stringify({
+                            add: [],
+                            update: [],
+                            delete: [
+                                {
+                                    '1_1': 'test_user_id2',
+                                    document: [
+                                        {
+                                            '2_n_1_1': documentIdentifer12,
+                                            '2_n_1_2_1': 1000008,
+                                            '2_n_1_2_2': 1,
+                                            '2_n_2_1': '2020-02-19T15:00:00.000Z',
+                                            '2_n_3_1_1': 1000117,
+                                            '2_n_3_1_2': 1,
+                                            '2_n_3_2_1': 0,
+                                            '2_n_3_2_2': 0,
+                                            '2_n_3_5_1': 1000007,
+                                            '2_n_3_5_2': 1
+                                        }
+                                    ],
+                                    event: {
+                                        '3_1_1': 'event-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                                        '3_1_2_1': 1000008,
+                                        '3_1_2_2': 1,
+                                        '3_2_1': null,
+                                        '3_2_2': null,
+                                        '3_5_1_1': 1000004,
+                                        '3_5_1_2': 1,
+                                        '3_5_2_1': 0,
+                                        '3_5_2_2': 0,
+                                        '3_5_5_1': 1000007,
+                                        '3_5_5_2': 1
+                                    },
+                                    thing: [
+                                        {
+                                            '4_1_1': 'thing-4f75161a-449a-4839-be6a-4cc577b8a8d0',
+                                            '4_1_2_1': 1000008,
+                                            '4_1_2_2': 1,
+                                            '4_4_1_1': 1000004,
+                                            '4_4_1_2': 1,
+                                            '4_4_2_1': 0,
+                                            '4_4_2_2': 0,
+                                            '4_4_5_1': 1000007,
+                                            '4_4_5_2': 1,
+                                            rowHash: 'XXXX',
+                                            rowHashCreateAt: '2019-12-31T15:00:00.000Z'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }));
+                    });
+                });
+                describe('ドキュメントテーブルに 別のAPP/WFに同じuserId、sourceId のドキュメントが存在する', () => {
+                    test('正常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+                        const before = new Date();
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id4', '?documentSourceId=20200221-1');
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).delete(url)
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send();
+                        // レスポンスチェック
+                        expect(response.status).toBe(200);
+                        // ドキュメントテーブルの確認 doc_identifier で取得
+                        const document = await common.executeSqlString(`select * from pxr_book_operate.document where doc_identifier='${documentIdentifer14}';`);
+                        expect(document.length).toBe(1);
+                        expect(new Date(document[0]['updated_at']).getTime()).toBeGreaterThan(before.getTime());
+                        expect(document[0]['is_disabled']).toBe(true);
+
+                        expect(parseInt(document[0]['my_condition_book_id'])).toBe(7);
+
+                        // thingが紐づかないためLocal-Ctokenサービスへのリクエストが飛ばないこと
+                        const apiInfos = mockDoPostRequest.mock.calls.filter(elem => elem[0] === 'http://localhost:3009/local-ctoken');
+                        expect(apiInfos.length).toBe(0);
+                    });
+                });
+            });
+            describe('異常系', () => {
+                describe('ドキュメントレコード取得時にAPP/WFのコードが設定されていない', () => {
+                    test('異常：アプリケーションの場合', async () => {
+                        // スタブサーバー起動
+                        _catalogServer = new StubCatalogServer(3001, 1000006, 200);
+                        _ctokenServer = new StubCTokenServer(3009, 200);
+
+                        // 送信データを生成
+                        const url = urljoin(Url.baseURI, 'document', 'test_user_id2', '?documentSourceId=2023_6948_2');
+                        const serviceValue = Session.application.service._value;
+                        Session.application.service._value = 0;
+                        // 対象APIに送信
+                        const response = await supertest(expressApp).delete(url)
+                            .set({ session: JSON.stringify(Session.application) })
+                            .send();
+                        Session.application.service._value = serviceValue;
+
+                        // レスポンスチェック
+                        expect(response.status).toBe(400);
+                        expect(response.body.message).toBe(Message.EMPTY_APP);
+                    });
+                });
+            });
+        });
     });
 });

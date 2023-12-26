@@ -102,8 +102,8 @@ export default class DocumentController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:PutDocumentByUserIdResDto = await this.updateDocumentProc(reqParm);
@@ -128,8 +128,8 @@ export default class DocumentController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:PutDocumentByUserIdResDto = await this.updateDocumentProc(reqParm);
@@ -190,8 +190,8 @@ export default class DocumentController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:DeleteDocumentByUserIdResDto = await this.deletedocumentProc(reqParm);
@@ -215,8 +215,8 @@ export default class DocumentController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:DeleteDocumentByUserIdResDto = await this.deletedocumentProc(reqParm);

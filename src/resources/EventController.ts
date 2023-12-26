@@ -103,8 +103,8 @@ export default class EventController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:PutEventByUserIdResDto = await this.updateEventProc(reqParm);
@@ -128,8 +128,8 @@ export default class EventController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:PutEventByUserIdResDto = await this.updateEventProc(reqParm);
@@ -190,8 +190,8 @@ export default class EventController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:DeleteEventByUserIdResDto = await this.deleteEventProc(reqParm);
@@ -215,8 +215,8 @@ export default class EventController {
         dto.setFromJson(req.body);
 
         const reqParm: {} = {
-            req: req,
-            dto: dto
+            req,
+            dto
         };
 
         const ret:DeleteEventByUserIdResDto = await this.deleteEventProc(reqParm);
@@ -254,7 +254,7 @@ export default class EventController {
         eventDto.setCatalogUrl(configure['catalogUrl']);
         eventDto.setCTokenUrl(configure['ctokenUrl']);
         eventDto.setMessage(message);
-        // サービス層のイベント蓄積を実行
+        // サービス層のイベント削除を実行
         const eventService: EventService = new EventService();
         const ret:DeleteEventByUserIdResDto = await eventService.deleteEvent(eventDto);
         return ret;

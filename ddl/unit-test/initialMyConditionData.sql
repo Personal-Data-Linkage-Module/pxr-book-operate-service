@@ -15,15 +15,15 @@ VALUES
 (
 	'test_user_id1',
     1000004, 1,
+    1000007, 1,
     null, null,
-    1000004, 1,
     '2020-02-01T00:00:00.000+0900',
     null, false, 'pxr_user', NOW(), 'pxr_user', NOW()
 ),
 (
 	'test_user_id2',
     1000004, 1,
-    1000004, 1,
+    1000007, 1,
     null, null,
     '2020-03-02T00:00:00.000+0900',
     null, false, 'pxr_user', NOW(), 'pxr_user', NOW()
@@ -31,15 +31,15 @@ VALUES
 (
 	'test_user_id3',
     1000004, 1,
+    1000007, 1,
     null, null,
-    1000004, 1,
     '2020-02-01T00:00:00.000+0900',
     null, false, 'pxr_user', NOW(), 'pxr_user', NOW()
 ),
 (
 	'test_user_id4',
     1000004, 1,
-    1000004, 1,
+    1000007, 1,
     null, null,
     '2020-03-02T00:00:00.000+0900',
     null, false, 'pxr_user', NOW(), 'pxr_user', NOW()

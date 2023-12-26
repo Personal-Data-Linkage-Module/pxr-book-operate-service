@@ -19,139 +19,139 @@ export default class ShareTriggerWaiting {
      * 共有トリガーによる共有状態ID
      */
     @Column({ type: 'bigint', name: 'share_status_id' })
-    shareStatusId: number;
+        shareStatusId: number;
 
     /**
      * 利用者ID
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'user_id' })
-    userId: string = '';
+        userId: string = '';
 
     /**
      * 共有トリガーカタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_trigger_code' })
-    shareTriggerCode: number;
+        shareTriggerCode: number;
 
     /**
      * 共有トリガーカタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_trigger_version' })
-    shareTriggerVersion: number;
+        shareTriggerVersion: number;
 
     /**
      * 共有定義カタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_code' })
-    shareCode: number;
+        shareCode: number;
 
     /**
      * 共有定義カタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'share_version' })
-    shareVersion: number;
+        shareVersion: number;
 
     /**
      * 共有元アクターカタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'source_actor_code' })
-    sourceActorCode: number;
+        sourceActorCode: number;
 
     /**
      * 共有元アクターカタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'source_actor_version' })
-    sourceActorVersion: number;
+        sourceActorVersion: number;
 
     /**
      * 共有元アプリケーションカタログコード
      */
     @Column({ type: 'bigint', name: 'source_app_code' })
-    sourceAppCode: number;
+        sourceAppCode: number;
 
     /**
      * 共有元アプリケーションカタログバージョン
      */
     @Column({ type: 'bigint', name: 'source_app_version' })
-    sourceAppVersion: number;
+        sourceAppVersion: number;
 
     /**
      * 共有元ワークフローカタログコード
      */
     @Column({ type: 'bigint', name: 'source_wf_code' })
-    sourceWfCode: number;
+        sourceWfCode: number;
 
     /**
      * 共有元ワークフローカタログバージョン
      */
     @Column({ type: 'bigint', name: 'source_wf_version' })
-    sourceWfVersion: number;
+        sourceWfVersion: number;
 
     /**
      * 共有先アクターカタログコード
      */
     @Column({ type: 'bigint', nullable: false, name: 'dest_actor_code' })
-    destActorCode: number;
+        destActorCode: number;
 
     /**
      * 共有先アクターカタログバージョン
      */
     @Column({ type: 'bigint', nullable: false, name: 'dest_actor_version' })
-    destActorVersion: number;
+        destActorVersion: number;
 
     /**
      * 共有先アプリケーションカタログコード
      */
     @Column({ type: 'bigint', name: 'dest_app_code' })
-    destAppCode: number;
+        destAppCode: number;
 
     /**
      * 共有先アプリケーションカタログバージョン
      */
     @Column({ type: 'bigint', name: 'dest_app_version' })
-    destAppVersion: number;
+        destAppVersion: number;
 
     /**
      * 共有先ワークフローカタログコード
      */
     @Column({ type: 'bigint', name: 'dest_wf_code' })
-    destWfCode: number;
+        destWfCode: number;
 
     /**
      * 共有先ワークフローカタログバージョン
      */
     @Column({ type: 'bigint', name: 'dest_wf_version' })
-    destWfVersion: number;
+        destWfVersion: number;
 
     /**
      * 処理種別（1：開始, 2：終了）
      */
     @Column({ type: 'smallint', name: 'process_type' })
-    processType: number;
+        processType: number;
 
     /**
      * 待機終了日時
      */
     @Column({ type: 'timestamp without time zone', name: 'end_of_waiting_at' })
-    endOfWaitingAt: Date;
+        endOfWaitingAt: Date;
 
     /**
      * データ識別子
      */
     @Column({ type: 'varchar', length: 255 })
-    identifier: string;
+        identifier: string;
 
     /**
      * 削除フラグ
      */
     @Column({ type: 'boolean', nullable: false, default: false, name: 'is_disabled' })
-    isDisabled: boolean = false;
+        isDisabled: boolean = false;
 
     /**
      * 登録者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'created_by' })
-    createdBy: string = '';
+        createdBy: string = '';
 
     /**
      * 登録日時
@@ -163,7 +163,7 @@ export default class ShareTriggerWaiting {
      * 更新者
      */
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'updated_by' })
-    updatedBy: string = '';
+        updatedBy: string = '';
 
     /**
      * 更新日時

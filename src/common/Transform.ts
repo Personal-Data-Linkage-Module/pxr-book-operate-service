@@ -93,7 +93,7 @@ export function IsNotObject (validationOptions?: ValidationOptions) {
         registerDecorator({
             name: 'isNotObject',
             target: object.constructor,
-            propertyName: propertyName,
+            propertyName,
             options: validationOptions,
             validator: {
                 validate (value: any, args: ValidationArguments) {

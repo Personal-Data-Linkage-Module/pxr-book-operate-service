@@ -13,42 +13,42 @@ export class DataType {
     @IsArray()
     @Type(type => CodeObject)
     @ValidateNested({ each: true })
-    sourceActor: CodeObject[];
+        sourceActor: CodeObject[];
 
     @IsOptional()
     @Type(type => CodeObject)
     @ValidateNested({ each: true })
-    code: CodeObject;
+        code: CodeObject;
 
     @IsOptional()
     @IsArray()
     @Type(type => DataType)
     @ValidateNested({ each: true })
-    thing: DataType[];
+        thing: DataType[]; // eslint-disable-line no-use-before-define
 }
 
 export class ShareCode {
     @IsDefined()
     @IsString()
-    id: string;
+        id: string;
 
     @IsOptional()
     @IsArray()
     @Type(type => DataType)
     @ValidateNested({ each: true })
-    document: DataType[];
+        document: DataType[];
 
     @IsOptional()
     @IsArray()
     @Type(type => DataType)
     @ValidateNested({ each: true })
-    event: DataType[];
+        event: DataType[];
 
     @IsOptional()
     @IsArray()
     @Type(type => DataType)
     @ValidateNested({ each: true })
-    thing: DataType[];
+        thing: DataType[];
 }
 
 export class Template {
@@ -56,7 +56,7 @@ export class Template {
     @IsArray()
     @Type(type => ShareCode)
     @ValidateNested({ each: true })
-    share: ShareCode[];
+        share: ShareCode[];
 }
 
 export default class {
@@ -64,5 +64,5 @@ export default class {
     @IsObject()
     @ValidateNested()
     @Type(type => Template)
-    template: Template;
+        template: Template;
 }
