@@ -62,96 +62,30 @@ export default class ShareService {
         const data = JSON.parse(decodeURIComponent(operator.getEncodeData()));
         app = operator.getType() === OperatorType.TYPE_APP ? parseInt(data['roles'][0]['_value']) : null;
 
-        // 共有定義の取得
-        const bookManageService: BookManageService = new BookManageService();
-        const bookManageDto: BookManageDto = new BookManageDto();
-        let settingShareUrl;
-        const baseUrl = configure['bookManageUrl'];
-        if ((baseUrl + '').indexOf('pxr-block-proxy') === -1) {
-            settingShareUrl = urljoin(baseUrl, '/setting/share');
-        } else {
-            settingShareUrl = baseUrl + encodeURIComponent('/setting/share');
-        }
-        bookManageDto.setUrl(settingShareUrl);
-        bookManageDto.setUserId(dto.userId);
-        bookManageDto.setActor(null);
-        bookManageDto.setApplication(app);
-        bookManageDto.setWorkflow(null);
-        bookManageDto.setOperator(operator);
-        bookManageDto.setMessage(message);
-        const sharingDefs = await bookManageService.getDataShareDefined(bookManageDto);
-        // データ種ごとに共有元の特定
-        const { requests, targetShares, targetConditions } = await this.checkAllowedDataDefinitionAndCreateReq(sharingDefs, operator, dto);
-        // 特定した共有元を指定してProxyサービス経由でデータ共有を呼出してデータを取得
+        // Proxyサービス経由でデータ共有を呼出してデータを取得
         const results = [];
-        applicationLogger.info('requests: ' + JSON.stringify(requests));
-        for (const req of requests) {
-            // Proxyサービス経由でデータ共有を呼出してデータを取得
-            const result = await BookOperateService.doLinkingGetShareSearch(operator.getBlockCode(), req, operator, accessToken);
-            applicationLogger.info('result: ' + JSON.stringify(result));
+        const result = await BookOperateService.doLinkingGetShareSearch(operator.getBlockCode(), dto, operator, accessToken);
+        if (Array.isArray(result)) {
+            results.push(...result);
+        } else {
             results.push(result);
         }
 
-        // 取得したイベントにモノが含まれる場合、共有定義に定義されているモノのみになるようにフィルタする
-        if (results && results.length > 0) {
-            // resultのイベント内のthingについてフィルタを行う
-            for (const res of results) {
-                if (!res.event || res.event.length < 1) {
-                    continue;
-                }
-                this.filterEveThing(res, dto, targetShares, targetConditions);
+        // results の document,event,thing が全て空のものを除外する
+        const ret = [];
+        for (const result of results) {
+            if ((result.document && result.document.length > 0) ||
+            (result.event && result.event.length > 0) ||
+            (result.thing && result.thing.length > 0)) {
+                ret.push(result);
             }
         }
 
         // レスポンスを生成
         const response: PostShareResDto = new PostShareResDto();
-        response.setFromJson(results);
+        response.setFromJson(ret);
         // レスポンスを返す
         return response;
-    }
-
-    /**
-     * 取得したイベントにモノが含まれる場合、共有定義に定義されているモノのみになるようにフィルタする
-     * @param res
-     * @param dto
-     * @param targetShares
-     * @param targetConditions
-     */
-    private filterEveThing (res: any, dto: PostShareReqDto, targetShares: ShareCode[], targetConditions: Condition[]) {
-        for (const eve of res.event) {
-            if (eve.thing && eve.thing.length > 0) {
-                const filteredThing = [];
-                for (const thi of eve.thing) {
-                    let exisits = false;
-                    if (!dto.dest) {
-                        // 共有トリガー以外からの呼出の場合
-                        for (const share of targetShares) {
-                            if (share.event && share.event.length > 0) {
-                                for (const eveDefs of share.event) {
-                                    if (eveDefs.code._value === Number(eve.code.value._value) && eveDefs.code._ver === Number(eve.code.value._ver)) {
-                                        if (!eveDefs.thing || eveDefs.thing.length <= 0) {
-                                            exisits = true;
-                                            break;
-                                        } else if (eveDefs.thing.some(elem => elem.code._value === Number(thi.code.value._value) && elem.code._ver === Number(thi.code.value._ver))) {
-                                            exisits = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            if (exisits) {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (exisits) {
-                        filteredThing.push(thi);
-                    }
-                }
-                eve.thing = filteredThing;
-            }
-        }
     }
 
     /**
@@ -591,194 +525,6 @@ export default class ShareService {
             dataTypes.push(dataType);
         }
         return dataTypes;
-    }
-
-    /**
-     * リクエストされたデータ種配列は、定義上許可されているものかを確認する
-     * @param sharingCodes 状態共有機能が定義されたカタログコード配列
-     * @param operator
-     * @param dto
-     *
-     * RefactorDescription:
-     *  #3803 : getTargetSharesAndConditions
-     *  #3803 : createDataShareReq
-     */
-    private async checkAllowedDataDefinitionAndCreateReq (sharingDefs: SharingDataDefinition[], operator: Operator, dto: PostShareReqDto) {
-        const document = dto.document;
-        const event = dto.event;
-        const thing = dto.thing;
-        // 対象の状態共有機能定義を取得
-        const { targetShares, targetConditions } = await this.getTargetSharesAndConditions(sharingDefs, operator, dto);
-
-        // データ共有定義から共有元のアクターを特定する
-        const tempReqDto: PostShareReqDto = Object.assign(JSON.parse(JSON.stringify(dto)));
-        tempReqDto.document = [];
-        tempReqDto.event = [];
-        tempReqDto.thing = [];
-        const nonActorRequest: PostShareReqDto = Object.assign(JSON.parse(JSON.stringify(tempReqDto)));
-        const requests: PostShareReqDto[] = [];
-        for (const sharingObject of targetShares) {
-            if (sharingObject.document && document) {
-                this.createDataShareReq(sharingObject, nonActorRequest, requests, tempReqDto, document, 'document');
-            }
-            if (sharingObject.event && event) {
-                this.createDataShareReq(sharingObject, nonActorRequest, requests, tempReqDto, event, 'event');
-            }
-            if ((sharingObject.thing || sharingObject.event) && thing) {
-                this.createDataShareReq(sharingObject, nonActorRequest, requests, tempReqDto, thing, 'thing');
-            }
-        }
-
-        if (targetConditions.length > 0) {
-            const req: PostShareReqDto = Object.assign(JSON.parse(JSON.stringify(tempReqDto)));
-            if (document) {
-                for (const codeObject of document) {
-                    if (!req.document.some(elem => elem._value === codeObject._value && elem._ver === codeObject._ver)) {
-                        req.document.push(codeObject);
-                    }
-                }
-            }
-            if (event) {
-                for (const codeObject of event) {
-                    if (!req.event.some(elem => elem._value === codeObject._value && elem._ver === codeObject._ver)) {
-                        req.event.push(codeObject);
-                    }
-                }
-            }
-            if (thing) {
-                for (const codeObject of thing) {
-                    if (!req.thing.some(elem => elem._value === codeObject._value && elem._ver === codeObject._ver)) {
-                        req.thing.push(codeObject);
-                    }
-                }
-            }
-            req.actor = {
-                _value: operator.getActorCode(),
-                _ver: operator.getActorVersion()
-            };
-            requests.push(req);
-        }
-
-        if (nonActorRequest.document.length > 0 || nonActorRequest.event.length > 0 || nonActorRequest.thing.length > 0) {
-            requests.push(nonActorRequest);
-        }
-        return { requests, targetShares, targetConditions };
-    }
-
-    /**
-     * 状態共有機能定義取得
-     * @param sharingDefs
-     * @param operator
-     * @param dto
-     * @returns
-     */
-    private async getTargetSharesAndConditions (sharingDefs: SharingDataDefinition[], operator: Operator, dto: PostShareReqDto) {
-        const document = dto.document;
-        const event = dto.event;
-        const thing = dto.thing;
-        const targetShares: ShareCode[] = [];
-        const targetConditions: Condition[] = [];
-        const catalogService: CatalogService = new CatalogService();
-        const catalogDto = new CatalogDto();
-        catalogDto.setUrl(configure['catalogUrl']);
-        catalogDto.setMessage(message);
-        catalogDto.setOperator(operator);
-        for (const def of sharingDefs) {
-            applicationLogger.info('sharingDef: ' + JSON.stringify(def));
-            // shareのカタログコードからカタログを取得 (論理削除済データ取得フラグ=true)
-            catalogDto.setCode(def.share[0].code._value);
-            catalogDto.setVersion(def.share[0].code._ver);
-            const result = await catalogService.getCatalogInfo(catalogDto, true);
-            let sharingCatalog;
-            try {
-                sharingCatalog = await transformAndValidate(SharingCatalog, result) as SharingCatalog;
-            } catch (err) {
-                const str = sprintf('カタログサービスにて取得したカタログを状態共有機能への変換に失敗しました(コード値: %s)', def.share[0].code._value);
-                throw new AppError(str, 500, err);
-            }
-            // リクエストのdocument, event, thingをすべて含むデータ共有定義を特定
-            applicationLogger.info('sharingCatalog: ' + JSON.stringify(sharingCatalog));
-            applicationLogger.info('request: ' + JSON.stringify(dto));
-            if (!dto.dest) {
-                for (const sharingObject of sharingCatalog.template.share) {
-                    const documentChecksFlag = this.checkAllowedData(document, sharingObject.document);
-                    const eventChecksFlag = this.checkAllowedData(event, sharingObject.event);
-                    let thingChecksFlag = this.checkAllowedData(thing, sharingObject.thing);
-                    if (!thingChecksFlag && sharingObject.event) {
-                        for (const eveThing of sharingObject.event) {
-                            if (eveThing.thing) {
-                                thingChecksFlag = this.checkAllowedData(thing, eveThing.thing);
-                            }
-                            if (thingChecksFlag) {
-                                break;
-                            }
-                        }
-                    }
-                    if (documentChecksFlag && eventChecksFlag && thingChecksFlag) {
-                        targetShares.push(sharingObject);
-                    }
-                }
-            }
-        }
-        // リクエストのdocument, event, thingをすべて含むデータ共有定義がない場合エラー
-        if ((!targetShares || targetShares.length < 1) && (!targetConditions || targetConditions.length < 1)) {
-            throw new AppError('いずれの状態共有機能定義においても、リクエストされたデータ種を共有できるように許可されていません', 400);
-        }
-        return { targetShares, targetConditions };
-    }
-
-    /**
-     * データ共有定義に基づくデータ共有リクエストの作成
-     * @param sharingObject
-     * @param nonActorRequest
-     * @param requests
-     * @param tempReqDto
-     * @param dataTypes
-     * @param type
-     */
-    private createDataShareReq (sharingObject: ShareCode, nonActorRequest: PostShareReqDto, requests: PostShareReqDto[], tempReqDto: PostShareReqDto, dataTypes: CodeVersionObject[], type: string) {
-        for (const codeObject of dataTypes) {
-            // データ共有定義からカタログコード、バージョンが一致する定義を取り出す
-            const dataTypeDefs = sharingObject[type] ? sharingObject[type].filter((elem: { code: { _value: number; _ver: number; }; }) => elem.code._value === codeObject._value && elem.code._ver === codeObject._ver) : [];
-            if (type === 'thing') {
-                if (sharingObject.event && sharingObject.event.length > 0) {
-                    for (const eveDefs of sharingObject.event) {
-                        if (eveDefs.thing && eveDefs.thing.length > 0) {
-                            dataTypeDefs.push(...(eveDefs.thing.filter(elem => elem.code._value === codeObject._value && elem.code._ver === codeObject._ver)));
-                        }
-                    }
-                }
-            }
-            // 定義に設定された共有元単位にリクエストを作成する
-            for (const def of dataTypeDefs) {
-                if (!def.sourceActor || def.sourceActor.length < 1) {
-                    // 共有元が指定されていない場合
-                    if (!nonActorRequest[type].some((elem: { _value: number; _ver: number; }) => elem._value === codeObject._value && elem._ver === codeObject._ver)) {
-                        nonActorRequest[type].push(codeObject);
-                    }
-                } else {
-                    // 共有元が指定されている場合
-                    for (const actor of def.sourceActor) {
-                        if (requests.length < 1 || !requests.some(elem => elem.actor._value === actor._value)) {
-                            // requestリストに同じ共有元が設定されていない場合は新しくrequestオブジェクトを生成してdocumentにコードをPush
-                            const req: PostShareReqDto = Object.assign(JSON.parse(JSON.stringify(tempReqDto)));
-                            req[type].push(codeObject);
-                            req.actor = actor;
-                            requests.push(req);
-                        } else {
-                            for (const request of requests) {
-                                if (request.actor._value === actor._value) {
-                                    // requestリストに同じ共有元が設定されている場合はrequestオブジェクトのdocumentに同じコードが設定されていない場合、コードをPush
-                                    if (!request[type].some((elem: { _value: number; _ver: number; }) => elem._value === codeObject._value && elem._ver === codeObject._ver)) {
-                                        request[type].push(codeObject);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**

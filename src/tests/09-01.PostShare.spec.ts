@@ -241,7 +241,7 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(response.body.length).toBe(2);
+            expect(response.body.length).toBe(1);
         });
         test('正常：Book管理サービス.データ共有定義の共有IDとカタログの共有定義のIDが一致しない', async () => {
             // スタブサーバー起動
@@ -291,572 +291,6 @@ describe('book-operate API', () => {
     });
 
     describe('データ共有によるデータ取得 異常系 POST: ' + Url.shareURI, () => {
-        test('異常：許可されていないデータ種', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, null, 200);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(200, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.application) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000825,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000891,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000716,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(400);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
-                status: 400,
-                message: 'いずれの状態共有機能定義においても、リクエストされたデータ種を共有できるように許可されていません'
-            }));
-        });
-
-        test('異常：Book管理サービス.データ共有定義取得のレスポンスに不足', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 200);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(200, 3);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.application) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(500);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
-                status: 500,
-                message: 'Book管理サービス.データ共有定義取得の結果を内部処理用に変換することに失敗しました'
-            }));
-        });
-
-        test('異常：Book管理サービス.データ共有定義取得のレスポンスに不足', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, null, 200);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(200, 6);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.application) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 12
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 12
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 12
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(400);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
-                status: 400,
-                message: 'いずれの状態共有機能定義においても、リクエストされたデータ種を共有できるように許可されていません'
-            }));
-        });
-
-        test('異常：共有定義カタログに不足', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 200);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(200, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.application) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(500);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
-                status: 500,
-                message: 'カタログサービスにて取得したカタログを状態共有機能への変換に失敗しました(コード値: 1000502)'
-            }));
-        });
-
-        test('異常：Book管理サービス.共有定義取得からのレスポンスコード400系', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 200);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(400, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.application) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(400);
-        });
-
-        test('異常：Book管理サービス.共有定義取得からのレスポンスコード500系', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 200);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(500, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.application) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(503);
-        });
-
-        test('異常：Book管理サービス.共有定義取得からのレスポンスコードが200以外', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 200);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(204, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.application) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(401);
-        });
-
-        test('異常：Book管理サービスへの接続に失敗', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 200);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.application) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(503);
-        });
-
-        test('異常：extName取得 カタログサービスからのレスポンスコード400系', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 400);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(200, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(400);
-        });
-
-        test('異常：extName取得 カタログサービスからのレスポンスコード500系', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 500);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(200, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(503);
-        });
-
-        test('異常：extName取得 カタログサービスからのレスポンスコードが200以外', async () => {
-            // スタブサーバー起動
-            _catalogServer = new StubCatalogServer(3001, 1000503, 204);
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(200, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(401);
-        });
-
-        test('異常：extName取得 カタログサービスへの接続に失敗', async () => {
-            // スタブサーバー起動
-            _operatorServer = new StubOperatorServer(200, 1);
-            _bookManageServer = new StubBookManageServer(200, 2);
-            _proxyServer = new StubProxyServer(3003, 200);
-
-            // 対象APIに送信
-            const response = await supertest(expressApp).post(Url.shareURI)
-                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
-                .set({ session: JSON.stringify(Session.wrorkFlow) })
-                .send(JSON.stringify(
-                    {
-                        userId: '...',
-                        updatedAt: {
-                            start: '2020-01-01T00:00:00.000+0900',
-                            end: '2020-03-01T00:00:00.000+0900'
-                        },
-                        identifier: [
-                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
-                        ],
-                        document: [
-                            {
-                                _value: 1000823,
-                                _ver: 1
-                            }
-                        ],
-                        event: [
-                            {
-                                _value: 1000811,
-                                _ver: 1
-                            }
-                        ],
-                        thing: [
-                            {
-                                _value: 1000815,
-                                _ver: 1
-                            }
-                        ]
-                    }
-                ));
-
-            // レスポンスチェック
-            expect(response.status).toBe(503);
-        });
-
         test('異常：Proxyサービスからのレスポンスコードが200以外', async () => {
             // スタブサーバー起動
             _catalogServer = new StubCatalogServer(3001, 1000501, 200);
@@ -946,6 +380,101 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(500);
+        });
+    });
+
+    describe('SNS通知バグ対応追加ケース' + Url.shareURI, () => {
+        test('正常：document,event,thing が全て空のものを除外されているか確認', async () => {
+            // スタブサーバー起動
+            _catalogServer = new StubCatalogServer(3001, null, 200);
+            _operatorServer = new StubOperatorServer(200, 1);
+            _bookManageServer = new StubBookManageServer(200, 1);
+            _proxyServer = new StubProxyServer(3003, 200, 8);
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(Url.shareURI)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.application) })
+                .send(JSON.stringify(
+                    {
+                        userId: '...',
+                        updatedAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        identifier: [
+                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
+                        ],
+                        document: [
+                            {
+                                _value: 1000823,
+                                _ver: 1
+                            }
+                        ],
+                        event: [
+                            {
+                                _value: 1000811,
+                                _ver: 1
+                            }
+                        ],
+                        thing: [
+                            {
+                                _value: 1000815,
+                                _ver: 1
+                            }
+                        ]
+                    }
+                ));
+
+            // レスポンスチェック
+            expect(response.status).toBe(200);
+            expect(response.body.length).toBe(1);
+        });
+        test('正常：document,event,thing が全て空のもの飲みが返却された場合、空の配列が返却されるか確認', async () => {
+            // スタブサーバー起動
+            _catalogServer = new StubCatalogServer(3001, null, 200);
+            _operatorServer = new StubOperatorServer(200, 1);
+            _bookManageServer = new StubBookManageServer(200, 1);
+            _proxyServer = new StubProxyServer(3003, 200, 9);
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(Url.shareURI)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.application) })
+                .send(JSON.stringify(
+                    {
+                        userId: '...',
+                        updatedAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        identifier: [
+                            'fedc51ce-2efd-4ade-9bbe-45dc445ae9c6'
+                        ],
+                        document: [
+                            {
+                                _value: 1000823,
+                                _ver: 1
+                            }
+                        ],
+                        event: [
+                            {
+                                _value: 1000811,
+                                _ver: 1
+                            }
+                        ],
+                        thing: [
+                            {
+                                _value: 1000815,
+                                _ver: 1
+                            }
+                        ]
+                    }
+                ));
+
+            // レスポンスチェック
+            expect(response.status).toBe(200);
+            expect(response.body.length).toBe(0);
         });
     });
 });
