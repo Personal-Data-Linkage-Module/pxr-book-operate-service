@@ -1,0 +1,219 @@
+post: 
+  tags:
+    - 利用者一覧検索
+  summary: 検索条件を受け、利用者一覧を取得します。
+  description: |-
+    ## API概要
+    利用者ID連携されたIDを基に、My-Condition-Bookテーブルを検索し、該当レコードを返却します。<br>
+    リクエストで指定した条件はAND条件として検索されます。<br>
+    - My-Condition-Book.利用者ID IN リクエスト.userId配列<br>
+    - My-Condition-Book.開設日時 >= リクエスト.establishAt.start<br>
+    - My-Condition-Book.開設日時 <= リクエスト.establishAt.end<br>
+   
+    ### 【認可条件】
+    下記のいずれかを満たす必要があります。
+    - アプリケーションオペレータ（カタログ定義済みのアプリケーションに割り当てられたオペレータ）であること
+    - 領域運営SPまたはアプリケーションPの運営メンバーであること<br>
+
+    アプリケーションオペレータまたは運営メンバーは下記のAPIで追加する必要があります。<br>
+    - pxr-operator-service の [POST: /operator]APIをオペレータ種別([アプリケーションオペレータ]type=2、[運営メンバー]type=3)で実行
+  requestBody:
+    description: 利用者一覧検索のリクエストボディ
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/PostUserListReq"
+        examples:
+          "利用者一覧検索_リクエスト":
+            $ref: "#/components/examples/利用者一覧検索_リクエスト"
+  responses:
+    200:
+      description: 利用者一覧検索のレスポンスボディ
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResSearchUserList"
+          examples:
+            "利用者一覧検索_レスポンス":
+              $ref: "#/components/examples/利用者一覧検索_レスポンス"
+components:
+  schemas:
+    PostUserListReq:
+     type: object
+     description: 利用者一覧検索のリクエストボディ
+     properties:
+      userId:
+        type: array
+        items:
+          type: string
+        description: |
+          検索対象となる利用者ID連携されたIDの配列<br>
+          （注意事項）
+          - 指定する利用者IDは下記のAPIで利用者ID連携を実施済である必要があります。
+            - pxr-book-manage-service の [POST: /book-manage/cooperate]API
+      establishAt:
+        type: object
+        properties:
+          start: 
+            type: string
+            description: 検索対象開設日時(自)
+          end:
+            type: string
+            description: 検索対象開設日時(至)
+        description: |
+          検索対象となるMy-Condition-Bookの開設日時の範囲<br>
+          （注意事項）
+          - 開始のみまたは終了のみを指定可能です。
+          - 日時は、ISO8601(JST)形式で指定してください。
+            - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          - 検索対象開設日時は、、startがendより前になるように指定してください。
+      includeRequest:
+        type: boolean
+        default: false
+        description: |
+          対象に申請中の情報を含むかどうかの指定<br>
+          デフォルトは「含まない」（false）です。<br>
+          「含む」を指定した（true）場合は、NotificationServiceから取得します。
+    ResSearchUserList:
+      type: object
+      description: 利用者一覧検索のレスポンスボディ
+      properties:
+        status:
+          type: number
+          description: |
+            連携状況（0: 申請中, 1: 連携中）
+        identifyCode:
+          type: string
+          description: |
+            連携状況が申請中（status=0）の場合のみ返却<br>
+            以降の項目は表示されない
+        app:
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/CodeObject"
+          description: 対象Blockのアプリケーションカタログコード
+        wf:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+        userId:
+          type: string
+          description: |
+            検索条件に該当する利用者ID
+        establishAt: 
+          type: string
+          description: |
+            My-Condition-Bookの開設日時<br>
+            ISO8601(JST)形式で返却されます
+        attribute: 
+          type: string
+          description: |
+            ※未使用のパラメータです
+            <br>【確認中】<br>
+          deprecated: true
+        store:
+          type: object
+          $ref: "#/components/schemas/StoreDataObject"
+        userInformation:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+    StoreDataObject:
+      type: object
+      description: 該当ユーザにおいて蓄積対象（同意済み）となっているカタログ一覧
+      properties:
+        document:
+          description: ドキュメントのカタログ配列
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/CodeObject"
+        event:
+          description: イベントのカタログ配列
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/CodeObject"
+        thing:
+          description: モノのカタログ配列
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/CodeObject"
+    CodeObject:
+      description: カタログコード
+      type: object
+      properties:
+        _value:
+          description: カタログコード値
+          type: number
+        _ver:
+          description: カタログバージョン値
+          type: number
+      required:
+        - "_value"
+        - "_ver"
+  examples:
+    利用者一覧検索_リクエスト:
+      description: 利用者一覧検索のリクエスト例
+      value:
+       {
+        "userId": [
+         "useTestUser000002",
+         "useTestUser000003"
+        ],
+        "establishAt": {
+          "start": "2022-01-01T00:00:00.000+0900",
+          "end": "2022-12-31T12:34:56.789+0900"
+        },
+        "includeRequest": true
+       }
+    利用者一覧検索_レスポンス:
+      description: 利用者一覧検索のレスポンス例
+      value:
+        [
+          {
+            "status": 1,
+            "app": {
+              "_value": 1000879,
+              "_ver": 3
+            },
+            "wf": null,
+            "userId": "useTestUser000002",
+            "establishAt": "2022-04-28T14:42:26.000+0900",
+            "attribute": {},
+            "store": [
+              {
+                "document": [],
+                "event": [
+                  {
+                    "_value": 1000800,
+                    "_ver": 2
+                  },
+                  {
+                    "_value": 1000835,
+                    "_ver": 2
+                  }
+                ],
+                "thing": [
+                  {
+                    "_value": 1000799,
+                    "_ver": 1
+                  },
+                  {
+                    "_value": 1000834,
+                    "_ver": 1
+                  }
+                ]
+              }
+            ],
+            "userInformation": null
+          },
+          {
+            "status": 0,
+            "identifyCode": "MmYxMWFjZTktZTQ2OS00NTE4LWE2YTktYzViYWQ3MzYxZmU5"
+          }
+        ]

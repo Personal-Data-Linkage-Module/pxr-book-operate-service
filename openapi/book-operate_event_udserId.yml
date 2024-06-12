@@ -1,0 +1,336 @@
+post: 
+  tags:
+    - イベント蓄積
+  summary: 蓄積対象のイベントを登録します。
+  description: |-
+    ## API概要
+    アプリケーションが、アプリケーション利用者に紐づくパーソナルデータ（イベント）を登録します。
+        
+    ### 【認可条件】
+    - アプリケーションオペレータ（カタログ定義済みのアプリケーションに割り当てられたオペレータ）であること
+      - アプリケーションオペレータは下記のAPIで追加する必要があります
+        - pxr-operator-service の [POST: /operator]APIをオペレータ種別(type=2)で実行
+  parameters:
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: |-
+        蓄積対象イベントに紐づく利用者ID
+
+        （注意事項）
+        - 指定する利用者IDは下記のAPIで利用者ID連携を実施済である必要があります。
+          - pxr-book-manage-service の [POST: /book-manage/cooperate]API
+  requestBody:
+    description: |-
+      イベント蓄積（登録）の要求オブジェクト
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/EventTemplate"
+        examples:
+          "イベント蓄積_リクエスト":
+            $ref: "#/components/examples/イベント蓄積_リクエスト"
+  responses:
+    200:
+      description: イベント蓄積（登録）の結果オブジェクト
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EventTemplate"
+          examples:
+            "イベント蓄積_レスポンス":
+              $ref: "#/components/examples/イベント蓄積_レスポンス"
+components:
+  schemas:
+    EventTemplate:
+      type: object
+      description: イベント蓄積（登録または更新）の要求オブジェクト
+      properties:
+        _code:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+        app:
+          type: object
+          description: |
+            イベント蓄積（登録または更新）を行うアプリケーションのカタログ項目コード
+          oneOf:
+            - $ref: "#/components/schemas/App"
+        code:
+          type: object
+          description: |
+            イベントのカタログ項目コード
+
+            （注意事項）
+            - code の index には 3_1_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        end:
+          type: object
+          description: |
+            イベントの終了時刻
+
+            （注意事項）
+            - end の index には 3_2_2 を設定します。
+            - end の value には以下の形式で設定する必要があります。
+              - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          properties:
+            index:
+              type: string
+            value:
+              type: string(ISO8601)
+          required:
+            - "index"
+            - "value"
+        env:
+          type: object
+          description: |
+            ※未使用のパラメータです
+
+            （注意事項）
+            - envはnullである必要があります。
+        id:
+          type: object
+          description: |
+            イベントのデータ識別子
+
+            （注意事項）
+            - イベント蓄積（登録）の場合はnullである必要があります。
+            - イベント蓄積（更新）の場合は更新対象のidを指定してください。
+            - id の index には 3_1_1 を設定します。
+          properties:
+            index:
+              type: string
+            value:
+              type: string
+          required:
+            - index
+            - value
+        location:
+          type: object
+          description: |
+            イベントの発生位置
+
+            （注意事項）
+            - location の value には以下の GPGGA 形式で設定する必要があります。
+              - $GPGGA,m1,m2,c1,m3,c2,d1,d2,f1,f2,M,f3,M,f4,d3*cc
+            - location の index には 3_3_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        sourceId:
+          type: string
+          description: |
+            蓄積対象イベントに割り当てる識別子
+          
+            （注意事項）
+            - sourceId は必須パラメータなので使わない場合はnull指定してください。
+            - sourceId はイベント更新 API およびイベント削除 API で対象の指定に利用できます。
+              - pxr-book-operate-service の [PUT: /book-operate/event/:userId]API
+              - pxr-book-operate-service の [DELETE: /book-operate/event/:userId]API
+        start:
+          type: object
+          description: |
+            イベントの開始時刻
+
+            （注意事項）
+            - start の index には 3_2_1 を設定します。
+            - start の value には以下の形式で設定する必要があります。
+              - yyyy-MM-ddTHH:mm:ss.SSS+0900
+          properties:
+            index:
+              type: string
+            value:
+              type: string(ISO8601)
+          required:
+            - "index"
+            - "value"
+        thing:
+          type: object
+          description: |
+            モノオブジェクト
+
+            ※未使用のパラメータです
+          deprecated: true
+        userId:
+          type: object
+          description: |
+            蓄積対象イベントに紐づく利用者ID
+
+            （注意事項）
+            - パラメータ userId の値と同じ値を設定する必要があります。
+            - userId の index には 3_6_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        wf:
+          type: object
+          description: |
+            ※未使用のパラメータです
+          deprecated: true
+      required:
+        - "app"
+        - "code"
+        - "id"
+        - "userId"
+        - "sourceId"
+    App:
+      type: object
+      description: イベント蓄積（登録または更新）を行うアプリケーションのカタログ項目コード
+      properties:
+        code:
+          type: object
+          description: |
+            アプリケーションプロバイダーのカタログ項目コード
+
+            （注意事項）
+            - code の index には 2_3_1 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+        app:
+          type: object
+          description: |
+            アプリケーションのカタログ項目コード
+
+            （注意事項）
+            - app の index には 2_3_2 を設定します。
+          oneOf:
+            - $ref: "#/components/schemas/IndexValue"
+    IndexValue:
+      type: object
+      description: |
+        CMatrix列のインデックスとその設定値
+      properties:
+        index:
+          type: string
+          description: CMatrix列のインデックス
+        value:
+          description: CMatrix列の設定値
+          oneOf:
+            - $ref: "#/components/schemas/StringValue"
+            - $ref: "#/components/schemas/CodeObject"
+    StringValue:
+      type: string
+      description: 文字列値
+    CodeObject:
+      description: カタログコード
+      type: object
+      properties:
+        _value:
+          description: カタログコード値
+          type: number
+        _ver:
+          description: カタログバージョン値
+          type: number
+      required:
+        - "_value"
+        - "_ver"
+  examples:
+    イベント蓄積_リクエスト:
+      description: |
+
+      value:
+        {
+          "app": {
+            "code": {
+              "index": "2_3_1",
+              "value": {
+                "_value": 1000788,
+                "_ver": 1
+              }
+            },
+            "app": {
+              "index": "2_3_2",
+              "value": {
+                "_value": 1000800,
+                "_ver": 1
+              }
+            }
+          },
+          "code": {
+            "index": "3_1_2",
+            "value": {
+              "_value": 1000797,
+              "_ver": 1
+            }
+          },
+          "end": {
+            "index": "3_2_2",
+            "value": null
+          },
+          "env": null,
+          "id": {
+            "index": "3_1_1",
+            "value": null
+          },
+          "location": {
+            "index": "3_3_1",
+            "value": null
+          },
+          "sourceId": null,
+          "start": {
+            "index": "3_2_1",
+            "value": null
+          },
+          "thing": null,
+          "userId": {
+            "index": "3_6_1",
+            "value": "testUser1234"
+          },
+          "wf": null
+        }
+    イベント蓄積_レスポンス:
+      description: |
+
+      value:
+        {
+          "app": {
+            "code": {
+              "index": "2_3_1",
+              "value": {
+                "_value": 1000788,
+                "_ver": 1
+              }
+            },
+            "app": {
+              "index": "2_3_2",
+              "value": {
+                "_value": 1000800,
+                "_ver": 1
+              }
+            }
+          },
+          "code": {
+            "index": "3_1_2",
+            "value": {
+              "_value": 1000797,
+              "_ver": 1
+            }
+          },
+          "end": {
+            "index": "3_2_2",
+            "value": null
+          },
+          "env": null,
+          "id": {
+            "index": "3_1_1",
+            "value": uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu
+          },
+          "location": {
+            "index": "3_3_1",
+            "value": null
+          },
+          "sourceId": null,
+          "start": {
+            "index": "3_2_1",
+            "value": null
+          },
+          "thing": null,
+          "userId": {
+            "index": "3_6_1",
+            "value": "testUser1234"
+          },
+          "wf": null
+        }
