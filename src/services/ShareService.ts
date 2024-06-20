@@ -65,18 +65,14 @@ export default class ShareService {
         // Proxyサービス経由でデータ共有を呼出してデータを取得
         const results = [];
         const result = await BookOperateService.doLinkingGetShareSearch(operator.getBlockCode(), dto, operator, accessToken);
-        if (Array.isArray(result)) {
-            results.push(...result);
-        } else {
-            results.push(result);
-        }
+        results.push(...result);
 
         // results の document,event,thing が全て空のものを除外する
         const ret = [];
         for (const result of results) {
             if ((result.document && result.document.length > 0) ||
-            (result.event && result.event.length > 0) ||
-            (result.thing && result.thing.length > 0)) {
+                (result.event && result.event.length > 0) ||
+                (result.thing && result.thing.length > 0)) {
                 ret.push(result);
             }
         }
@@ -111,38 +107,51 @@ export default class ShareService {
         const tempShareCode = await new BookManageService().getCollationTempShareCode(bookManageDto);
 
         // Proxyサービス経由でデータ共有を呼出してデータを取得
+        const results: any[] = [];
         const result = await BookOperateService.doLinkingGetShareSearch(operator.getBlockCode(), dto.getAsJson(), operator, accessToken);
+        results.push(...result);
 
-        let filteredRes: any = {};
+        const filteredResults: any[] = [];
+        const emptyRes: any = {
+            document: [],
+            event: [],
+            thing: []
+        };
         if (tempShareCode.identifier && tempShareCode.identifier.length > 0) {
-            // 対象データ種識別子格納用
-            result.document = result.document || [];
-            result.event = result.event || [];
-            result.thing = result.thing || [];
-            const { targetDocList, targetEveList, targetThiList } = await this.getDataTypeIdList(tempShareCode, result);
+            for (const result of results) {
+                // 対象データ種識別子格納用
+                result.document = result.document || [];
+                result.event = result.event || [];
+                result.thing = result.thing || [];
+                const { targetDocList, targetEveList, targetThiList } = await this.getDataTypeIdList(tempShareCode, result);
 
-            // 各データを共有条件でフィルタリング（eventはevent内の各thingについてもフィルタリング）
-            const filteredDocument = result.document ? result.document.filter((doc: any) => targetDocList.includes(doc.id.value)) : [];
-            const filteredEvent = result.event ? result.event.filter((eve: any) => targetEveList.includes(eve.id.value)) : [];
-            if (filteredEvent.length > 0) {
-                for (const event of filteredEvent) {
-                    event['thing'] = event['thing'].filter((thi: any) => targetThiList.includes(thi.id.value));
+                // 各データを共有条件でフィルタリング（eventはevent内の各thingについてもフィルタリング）
+                const filteredDocument = result.document ? result.document.filter((doc: any) => targetDocList.includes(doc.id.value)) : [];
+                const filteredEvent = result.event ? result.event.filter((eve: any) => targetEveList.includes(eve.id.value)) : [];
+                if (filteredEvent.length > 0) {
+                    for (const event of filteredEvent) {
+                        event['thing'] = event['thing'].filter((thi: any) => targetThiList.includes(thi.id.value));
+                    }
                 }
-            }
-            const filteredThing = result.thing ? result.thing.filter((thi: any) => targetThiList.includes(thi.id.value)) : [];
+                const filteredThing = result.thing ? result.thing.filter((thi: any) => targetThiList.includes(thi.id.value)) : [];
 
-            filteredRes = {
-                document: filteredDocument,
-                event: filteredEvent,
-                thing: filteredThing
-            };
+                const filteredRes = {
+                    document: filteredDocument,
+                    event: filteredEvent,
+                    thing: filteredThing
+                };
+                filteredResults.push(filteredRes);
+            }
         } else {
-            filteredRes = result;
+            filteredResults.push(...results);
+        }
+        if (filteredResults.length === 0) {
+            filteredResults.push(emptyRes);
         }
 
         // レスポンスを生成
         const response: PostShareByTempShareCodeResDto = new PostShareByTempShareCodeResDto();
-        response.setFromJson(filteredRes);
+        response.setFromJson(filteredResults);
 
         // レスポンスを返す
         return response;

@@ -18,7 +18,7 @@ export default class StubProxyServer {
             if (status === ResponseCode.OK) {
                 if (code === 0) {
                     // 正常(pxr-root)
-                    res.status(ResponseCode.OK).json({
+                    res.status(ResponseCode.OK).json([{
                         document: [
                             {
                                 id: {
@@ -2298,11 +2298,11 @@ export default class StubProxyServer {
                                 }
                             }
                         ]
-                    });
+                    }]);
                     return;
                 } else if (code === 1) {
                     // 正常(pxr-root)
-                    res.status(ResponseCode.OK).json({
+                    res.status(ResponseCode.OK).json([{
                         document: [],
                         event: [
                             {
@@ -2462,11 +2462,11 @@ export default class StubProxyServer {
                             }
                         ],
                         thing: []
-                    });
+                    }]);
                     return;
                 } else if (code === 2) {
                     // 正常(pxr-root)
-                    res.status(ResponseCode.OK).json({
+                    res.status(ResponseCode.OK).json([{
                         document: [
                             {
                                 id: {
@@ -2784,19 +2784,19 @@ export default class StubProxyServer {
                                 }
                             }
                         ]
-                    });
+                    }]);
                     return;
                 } else if (code === 3) {
                     // 正常(pxr-root)
-                    res.status(ResponseCode.OK).json({
+                    res.status(ResponseCode.OK).json([{
                         document: null,
                         event: null,
                         thing: null,
-                    });
+                    }]);
                     return;
                 } else if (code === 4) {
                     // 正常(pxr-root)
-                    res.status(ResponseCode.OK).json({
+                    res.status(ResponseCode.OK).json([{
                         document: [
                             {
                                 id: {
@@ -5073,11 +5073,11 @@ export default class StubProxyServer {
                                 }
                             }
                         ]
-                    });
+                    }]);
                     return;
                 } else if (code === 5) {
                     // 正常(pxr-root)
-                    res.status(ResponseCode.OK).json({
+                    res.status(ResponseCode.OK).json([{
                         document: [
                             {
                                 id: {
@@ -5347,18 +5347,18 @@ export default class StubProxyServer {
                                 }
                             }
                         ]
-                    });
+                    }]);
                     return;
                 } else if (code === 6) {
                     // 正常(pxr-root)
-                    res.status(ResponseCode.OK).json({
+                    res.status(ResponseCode.OK).json([{
                         document: null,
                         event: null,
                         thing: null
-                    });
+                    }]);
                     return;
                 } else if (code === 7) {
-                    res.status(ResponseCode.OK).json({
+                    res.status(ResponseCode.OK).json([{
                         "document": null,
                         "event": [
                             {
@@ -5569,7 +5569,7 @@ export default class StubProxyServer {
                             }
                         ],
                         "thing": null
-                    });
+                    }]);
                     return;
                 } else if (code === 8) {
                     // 正常 配列に空のレスポンスあり
@@ -7863,7 +7863,7 @@ export class ProxyServer {
                     message: '指定された本人性確認コードは、有効期限切れです',
                     status: 400
                 });
-            } 
+            }
             res.status(status);
             const code = req.body['identifyCode'];
             if (pxrId === '1') {
