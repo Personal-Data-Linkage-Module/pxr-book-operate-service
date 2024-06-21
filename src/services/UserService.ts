@@ -40,6 +40,7 @@ import CatalogDto from './dto/CatalogDto';
 import OperatorReqDto from '../resources/dto/OperatorReqDto';
 import moment = require('moment');
 import { OperatorType } from '../common/Operator';
+import { applicationLogger } from '../common/logging';
 /* eslint-enable */
 const config = Config.ReadConfig('./config/config.json');
 
@@ -510,80 +511,109 @@ export default class UserService {
     /**
      * 利用者作成(バッチ)
      * @param bookUserCreateDto
+     * @param maxCount
+     * @param dayBack
      */
-    public async createUserBatch (bookUserCreateDto: UserServiceDto): Promise<PostUserCreateBatchResDto> {
+    public async createUserBatch (bookUserCreateDto: UserServiceDto, maxCount: number, dayBack: number): Promise<PostUserCreateBatchResDto> {
         const operator = bookUserCreateDto.getOperator();
         const message = bookUserCreateDto.getMessage();
 
-        // My-Condition-Book管理サービス.利用者ID連携APIを呼び出す
-        // レスポンスが200 OK以外の場合エラーレスポンスを返却し終了
-        const bookManageDto: BookManageDto = new BookManageDto();
-        const bookSearchUrl: string = urljoin(bookUserCreateDto.getBookManageUrl(), '/search');
-        bookManageDto.setUrl(bookSearchUrl);
-        bookManageDto.setOperator(operator);
-        bookManageDto.setMessage(message);
-        const bookManageService: BookManageService = new BookManageService();
-        const bookManageResult = await bookManageService.getCoopList(bookManageDto);
+        // Bookが未作成状態の時のデフォルトのBook作成日時
+        const DEFAULT_CREATE_DATE = new Date('2020/01/01 00:00:00');
 
-        if (bookManageResult && Array.isArray(bookManageResult)) {
-            const connection = await connectDatabase();
-            await connection.transaction(async trans => {
-                // 作成されてない利用者IDを検索
-                const myConditionBooks: MyConditionBook[] = await EntityOperation.getMyConditionBooksIncludeDeleted();
+        // 最後にバッチで作祭されたBookを取得
+        const lastCreatedBook = await EntityOperation.getMyConditionBooksLastCreated(operator.getLoginId());
+        const lastCreatedAt = (lastCreatedBook && lastCreatedBook.openStartAt) ? lastCreatedBook.openStartAt : DEFAULT_CREATE_DATE;
 
-                for (const book of bookManageResult) {
-                    if (book['cooperation'] && Array.isArray(book['cooperation'])) {
-                        for (const coop of book['cooperation']) {
-                            if (Number(coop['actor']['_value']) === operator.getActorCode()) {
-                                const appCatalogCode = coop['app'] ? Number(coop['app']['_value']) : null;
-                                const appCatalogVersion = coop['app'] ? Number(coop['app']['_ver']) : null;
-                                const wfCatalogCode :number = null;
-                                const wfCatalogVersion :number = null;
-                                const userId = coop['userId'];
-                                let isExist = false;
-                                for (const myConditionBook of myConditionBooks) {
-                                    if (
-                                        (
-                                            (appCatalogCode === Number(myConditionBook.appCatalogCode)) ||
-                                            (wfCatalogCode === Number(myConditionBook.wfCatalogCode))
-                                        ) && userId === myConditionBook.userId
-                                    ) {
-                                        isExist = true;
-                                        break;
+        // 取得対象の連携開始日の算出
+        const targetDate = moment(lastCreatedAt).subtract(dayBack, 'days').toDate();
+        // Book作成カウント
+        let createCount = 0;
+        let offset = 0;
+        while (true) {
+            // My-Condition-Book管理サービス.Book一覧取得APIを呼び出す
+            const bookManageDto: BookManageDto = new BookManageDto();
+            const bookSearchUrl: string = urljoin(bookUserCreateDto.getBookManageUrl(), '/search');
+            bookManageDto.setUrl(bookSearchUrl);
+            bookManageDto.setOperator(operator);
+            bookManageDto.setMessage(message);
+            const bookManageService: BookManageService = new BookManageService();
+            const bookManageResult = await bookManageService.getCoopList(bookManageDto, null, targetDate, maxCount, offset);
+            let coopCount = 0;
+            if (bookManageResult && Array.isArray(bookManageResult)) {
+                const connection = await connectDatabase();
+                await connection.transaction(async trans => {
+                    // 作成されてない利用者IDを検索
+                    for (const book of bookManageResult) {
+                        if (maxCount <= createCount) {
+                            break;
+                        }
+                        if (book['cooperation'] && Array.isArray(book['cooperation'])) {
+                            for (const coop of book['cooperation']) {
+                                coopCount++;
+                                if (Number(coop['actor']['_value']) === operator.getActorCode()) {
+                                    const appCatalogCode = coop['app'] ? Number(coop['app']['_value']) : null;
+                                    const appCatalogVersion = coop['app'] ? Number(coop['app']['_ver']) : null;
+                                    const wfCatalogCode :number = null;
+                                    const wfCatalogVersion :number = null;
+                                    const userId = coop['userId'];
+                                    const status = coop['status'];
+                                    const startAt = new Date(coop['startAt']);
+                                    if (userId && status === this.COOPERATING_STATUS) {
+                                        const isBookExists = await EntityOperation.isBookExists(userId, appCatalogCode, wfCatalogCode);
+                                        if (isBookExists) {
+                                            // すでにBookが存在したらスキップ
+                                            continue;
+                                        }
+                                        // ログイン不可の個人を登録する
+                                        const operatorAddDto: OperatorAddDto = new OperatorAddDto();
+                                        operatorAddDto.setUrl(bookUserCreateDto.getOperatorUrl());
+                                        operatorAddDto.setOperator(operator);
+                                        operatorAddDto.setMessage(message);
+                                        operatorAddDto.setUserId(userId);
+                                        operatorAddDto.setAppCatalogCode(appCatalogCode);
+                                        operatorAddDto.setWfCatalogCode(wfCatalogCode);
+                                        try {
+                                            await OperatorService.addProhibitedIndividual(operatorAddDto);
+                                        } catch (err) {
+                                            // 失敗した場合は対象データの処理をスキップ
+                                            applicationLogger.error('ログイン不可個人の登録に失敗したため、対象データの処理をスキップします。', err);
+                                            continue;
+                                        }
+
+                                        // My-Condition-Bookテーブルにレコードを登録する
+                                        const startDateTime: Date = new Date(startAt.getUTCFullYear(), startAt.getUTCMonth(), startAt.getUTCDate(), startAt.getUTCHours(), startAt.getUTCMinutes(), startAt.getUTCSeconds());
+                                        const myConditionBook = new MyConditionBook();
+                                        myConditionBook.userId = userId;
+                                        myConditionBook.actorCatalogCode = Number(coop['actor']['_value']);
+                                        myConditionBook.actorCatalogVersion = Number(coop['actor']['_ver']);
+                                        myConditionBook.appCatalogCode = appCatalogCode;
+                                        myConditionBook.appCatalogVersion = appCatalogVersion;
+                                        myConditionBook.wfCatalogCode = wfCatalogCode;
+                                        myConditionBook.wfCatalogVersion = wfCatalogVersion;
+                                        myConditionBook.openStartAt = startDateTime;
+                                        myConditionBook.createdBy = operator.getLoginId();
+                                        myConditionBook.updatedBy = operator.getLoginId();
+                                        await EntityOperation.insertCondBookRecord(trans, myConditionBook);
+                                        createCount++;
+
+                                        if (maxCount <= createCount) {
+                                            break;
+                                        }
                                     }
-                                }
-                                if (!isExist && userId) {
-                                    // ログイン不可の個人を登録する
-                                    const operatorAddDto: OperatorAddDto = new OperatorAddDto();
-                                    operatorAddDto.setUrl(bookUserCreateDto.getOperatorUrl());
-                                    operatorAddDto.setOperator(operator);
-                                    operatorAddDto.setMessage(message);
-                                    operatorAddDto.setUserId(userId);
-                                    operatorAddDto.setAppCatalogCode(appCatalogCode);
-                                    operatorAddDto.setWfCatalogCode(wfCatalogCode);
-                                    await OperatorService.addProhibitedIndividual(operatorAddDto);
-
-                                    // My-Condition-Bookテーブルにレコードを登録する
-                                    const nowTime: Date = new Date();
-                                    const nowDateTime: Date = new Date(nowTime.getUTCFullYear(), nowTime.getUTCMonth(), nowTime.getUTCDate(), nowTime.getUTCHours(), nowTime.getUTCMinutes(), nowTime.getUTCSeconds());
-                                    const myConditionBook = new MyConditionBook();
-                                    myConditionBook.userId = userId;
-                                    myConditionBook.actorCatalogCode = Number(coop['actor']['_value']);
-                                    myConditionBook.actorCatalogVersion = Number(coop['actor']['_ver']);
-                                    myConditionBook.appCatalogCode = appCatalogCode;
-                                    myConditionBook.appCatalogVersion = appCatalogVersion;
-                                    myConditionBook.wfCatalogCode = wfCatalogCode;
-                                    myConditionBook.wfCatalogVersion = wfCatalogVersion;
-                                    myConditionBook.openStartAt = nowDateTime;
-                                    myConditionBook.createdBy = operator.getLoginId();
-                                    myConditionBook.updatedBy = operator.getLoginId();
-                                    await EntityOperation.insertCondBookRecord(trans, myConditionBook);
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
+            // Book管理サービス.Book一覧取得の結果が取得できない または 連携情報がmaxCount未満 または 作成数がmaxCount以上になった場合、処理を終了する
+            if (!bookManageResult || coopCount < maxCount || maxCount <= createCount) {
+                break;
+            } else {
+                // offsetを加算する
+                offset = offset + maxCount;
+            }
         }
 
         // レスポンスを返す

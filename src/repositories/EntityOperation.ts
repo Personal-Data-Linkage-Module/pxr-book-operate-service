@@ -581,13 +581,38 @@ export default class EntityOperation {
     }
 
     /**
-     * MyConditionBookを取得する
+    * MyConditionBookの存在確認を行う
+    */
+    static async isBookExists (userId: string, app: number, wf: number): Promise<boolean> {
+        const connection = await connectDatabase();
+        const repository = getRepository(MyConditionBook, connection.name);
+        let sql = repository
+            .createQueryBuilder('my_condition_book')
+            .where('user_id = :userId', { userId: userId });
+        if (app) {
+            sql = sql.andWhere('app_catalog_code = :app_catalog_code', { app_catalog_code: app });
+        }
+        if (wf) {
+            sql = sql.andWhere('wf_catalog_code = :wf_catalog_code', { wf_catalog_code: wf });
+        }
+        const ret = await sql.getRawMany();
+
+        return ret.length > 0;
+    }
+
+    /**
+     * 最後に作成されたMyConditionBookを取得する
      */
-    static async getMyConditionBooksIncludeDeleted (): Promise<MyConditionBook[]> {
+    static async getMyConditionBooksLastCreated (createUser: string): Promise<MyConditionBook> {
         const connection = await connectDatabase();
         const repository = connection.getRepository(MyConditionBook);
-        const entity = await repository.createQueryBuilder('myConditionBook').getMany();
-        return entity;
+        const ret = await repository
+            .createQueryBuilder('my_condition_book')
+            .where('created_by = :createUser', { createUser: createUser })
+            .orderBy('open_start_at', 'DESC')
+            .limit(1)
+            .getRawOne();
+        return ret ? new MyConditionBook(ret) : null;
     }
 
     /**

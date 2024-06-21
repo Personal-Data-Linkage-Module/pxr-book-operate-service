@@ -7,6 +7,7 @@ import { Server } from 'net';
 
 import * as express from 'express';
 import bodyParser = require('body-parser');
+import moment = require('moment');  
 /**
  * Book管理サービス
  */
@@ -288,7 +289,6 @@ export default class StubBookManageServer {
                         ]
                     });
                 }
-                return;
             }
             res.status(status).end();
         };
@@ -1519,6 +1519,130 @@ export default class StubBookManageServer {
                             userInformation: null
                         }
                     ]);
+                } else if (option === 5) {
+                    const list: any[] = [
+                        {
+                            pxrId: 'test_user01',
+                            attribute: {
+                                key: 'value'
+                            },
+                            cooperation: [
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    status: 1,
+                                    userId: 'test_app_user01',
+                                    startAt: moment(new Date()).tz('Asia/Tokyo').format('YYYY-MM-DDTHH:mm:ss.SSSZZ')
+                                }
+                            ],
+                            userInformation: null
+                        },
+                        {
+                            pxrId: 'test_user02',
+                            attribute: {
+                                key: 'value'
+                            },
+                            cooperation: [
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    status: 1,
+                                    userId: 'test_app_user02',
+                                    startAt: moment(new Date()).tz('Asia/Tokyo').format('YYYY-MM-DDTHH:mm:ss.SSSZZ')
+                                }
+                            ],
+                            userInformation: null
+                        },
+                        {
+                            pxrId: 'test_user03',
+                            attribute: {
+                                key: 'value'
+                            },
+                            cooperation: [
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    status: 1,
+                                    userId: 'test_app_user03',
+                                    startAt: moment(new Date()).tz('Asia/Tokyo').format('YYYY-MM-DDTHH:mm:ss.SSSZZ')
+                                }
+                            ],
+                            userInformation: null
+                        },
+                        {
+                            pxrId: 'test_user04',
+                            attribute: {
+                                key: 'value'
+                            },
+                            cooperation: [
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    status: 1,
+                                    userId: 'test_app_user04',
+                                    startAt: moment(new Date()).tz('Asia/Tokyo').format('YYYY-MM-DDTHH:mm:ss.SSSZZ')
+                                }
+                            ],
+                            userInformation: null
+                        },
+                        {
+                            pxrId: 'test_user05',
+                            attribute: {
+                                key: 'value'
+                            },
+                            cooperation: [
+                                {
+                                    actor: {
+                                        _value: '1000004',
+                                        _ver: '1'
+                                    },
+                                    region: null,
+                                    app: {
+                                        _value: '1000007',
+                                        _ver: '1'
+                                    },
+                                    wf: null,
+                                    status: 1,
+                                    userId: 'test_app_user05',
+                                    startAt: moment(new Date()).tz('Asia/Tokyo').format('YYYY-MM-DDTHH:mm:ss.SSSZZ')
+                                }
+                            ],
+                            userInformation: null
+                        }
+                    ];
+                    res.json(list.slice(req.body.offset, req.body.offset + req.body.limit < list.length ? req.body.offset + req.body.limit : list.length));
                 }
             }
             res.status(status).end();

@@ -298,9 +298,11 @@ export default class BookManageService {
      * My-Condition-Book管理サービスのBook一覧を呼び出す
      * @param bookManageDto
      */
-    public async getCoopList (bookManageDto: BookManageDto, pxrId?: string): Promise<any> {
+    public async getCoopList (bookManageDto: BookManageDto, pxrId?: string, coopStartAt?: Date, limit?: number, offset?: number): Promise<any> {
         const operator = bookManageDto.getOperator();
         const message = bookManageDto.getMessage();
+        const reqOffset = !offset ? 0 : offset;
+        const reqLimit = !limit ? 1000 : limit;
         let bodyStr;
         if (pxrId) {
             bodyStr = JSON.stringify({
@@ -308,10 +310,23 @@ export default class BookManageService {
                 createdAt: null
             });
         } else {
-            bodyStr = JSON.stringify({
-                pxrId: null,
-                createdAt: null
-            });
+            if (coopStartAt) {
+                bodyStr = JSON.stringify({
+                    pxrId: null,
+                    createdAt: null,
+                    coopStartAt: coopStartAt,
+                    actor: operator.getActorCode(),
+                    limit: reqLimit,
+                    offset: reqOffset
+                });
+            } else {
+                bodyStr = JSON.stringify({
+                    pxrId: null,
+                    createdAt: null,
+                    offset: reqOffset,
+                    limit: reqLimit
+                });
+            }
         }
 
         // 接続のためのオプションを生成
@@ -339,7 +354,7 @@ export default class BookManageService {
                 // 応答が500系の場合、エラーを返す
                 throw new AppError(message.FAILED_BOOK_MANAGE_BOOK_LIST, ResponseCode.SERVICE_UNAVAILABLE);
             } else if (result.response.statusCode !== ResponseCode.OK &&
-                result.response.statusCode !== ResponseCode.NOT_FOUND) {
+                result.response.statusCode !== ResponseCode.NO_CONTENT) {
                 // 応答が200以外の場合、エラーを返す
                 throw new AppError(message.FAILED_BOOK_MANAGE_BOOK_LIST, ResponseCode.UNAUTHORIZED);
             }
