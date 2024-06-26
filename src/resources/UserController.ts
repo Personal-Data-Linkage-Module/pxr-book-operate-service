@@ -211,7 +211,7 @@ export default class UserController {
     @Header('X-Frame-Options', 'deny')
     // SDE-MSA-PRIN 過負荷を回避する （MSA-PRIN-ID-02）
     @EnableSimpleBackPressure()
-    async postUserCreateBatch (@Req() req: Request, @Res() res: Response): Promise<any> {
+    async postUserCreateBatch (@Req() req: Request, @QueryParam('maxCount') maxCount: number, @QueryParam('dayBack') dayBack: number, @Res() res: Response): Promise<any> {
         const configure = Config.ReadConfig('./config/config.json');
         const message = Config.ReadConfig('./config/message.json');
         // セッションチェックデータオブジェクトを生成
@@ -236,6 +236,6 @@ export default class UserController {
         serviceDto.setOperatorUrl(configure['operatorUrl']);
         serviceDto.setOperator(operator);
         serviceDto.setMessage(message);
-        return new UserService().createUserBatch(serviceDto);
+        return new UserService().createUserBatch(serviceDto, maxCount, dayBack);
     }
 }
