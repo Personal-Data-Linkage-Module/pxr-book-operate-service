@@ -118,7 +118,7 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify([{
                 document: [
                     {
                         id: {
@@ -2107,7 +2107,7 @@ describe('book-operate API', () => {
                         }
                     }
                 ]
-            }));
+            }]));
         });
         test('正常：データ取得（照合結果にidentifierあり）,document, event, thing1件ずつ共有コードで指定', async () => {
             // スタブサーバー起動
@@ -2149,7 +2149,7 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify([{
                 document: [
                     {
                         id: {
@@ -2371,7 +2371,7 @@ describe('book-operate API', () => {
                         }
                     }
                 ]
-            }));
+            }]));
         });
         test('正常：データ取得（照合結果にidentifierあり）,eventのみ取得, 一時的共有の定義でevent.thingをフィルタリング', async () => {
             // スタブサーバー起動
@@ -2403,7 +2403,7 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify([{
                 document: [],
                 event: [
                     {
@@ -2515,7 +2515,7 @@ describe('book-operate API', () => {
                     }
                 ],
                 thing: []
-            }));
+            }]));
         });
         test('正常：データ取得（照合結果にidentifierなし）', async () => {
             // スタブサーバー起動
@@ -2557,7 +2557,7 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify([{
                 document: [
                     {
                         id: {
@@ -4837,7 +4837,7 @@ describe('book-operate API', () => {
                         }
                     }
                 ]
-            }));
+            }]));
         });
         test('正常：データ取得（結果が空）', async () => {
             // スタブサーバー起動
@@ -4879,11 +4879,11 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(JSON.stringify(response.body)).toBe(JSON.stringify({
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify([{
                 document: [],
                 event: [],
                 thing: []
-            }));
+            }]));
         });
         test('正常：データ取得（照合結果にidentifierあり）document.chapter.eventがnull', async () => {
             // スタブサーバー起動
@@ -4926,7 +4926,7 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
+            expect(response.body).toMatchObject([{
                 document: [
                     {
                         id: {
@@ -6760,7 +6760,7 @@ describe('book-operate API', () => {
                         }
                     }
                 ]
-            });
+            }]);
         });
         test('正常：データ取得（照合結果にidentifierあり）identifier.thingがnull', async () => {
             // スタブサーバー起動
@@ -6798,7 +6798,7 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
+            expect(response.body).toMatchObject([{
                 document: [
                     {
                         id: {
@@ -7116,7 +7116,7 @@ describe('book-operate API', () => {
                         }
                     }
                 ]
-            });
+            }]);
         });
         test('正常：データ取得（照合結果にidentifierあり）identifierがnull', async () => {
             // スタブサーバー起動
@@ -7154,11 +7154,11 @@ describe('book-operate API', () => {
 
             // レスポンスチェック
             expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
+            expect(response.body).toMatchObject([{
                 document: [],
                 event: [],
                 thing: []
-            });
+            }]);
         });
         test('パラメータ異常：全体が空', async () => {
             // スタブサーバー起動
