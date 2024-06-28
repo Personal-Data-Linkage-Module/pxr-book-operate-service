@@ -2602,6 +2602,186 @@ describe('book-operate API', () => {
             // レスポンスチェック
             expect(response.status).toBe(200);
         });
+        test('正常：app、userId指定あり、蓄積定義が複数', async () => {
+            // データ準備
+            await common.executeSqlString(`
+            INSERT INTO pxr_book_operate.my_condition_book
+            (
+                user_id,
+                actor_catalog_code, actor_catalog_version,
+                region_catalog_code, region_catalog_version,
+                app_catalog_code, app_catalog_version,
+                wf_catalog_code, wf_catalog_version,
+                open_start_at,
+                identify_code,
+                attributes,
+                is_disabled, created_by, created_at, updated_by, updated_at
+            )
+            VALUES
+            (
+                'appUser03',
+                1000012,1,
+                null,null,
+                1000002,1,
+                null,null,
+                '2020-02-01T00:00:00.000+0900',
+                'identifyCode',
+                '蓄積同意が複数ある利用者',
+                false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+            );
+            `);
+            _operatorServer = new StubOperatorServer(200, null);
+            _catalogServer = new StubCatalogServer(3001, 1000020, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, 'pxrUser01');
+            const notificationServer = new NotificationServiceForDuplicateUserId(200, 'app');
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.application2) })
+                .send(JSON.stringify(
+                    {
+                        userId: ['appUser03'],
+                        establishAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        includeRequest: false
+                    }
+                ));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(response.status).toBe(200);
+            expect(JSON.stringify(response.body[0])).toBe(JSON.stringify({
+                status: 1,
+                app: { _value: 1000002, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser03',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: '蓄積同意が複数ある利用者',
+                store: {
+                    document: [
+                        {
+                            _value: 1000009,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 1
+                        }
+                    ],
+                    event: [
+                        {
+                            _value: 1000009,
+                            _ver: 2
+                        },
+                        {
+                            _value: 1000010,
+                            _ver: 2
+                        }
+                    ],
+                    thing: [
+                        {
+                            _value: 1000011,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 1
+                        },
+                        {
+                            _value: 1000011,
+                            _ver: 2
+                        },
+                        {
+                            _value: 1000014,
+                            _ver: 2
+                        }
+                    ]
+                },
+                userInformation: userInfo
+            }));
+        });
+
+        test('正常：app、userId指定あり、蓄積定義が複数', async () => {
+            // データ準備
+            await common.executeSqlString(`
+            INSERT INTO pxr_book_operate.my_condition_book
+            (
+                user_id,
+                actor_catalog_code, actor_catalog_version,
+                region_catalog_code, region_catalog_version,
+                app_catalog_code, app_catalog_version,
+                wf_catalog_code, wf_catalog_version,
+                open_start_at,
+                identify_code,
+                attributes,
+                is_disabled, created_by, created_at, updated_by, updated_at
+            )
+            VALUES
+            (
+                'appUser04',
+                1000012,1,
+                null,null,
+                1000002,1,
+                null,null,
+                '2020-02-01T00:00:00.000+0900',
+                'identifyCode',
+                '蓄積同意がない利用者',
+                false, 'pxr_user', '2020-02-01T00:00:00.000+0900', 'pxr_user', '2020-02-01T00:00:00.000+0900'
+            );
+            `);
+            _operatorServer = new StubOperatorServer(200, null);
+            _catalogServer = new StubCatalogServer(3001, 1000020, 200);
+            _bookManageServer = new StubBookManageServer(200);
+            _proxyServer = new ProxyServer(200, false, 'pxrUser01');
+            const notificationServer = new NotificationServiceForDuplicateUserId(200, 'app');
+            await notificationServer.start();
+
+            // 送信データを生成
+            const url = Url.userListURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.application2) })
+                .send(JSON.stringify(
+                    {
+                        userId: ['appUser04'],
+                        establishAt: {
+                            start: '2020-01-01T00:00:00.000+0900',
+                            end: '2020-03-01T00:00:00.000+0900'
+                        },
+                        includeRequest: false
+                    }
+                ));
+            await notificationServer.stop();
+
+            // レスポンスチェック
+            expect(response.status).toBe(200);
+            expect(JSON.stringify(response.body[0])).toBe(JSON.stringify({
+                status: 1,
+                app: { _value: 1000002, _ver: 1 },
+                wf: null,
+                region: null,
+                userId: 'appUser04',
+                establishAt: '2020-02-01T09:00:00.000+0900',
+                attribute: '蓄積同意がない利用者',
+                store: {
+                    document: null,
+                    event: null,
+                    thing: null
+                },
+                userInformation: userInfo
+            }));
+        });
     });
 
     /**
