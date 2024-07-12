@@ -41,6 +41,7 @@ import OperatorReqDto from '../resources/dto/OperatorReqDto';
 import moment = require('moment');
 import { OperatorType } from '../common/Operator';
 import { applicationLogger } from '../common/logging';
+import { IsArray } from 'class-validator';
 /* eslint-enable */
 const config = Config.ReadConfig('./config/config.json');
 
@@ -407,43 +408,59 @@ export default class UserService {
                     identifyCode: bookManageResult.identifyCode
                 };
             } else {
-                const userInformation = await OperatorService.acquireUserInformation(
-                    bookManageResult.userId,
-                    bookManageResult.wfCode,
-                    bookManageResult.appCode,
-                    bookManageResult.regionCode,
-                    operator.getEncodeData()
-                );
-                jsonData = {
-                    status: bookManageResult.status,
-                    app: bookManageResult.appCode
-                        ? {
-                            _value: bookManageResult.appCode,
-                            _ver: bookManageResult.appVersion
+                if (response.some(res => res['userId'] && res['userId'] as string === bookManageResult.userId &&
+                    res['app'] && Number(res['app']['_value']) === bookManageResult.appCode
+                )) {
+                    // すでにレスポンスに設定されている利用者の場合は蓄積定義のデータ種を集約する
+                    for (const res of response) {
+                        if (res['userId'] && res['userId'] === bookManageResult.userId &&
+                            res['app'] && Number(res['app']['_value']) === bookManageResult.appCode) {
+                            res['store']['document'] = res['store']['document'] ? res['store']['document'].concat(bookManageResult.document ? bookManageResult.document : []) : bookManageResult.document;
+                            res['store']['event'] = res['store']['event'] ? res['store']['event'].concat(bookManageResult.event ? bookManageResult.event : []) : bookManageResult.event;
+                            res['store']['thing'] = res['store']['thing'] ? res['store']['thing'].concat(bookManageResult.thing ? bookManageResult.thing : []) : bookManageResult.thing;
                         }
-                        : null,
-                    wf: bookManageResult.wfCode
-                        ? {
-                            _value: bookManageResult.wfCode,
-                            _ver: bookManageResult.wfVersion
-                        }
-                        : null,
-                    region: bookManageResult.regionCode
-                        ? {
-                            _value: bookManageResult.regionCode,
-                            _ver: bookManageResult.regionVersion
-                        }
-                        : null,
-                    userId: bookManageResult.userId,
-                    establishAt: transformFromDateTimeToString(config['timezone'], bookManageResult.openStartAt),
-                    attribute: bookManageResult.attribute ? bookManageResult.attribute : {},
-                    store: {
-                        document: bookManageResult.document,
-                        event: bookManageResult.event,
-                        thing: bookManageResult.thing
-                    },
-                    userInformation
-                };
+                    }
+                    // レスポンスにpushせずに次の蓄積定義の情報を処理する
+                    continue;
+                } else {
+                    const userInformation = await OperatorService.acquireUserInformation(
+                        bookManageResult.userId,
+                        bookManageResult.wfCode,
+                        bookManageResult.appCode,
+                        bookManageResult.regionCode,
+                        operator.getEncodeData()
+                    );
+                    jsonData = {
+                        status: bookManageResult.status,
+                        app: bookManageResult.appCode
+                            ? {
+                                _value: bookManageResult.appCode,
+                                _ver: bookManageResult.appVersion
+                            }
+                            : null,
+                        wf: bookManageResult.wfCode
+                            ? {
+                                _value: bookManageResult.wfCode,
+                                _ver: bookManageResult.wfVersion
+                            }
+                            : null,
+                        region: bookManageResult.regionCode
+                            ? {
+                                _value: bookManageResult.regionCode,
+                                _ver: bookManageResult.regionVersion
+                            }
+                            : null,
+                        userId: bookManageResult.userId,
+                        establishAt: transformFromDateTimeToString(config['timezone'], bookManageResult.openStartAt),
+                        attribute: bookManageResult.attribute ? bookManageResult.attribute : {},
+                        store: {
+                            document: bookManageResult.document,
+                            event: bookManageResult.event,
+                            thing: bookManageResult.thing
+                        },
+                        userInformation
+                    };
+                }
             }
             response.push(jsonData);
         }
@@ -487,23 +504,46 @@ export default class UserService {
             if (ret === 'no_user') {
                 continue;
             }
-            const bookManageResult: BookManageSettingStoreDomain = new BookManageSettingStoreDomain();
-            bookManageResult.setFromJson(ret);
-            bookManageResult.userId = myConditionBookData.userId;
-            bookManageResult.attribute = myConditionBookData.attributes;
-            const openStartAt = new Date(Date.UTC(myConditionBookData.openStartAt.getFullYear(), myConditionBookData.openStartAt.getMonth(), myConditionBookData.openStartAt.getDate(), myConditionBookData.openStartAt.getHours(), myConditionBookData.openStartAt.getMinutes(), myConditionBookData.openStartAt.getSeconds()));
-            bookManageResult.openStartAt = openStartAt;
-            bookManageResult.actorCode = myConditionBookData.actorCatalogCode;
-            bookManageResult.actorVersion = myConditionBookData.actorCatalogVersion;
-            bookManageResult.wfCode = myConditionBookData.wfCatalogCode;
-            bookManageResult.wfVersion = myConditionBookData.wfCatalogVersion;
-            bookManageResult.appCode = myConditionBookData.appCatalogCode;
-            bookManageResult.appVersion = myConditionBookData.appCatalogVersion;
-            bookManageResult.regionCode = myConditionBookData.regionCatalogCode;
-            bookManageResult.regionVersion = myConditionBookData.regionCatalogVersion;
-            bookManageResult.status = this.COOPERATING_STATUS;
-            bookManageResult.identifyCode = myConditionBookData.identifyCode;
-            bookManageResultList.push(bookManageResult);
+
+            if (ret && IsArray(ret) && ret.length > 0) {
+                for (const store of ret) {
+                    const bookManageResult: BookManageSettingStoreDomain = new BookManageSettingStoreDomain();
+                    bookManageResult.setFromJson(store);
+                    bookManageResult.userId = myConditionBookData.userId;
+                    bookManageResult.attribute = myConditionBookData.attributes;
+                    const openStartAt = new Date(Date.UTC(myConditionBookData.openStartAt.getFullYear(), myConditionBookData.openStartAt.getMonth(), myConditionBookData.openStartAt.getDate(), myConditionBookData.openStartAt.getHours(), myConditionBookData.openStartAt.getMinutes(), myConditionBookData.openStartAt.getSeconds()));
+                    bookManageResult.openStartAt = openStartAt;
+                    bookManageResult.actorCode = myConditionBookData.actorCatalogCode;
+                    bookManageResult.actorVersion = myConditionBookData.actorCatalogVersion;
+                    bookManageResult.wfCode = myConditionBookData.wfCatalogCode;
+                    bookManageResult.wfVersion = myConditionBookData.wfCatalogVersion;
+                    bookManageResult.appCode = myConditionBookData.appCatalogCode;
+                    bookManageResult.appVersion = myConditionBookData.appCatalogVersion;
+                    bookManageResult.regionCode = myConditionBookData.regionCatalogCode;
+                    bookManageResult.regionVersion = myConditionBookData.regionCatalogVersion;
+                    bookManageResult.status = this.COOPERATING_STATUS;
+                    bookManageResult.identifyCode = myConditionBookData.identifyCode;
+                    bookManageResultList.push(bookManageResult);
+                }
+            } else {
+                const bookManageResult: BookManageSettingStoreDomain = new BookManageSettingStoreDomain();
+                bookManageResult.setFromJson(null);
+                bookManageResult.userId = myConditionBookData.userId;
+                bookManageResult.attribute = myConditionBookData.attributes;
+                const openStartAt = new Date(Date.UTC(myConditionBookData.openStartAt.getFullYear(), myConditionBookData.openStartAt.getMonth(), myConditionBookData.openStartAt.getDate(), myConditionBookData.openStartAt.getHours(), myConditionBookData.openStartAt.getMinutes(), myConditionBookData.openStartAt.getSeconds()));
+                bookManageResult.openStartAt = openStartAt;
+                bookManageResult.actorCode = myConditionBookData.actorCatalogCode;
+                bookManageResult.actorVersion = myConditionBookData.actorCatalogVersion;
+                bookManageResult.wfCode = myConditionBookData.wfCatalogCode;
+                bookManageResult.wfVersion = myConditionBookData.wfCatalogVersion;
+                bookManageResult.appCode = myConditionBookData.appCatalogCode;
+                bookManageResult.appVersion = myConditionBookData.appCatalogVersion;
+                bookManageResult.regionCode = myConditionBookData.regionCatalogCode;
+                bookManageResult.regionVersion = myConditionBookData.regionCatalogVersion;
+                bookManageResult.status = this.COOPERATING_STATUS;
+                bookManageResult.identifyCode = myConditionBookData.identifyCode;
+                bookManageResultList.push(bookManageResult);
+            }
         }
         return bookManageResultList;
     }

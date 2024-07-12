@@ -105,7 +105,7 @@ export default class StubBookManageServer {
         const _listener2 = (req: express.Request, res: express.Response) => {
             if (status === 200) {
                 if (req.params.id === '111111111') {
-                    res.json({
+                    res.json([{
                         id: 1,
                         bookId: 1,
                         regionUseId: null,
@@ -149,9 +149,9 @@ export default class StubBookManageServer {
                                 _ver: 1
                             }
                         ]
-                    });
+                    }]);
                 } else if (req.params.id === '222222222') {
-                    res.json({
+                    res.json([{
                         id: 1,
                         bookId: 1,
                         regionUseId: null,
@@ -195,9 +195,9 @@ export default class StubBookManageServer {
                                 _ver: 3
                             }
                         ]
-                    });
+                    }]);
                 } else if (req.params.id === '333333333') {
-                    res.json({
+                    res.json([{
                         id: 1,
                         bookId: 1,
                         regionUseId: null,
@@ -241,9 +241,9 @@ export default class StubBookManageServer {
                                 _ver: 3
                             }
                         ]
-                    });
+                    }]);
                 } else if (req.params.id === 'appUser01' || req.params.id === 'appUser02') {
-                    res.json({
+                    res.json([{
                         id: 1,
                         bookId: 1,
                         regionUseId: null,
@@ -287,9 +287,84 @@ export default class StubBookManageServer {
                                 _ver: 1
                             }
                         ]
-                    });
+                    }]);
+                } else if (req.params.id === 'appUser03') {
+                    res.json([{
+                        id: 1,
+                        bookId: 1,
+                        regionUseId: null,
+                        type: 'store',
+                        actor: {
+                            _value: 1000012,
+                            _ver: 1
+                        },
+                        app: {
+                            _value: 1000002,
+                            _ver: 1
+                        },
+                        wf: null,
+                        document: [
+                            {
+                                _value: 1000009,
+                                _ver: 1
+                            },
+                            {
+                                _value: 1000010,
+                                _ver: 1
+                            }
+                        ],
+                        event: null,
+                        thing: [
+                            {
+                                _value: 1000011,
+                                _ver: 1
+                            },
+                            {
+                                _value: 1000014,
+                                _ver: 1
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        bookId: 1,
+                        regionUseId: null,
+                        type: 'store',
+                        actor: {
+                            _value: 1000012,
+                            _ver: 1
+                        },
+                        app: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        wf: null,
+                        document: null,
+                        event: [
+                            {
+                                _value: 1000009,
+                                _ver: 2
+                            },
+                            {
+                                _value: 1000010,
+                                _ver: 2
+                            }
+                        ],
+                        thing: [
+                            {
+                                _value: 1000011,
+                                _ver: 2
+                            },
+                            {
+                                _value: 1000014,
+                                _ver: 2
+                            }
+                        ]
+                    }]);
+                } else if (req.params.id === 'appUser04') {
+                    res.json([]);
                 }
-            }
+            } 
             res.status(status).end();
         };
 
