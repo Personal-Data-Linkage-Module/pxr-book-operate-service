@@ -109,6 +109,7 @@
     "FAILED_LINKAGE": "連携に失敗しました",
     "FAILED_CONNECT_TO_LINKAGE_SERVICE": "連携サービスとの接続に失敗しました",
     "NOT_EXIST_EVENT": "対象のイベントが存在しません",
+    "IDENTIFY_CODE_EXPIRED": "指定された本人性確認コードは、有効期限切れです",
     "validation": {
         "isArray": "配列ではありません",
         "isBoolean": "真偽値ではありません",

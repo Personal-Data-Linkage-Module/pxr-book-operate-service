@@ -2188,6 +2188,117 @@ describe('book-operate API', () => {
             expect(response.body.message).toBe(Message.FAILED_BOOK_MANAGE_USERIDCOOPERATE);
         });
 
+        test('異常：MyConditionBook管理サービス利用者ID連携からの本人性確認コード期限切れエラー', async () => {
+            _catalogServer = new StubCatalogServer(3001, 0, 200);
+            _bookManageServer = new StubBookManageServer(400, 1);
+
+            // 送信データを生成
+            const url = Url.userCreateURI;
+
+            // 対象APIに送信
+            const response = await supertest(expressApp).post(url)
+                .set({ accept: 'application/json', 'Content-Type': 'application/json' })
+                .set({ session: JSON.stringify(Session.wfManager) })
+                .send(JSON.stringify(
+                    {
+                        identifyCode: 'ukO8z+Xf8vv7yxXQj2Hpo',
+                        app: null,
+                        wf: {
+                            _value: 1000007,
+                            _ver: 1
+                        },
+                        userId: '1111111',
+                        attributes: {},
+                        userInformation: {
+                            _code: {
+                                _value: 1000373,
+                                _ver: 1
+                            },
+                            'item-group': [
+                                {
+                                    title: '氏名',
+                                    item: [
+                                        {
+                                            title: '姓',
+                                            type: {
+                                                _value: 30019,
+                                                _ver: 1
+                                            },
+                                            content: 'サンプル'
+                                        },
+                                        {
+                                            title: '名',
+                                            type: {
+                                                _value: 30020,
+                                                _ver: 1
+                                            },
+                                            content: '太郎'
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: '性別',
+                                    item: [
+                                        {
+                                            title: '性別',
+                                            type: {
+                                                _value: 30021,
+                                                _ver: 1
+                                            },
+                                            content: '男'
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: '生年',
+                                    item: [
+                                        {
+                                            title: '生年',
+                                            type: {
+                                                _value: 1000372,
+                                                _ver: 1
+                                            },
+                                            content: 2000
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: '住所（行政区）',
+                                    item: [
+                                        {
+                                            title: '住所（行政区）',
+                                            type: {
+                                                _value: 1000371,
+                                                _ver: 1
+                                            },
+                                            content: '東京都港区'
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: '連絡先電話番号',
+                                    item: [
+                                        {
+                                            title: '連絡先電話番号',
+                                            type: {
+                                                _value: 30036,
+                                                _ver: 1
+                                            },
+                                            content: '080-1234-5678',
+                                            'changeable-flag': true
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ));
+
+            // レスポンスチェック
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe(Message.IDENTIFY_CODE_EXPIRED);
+        });
+
         test('異常：MyConditionBook管理サービス利用者ID連携からのレスポンスエラー（500系）', async () => {
             _catalogServer = new StubCatalogServer(3001, 0, 200);
             _bookManageServer = new StubBookManageServer(500);

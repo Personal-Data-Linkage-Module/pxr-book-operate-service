@@ -7,7 +7,9 @@ import { Server } from 'net';
 
 import * as express from 'express';
 import bodyParser = require('body-parser');
-import moment = require('moment');  
+import moment = require('moment');
+import Config from '../common/Config';
+const Message = Config.ReadConfig('./config/message.json');
 /**
  * Book管理サービス
  */
@@ -97,6 +99,15 @@ export default class StubBookManageServer {
                     });
                 }
                 return;
+            } else if (status === 400) {
+                if (option === 1) {
+                    res.status(400)
+                        .json({
+                            status: 400,
+                            message: Message.IDENTIFY_CODE_EXPIRED
+                        });
+                    return;
+                }
             }
             res.status(status).end();
         };

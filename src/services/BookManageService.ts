@@ -48,6 +48,10 @@ export default class BookManageService {
             // ステータスコードを判定
             const statusCode: string = result.response.statusCode.toString();
             if (result.response.statusCode === ResponseCode.BAD_REQUEST) {
+                // 本人性確認コード期限切れのエラーの場合、エラーメッセージをそのまま返す
+                if (result.body.message === message.IDENTIFY_CODE_EXPIRED) {
+                    throw new AppError(result.body.message, ResponseCode.BAD_REQUEST);
+                }
                 // 応答が400の場合、エラーを返す
                 throw new AppError(message.FAILED_BOOK_MANAGE_USERIDCOOPERATE, ResponseCode.BAD_REQUEST);
             } else if (statusCode.match(/^5.+/)) {
